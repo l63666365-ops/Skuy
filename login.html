@@ -9,7 +9,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap');
 
 html {
-    font-size: 14px !important;
+    font-size: 12px !important;
     -webkit-text-size-adjust: 100% !important;
     -moz-text-size-adjust: 100% !important;
     text-size-adjust: 100% !important;
@@ -329,15 +329,15 @@ function handleLogin() {
 (function normalizeFontSize() {
     function applyFix() {
         var probe = document.createElement('div');
-        probe.style.cssText = 'position:fixed;visibility:hidden;pointer-events:none;width:100px;font-size:14px;line-height:1;';
+        probe.style.cssText = 'position:fixed;visibility:hidden;pointer-events:none;width:100px;font-size:12px;line-height:1;';
         document.documentElement.appendChild(probe);
         var actual = parseFloat(window.getComputedStyle(probe).fontSize);
         document.documentElement.removeChild(probe);
-        if (Math.abs(actual - 14) > 0.5) {
-            var ratio = 14 / actual;
-            document.documentElement.style.setProperty('font-size', (ratio * 14) + 'px', 'important');
+        if (Math.abs(actual - 12) > 0.5) {
+            var ratio = 12 / actual;
+            document.documentElement.style.setProperty('font-size', (ratio * 12) + 'px', 'important');
         } else {
-            document.documentElement.style.setProperty('font-size', '14px', 'important');
+            document.documentElement.style.setProperty('font-size', '12px', 'important');
         }
     }
     applyFix();
