@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=0.84, maximum-scale=0.84, user-scalable=no">
+    <title>Login Jadwal Sekolah Pro</title>
+    <style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap');
+
+* { 
+    margin: 0; 
+    padding: 0; 
+    box-sizing: border-box; 
+    font-family: 'Poppins', sans-serif; 
+}
+        
+:root {
+    --bg-color: #f1f6f9; 
+    --color-1: #021024;
+    --color-2: #052659;
+    --color-3: #5483b3;
+    --color-4: #7da0ca;
+    --color-5: #c1e8ff;
+    --white: #ffffff;
+    --error: #ff4d4d;
+}
+
+body { 
+    background: linear-gradient(135deg, var(--bg-color) 100%);
+    color: var(--color-1); 
+    min-height: 100vh; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center;
+    padding: 20px;
+}
+        
+.login-wrapper {
+    width: 100%;
+    max-width: 420px;
+    animation: fadeIn 0.8s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.glass-card { 
+    background: var(--white); 
+    border-radius: 20px; 
+    padding: 50px 40px; 
+    text-align: center; 
+    box-shadow: 0 20px 40px rgba(5, 38, 89, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    position: relative;
+}
+    
+.logo-profile {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden; 
+}
+
+.logo-profile img {
+    width: 120%;
+    height: 120%;
+    object-fit: cover; 
+    transform: translateX(0.6px);
+}
+
+.title {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--color-2);
+    letter-spacing: -1px;
+    line-height: 1.2;
+}
+    
+.subtitle {
+    font-size: 16px;
+    color: var(--color-3);
+    margin-bottom: 35px;
+    font-weight: 500;
+}
+
+.input-group {
+    margin-bottom: 15px;
+    text-align: left;
+    position: relative;
+}
+
+.input-group label {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--color-2);
+    margin-bottom: 8px;
+    margin-left: 5px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.input-group input {
+    width: 100%;
+    background: #f8fbfc;
+    border: 2px solid #e1e8ef;
+    padding: 16px 20px;
+    border-radius: 15px;
+    color: var(--color-1);
+    font-weight: 600;
+    font-size: 15px;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.input-group input:focus {
+    border-color: var(--color-3);
+    background: var(--white);
+    box-shadow: 0 8px 20px rgba(84, 131, 179, 0.15);
+}
+
+.pass-wrapper { 
+    position: relative; 
+    display: flex; 
+    align-items: center; 
+}
+
+.toggle-pass {
+    position: absolute;
+    right: 20px;
+    cursor: pointer;
+    color: var(--color-3);
+    display: flex;
+    align-items: center;
+}
+
+.toggle-pass svg { 
+    width: 20px; 
+    height: 20px; 
+    stroke: currentColor; 
+    fill: none; 
+    stroke-width: 2; 
+}
+
+.btn-login {
+    width: 100%;
+    background: var(--color-2);
+    color: var(--white);
+    border: none;
+    padding: 18px;
+    border-radius: 15px;
+    font-weight: 800;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    margin-top: 10px;
+    box-shadow: 0 10px 20px rgba(5, 38, 89, 0.2);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.btn-login:hover {
+    background: var(--color-1);
+    transform: translateY(-2px);
+}
+
+.error-msg {
+    color: var(--error);
+    font-size: 12px;
+    font-weight: 600;
+    margin-top: 5px; 
+    margin-left: 5px;
+    display: none;
+    animation: fadeInMsg 0.3s ease;
+}
+
+@keyframes fadeInMsg {
+    from { 
+        opacity: 0; 
+        transform: translateY(-5px); 
+    }
+    to { 
+        opacity: 1; 
+        transform: translateY(0); 
+    }
+}
+
+.footer-text {
+    margin-top: 30px;
+    font-size: 13px;
+    color: var(--color-4);
+    font-weight: 500;
+}
+
+</style>
+</head>
+<body>
+<div class="login-wrapper">
+  <div class="glass-card">
+    <div class="logo-profile">
+        <img src="https://raw.githubusercontent.com/l63666365-ops/logo_skuyjadwal/refs/heads/main/20260509_105316_0000.png" alt="SkuyJadwal Logo">
+    </div>
+        <div class="title">Selamat Datang</div>
+        <div class="subtitle">Masuk untuk melihat jadwal harianmu.</div>
+        
+<div class="input-group">
+    <label>Email</label>
+    <input type="text" id="username" placeholder="Contoh: 12345@smkn2sragen.sch.id" autocomplete="off">
+</div>
+        
+<div class="input-group">
+            <label>Password</label>
+            <div class="pass-wrapper">
+                <input type="password" id="password" placeholder="Masukkan password...">
+                <div class="toggle-pass" id="eyeBtn" onclick="togglePassword()">
+                    <svg id="eyeIcon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                </div>
+            </div>
+            <div class="error-msg" id="errorBox">Email atau password yang Anda masukkan salah. Silakan coba lagi.</div>
+        </div>
+        
+        <button class="btn-login" id="loginBtn" onclick="handleLogin()">Akses Jadwal</button>
+
+        <div class="footer-text">
+            &copy; 2026 SkuyJadwal. All rights reserved.
+        </div>
+    </div>
+</div>
+
+<script>
+window.onload = function() {
+    if (localStorage.getItem('isLoggedIn') === 'true') {
+        window.location.href = './index.html';
+    }
+};
+
+function togglePassword() {
+    const passInput = document.getElementById('password');
+    const eyeIcon = document.getElementById('eyeIcon');
+    if (passInput.type === 'password') {
+        passInput.type = 'text';
+        eyeIcon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line>';
+    } else {
+        passInput.type = 'password';
+        eyeIcon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>';
+    }
+}
+
+function handleLogin() {
+    const email = document.getElementById('username').value.toLowerCase();
+    const errorBox = document.getElementById('errorBox');
+    
+    if (!email.endsWith("@smkn2sragen.sch.id")) {
+        Swal.fire({
+            title: 'Akses Ditolak!',
+            text: 'Mohon gunakan email sekolah!',
+            icon: 'error',
+            confirmButtonColor: '#00203F'
+        });
+        return;
+    }
+
+    if (email === "admin@smkn2sragen.sch.id") {
+        localStorage.setItem('role', 'admin');
+        localStorage.setItem('userKelas', 'ADMIN');
+        localStorage.setItem('isLoggedIn', 'true');
+        window.location.href = './index.html';
+        return;
+    }
+
+    if (email.startsWith('sek')) {
+        let rawKelas = email.replace('sek', '').split('@')[0]; 
+        let match = rawKelas.match(/[a-z]+|[0-9]+/gi);
+        let kelasFix = match ? match.join(' ').toUpperCase() : rawKelas.toUpperCase();
+
+        localStorage.setItem('role', 'sekretaris');
+        localStorage.setItem('userKelas', kelasFix);
+        localStorage.setItem('isLoggedIn', 'true');
+        window.location.href = './index.html';
+        return;
+    }
+    const idStr = email.split('@')[0];
+    const id = parseInt(idStr);
+    let kelas = "";
+
+    if (id >= 12075 && id <= 12110) kelas = "TKP 1";
+    else if (id >= 12111 && id <= 12145) kelas = "TKP 2";
+    else if (id >= 12146 && id <= 12181) kelas = "DPIB 1";
+    else if (id >= 12182 && id <= 12217) kelas = "DPIB 2";
+    else if (id >= 12218 && id <= 12253) kelas = "TP 1";
+    else if (id >= 12254 && id <= 12289) kelas = "TP 2";
+    else if (id >= 12290 && id <= 12324) kelas = "TP 3";
+    else if (id >= 12325 && id <= 12359) kelas = "TP 4";
+    else if (id >= 12360 && id <= 12395) kelas = "TKR 1";
+    else if (id >= 12396 && id <= 12431) kelas = "TKR 2";
+    else if (id >= 12432 && id <= 12467) kelas = "TKR 3";
+    else if (id >= 12468 && id <= 12503) kelas = "TKR 4";
+    else if (id >= 12504 && id <= 12539) kelas = "TITL 1";
+    else if (id >= 12540 && id <= 12575) kelas = "TITL 2";
+    else if (id >= 12576 && id <= 12611) kelas = "TITL 3";
+    else if (id >= 12612 && id <= 12647) kelas = "TITL 4";
+    else if (id >= 12648 && id <= 12683) kelas = "TKJ 1";
+    else if (id >= 12684 && id <= 12719) kelas = "TKJ 2";
+
+    if (kelas !== "") {
+        localStorage.setItem('userKelas', kelas);
+        localStorage.setItem('role', 'user');
+        localStorage.setItem('isLoggedIn', 'true');
+        window.location.href = './index.html';
+    } else {
+        errorBox.style.display = 'block';
+        errorBox.innerText = "Email atau password yang Anda masukkan salah. Silakan coba lagi.";
+    }
+}
+
+(function() {
+    function fixFontSize() {
+        var testDiv = document.createElement('div');
+        testDiv.style.cssText = 'width:1rem;display:none !important';
+        document.body.appendChild(testDiv);
+        var actualSize = parseFloat(window.getComputedStyle(testDiv).getPropertyValue('width'));
+        if (actualSize !== 16) {
+            var scale = 16 / actualSize;
+            document.documentElement.style.fontSize = (scale * 100) + '%';
+        }
+        document.body.removeChild(testDiv);
+    }
+    fixFontSize();
+})();
+    
+</script>
+</body>
+  </html>
