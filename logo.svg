@@ -1,69 +1,40 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
 
-  <!-- Background rounded square -->
-  <rect x="0" y="0" width="512" height="512" rx="110" ry="110" fill="#0f1e4a"/>
-  <rect x="0" y="0" width="512" height="512" rx="110" ry="110" fill="#1a3580" opacity="0.5"/>
+  <!-- Background rounded square navy -->
+  <rect width="512" height="512" rx="115" fill="#0f1e4a"/>
 
-  <!-- ===== BUKU TERBUKA ===== -->
+  <!-- Lingkaran jam besar (putih) -->
+  <circle cx="220" cy="235" r="140" fill="none" stroke="#ffffff" stroke-width="22"/>
 
-  <!-- Cover kiri (biru tua) -->
-  <path d="M88,200 L88,360 Q88,378 106,380 L252,376 L252,158 L108,162 Q88,164 88,182 Z" fill="#1e3a7a"/>
-  <!-- Cover kanan (biru tua) -->
-  <path d="M424,200 L424,360 Q424,378 406,380 L260,376 L260,158 L404,162 Q424,164 424,182 Z" fill="#1e3a7a"/>
+  <!-- Tanda 12, 3, 6, 9 -->
+  <line x1="220" y1="110" x2="220" y2="135" stroke="#ffffff" stroke-width="14" stroke-linecap="round"/>
+  <line x1="220" y1="335" x2="220" y2="360" stroke="#ffffff" stroke-width="14" stroke-linecap="round"/>
+  <line x1="95"  y1="235" x2="120" y2="235" stroke="#ffffff" stroke-width="14" stroke-linecap="round"/>
+  <line x1="320" y1="235" x2="345" y2="235" stroke="#ffffff" stroke-width="14" stroke-linecap="round"/>
 
-  <!-- Halaman kiri (putih) -->
-  <path d="M108,170 L252,166 L252,368 L110,372 Q98,370 98,358 L98,182 Q98,170 108,170 Z" fill="#f0f5ff"/>
-  <!-- Halaman kanan (putih) -->
-  <path d="M404,170 L260,166 L260,368 L402,372 Q414,370 414,358 L414,182 Q414,170 404,170 Z" fill="#e8f0ff"/>
+  <!-- Jarum jam (pendek) -->
+  <line x1="220" y1="235" x2="220" y2="168" stroke="#ffffff" stroke-width="14" stroke-linecap="round"/>
+  <!-- Jarum menit (panjang, mengarah ke kanan-atas, sekitar jam 1) -->
+  <line x1="220" y1="235" x2="280" y2="185" stroke="#f5a623" stroke-width="10" stroke-linecap="round"/>
 
-  <!-- Spine tengah -->
-  <rect x="248" y="158" width="16" height="218" rx="3" fill="#0f1e4a"/>
+  <!-- Titik tengah jam -->
+  <circle cx="220" cy="235" r="12" fill="#f5a623"/>
 
-  <!-- Garis-garis halaman kiri -->
-  <line x1="116" y1="200" x2="242" y2="200" stroke="#b0c4e8" stroke-width="5" stroke-linecap="round"/>
-  <line x1="116" y1="220" x2="242" y2="220" stroke="#b0c4e8" stroke-width="5" stroke-linecap="round"/>
-  <line x1="116" y1="240" x2="242" y2="240" stroke="#b0c4e8" stroke-width="5" stroke-linecap="round"/>
-  <line x1="116" y1="260" x2="242" y2="260" stroke="#b0c4e8" stroke-width="5" stroke-linecap="round"/>
-  <line x1="116" y1="280" x2="242" y2="280" stroke="#b0c4e8" stroke-width="5" stroke-linecap="round"/>
-  <line x1="116" y1="300" x2="242" y2="300" stroke="#b0c4e8" stroke-width="5" stroke-linecap="round"/>
-  <line x1="116" y1="320" x2="200" y2="320" stroke="#b0c4e8" stroke-width="5" stroke-linecap="round"/>
+  <!-- Garis-garis jadwal (kanan, simpel) -->
+  <rect x="395" y="148" width="80" height="14" rx="7" fill="#ffffff" opacity="0.9"/>
+  <rect x="395" y="186" width="60" height="14" rx="7" fill="#ffffff" opacity="0.6"/>
+  <rect x="395" y="224" width="75" height="14" rx="7" fill="#f5a623" opacity="0.95"/>
+  <rect x="395" y="262" width="55" height="14" rx="7" fill="#ffffff" opacity="0.6"/>
+  <rect x="395" y="300" width="70" height="14" rx="7" fill="#ffffff" opacity="0.4"/>
 
-  <!-- Garis-garis halaman kanan -->
-  <line x1="270" y1="200" x2="396" y2="200" stroke="#b0c4e8" stroke-width="5" stroke-linecap="round"/>
-  <line x1="270" y1="220" x2="396" y2="220" stroke="#b0c4e8" stroke-width="5" stroke-linecap="round"/>
-  <line x1="270" y1="240" x2="396" y2="240" stroke="#b0c4e8" stroke-width="5" stroke-linecap="round"/>
-  <line x1="270" y1="260" x2="396" y2="260" stroke="#b0c4e8" stroke-width="5" stroke-linecap="round"/>
-  <line x1="270" y1="280" x2="396" y2="280" stroke="#b0c4e8" stroke-width="5" stroke-linecap="round"/>
-  <line x1="270" y1="300" x2="396" y2="300" stroke="#b0c4e8" stroke-width="5" stroke-linecap="round"/>
-  <line x1="270" y1="320" x2="350" y2="320" stroke="#b0c4e8" stroke-width="5" stroke-linecap="round"/>
+  <!-- Titik bulat di depan garis jadwal -->
+  <circle cx="383" cy="155" r="7" fill="#ffffff" opacity="0.9"/>
+  <circle cx="383" cy="193" r="7" fill="#ffffff" opacity="0.6"/>
+  <circle cx="383" cy="231" r="7" fill="#f5a623"/>
+  <circle cx="383" cy="269" r="7" fill="#ffffff" opacity="0.6"/>
+  <circle cx="383" cy="307" r="7" fill="#ffffff" opacity="0.4"/>
 
-  <!-- Lengkung bawah buku -->
-  <path d="M88,360 Q256,400 424,360 L424,376 Q256,418 88,376 Z" fill="#162d6a"/>
-
-  <!-- ===== JAM (kanan atas) ===== -->
-  <!-- Lingkaran luar (border) -->
-  <circle cx="372" cy="170" r="64" fill="#0a1530"/>
-  <!-- Lingkaran tengah -->
-  <circle cx="372" cy="170" r="56" fill="#1a3580"/>
-  <!-- Muka jam putih -->
-  <circle cx="372" cy="170" r="48" fill="#ffffff"/>
-  <!-- Tanda jam -->
-  <line x1="372" y1="128" x2="372" y2="140" stroke="#1a3580" stroke-width="5" stroke-linecap="round"/>
-  <line x1="372" y1="200" x2="372" y2="212" stroke="#1a3580" stroke-width="5" stroke-linecap="round"/>
-  <line x1="330" y1="170" x2="342" y2="170" stroke="#1a3580" stroke-width="5" stroke-linecap="round"/>
-  <line x1="402" y1="170" x2="414" y2="170" stroke="#1a3580" stroke-width="5" stroke-linecap="round"/>
-  <!-- Jarum jam -->
-  <line x1="372" y1="170" x2="372" y2="144" stroke="#0f1e4a" stroke-width="6" stroke-linecap="round"/>
-  <!-- Jarum menit -->
-  <line x1="372" y1="170" x2="392" y2="156" stroke="#0f1e4a" stroke-width="4" stroke-linecap="round"/>
-  <!-- Titik tengah (oranye) -->
-  <circle cx="372" cy="170" r="6" fill="#f5a623"/>
-
-  <!-- ===== CHECKLIST BADGE (kiri bawah) ===== -->
-  <!-- Lingkaran oranye -->
-  <circle cx="140" cy="398" r="44" fill="#f5a623"/>
-  <circle cx="140" cy="398" r="44" fill="#f76b1c" opacity="0.3"/>
-  <!-- Centang putih -->
-  <polyline points="120,398 134,413 162,384" fill="none" stroke="#ffffff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Garis pemisah vertikal tipis -->
+  <line x1="368" y1="130" x2="368" y2="325" stroke="#ffffff" stroke-width="2" opacity="0.2"/>
 
 </svg>
