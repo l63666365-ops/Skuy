@@ -34,7 +34,8 @@ html {
 body { 
     background-color: var(--bg-color); 
     color: var(--color-1); 
-    min-height: 100vh; display: flex; justify-content: center; padding: 12px; transition: background 0.5s ease; 
+    min-height: 100vh; display: flex; justify-content: center; padding: 24px 20px; transition: background 0.5s ease;
+    zoom: 0.88;
 }
         
 .modal-nav {
@@ -279,7 +280,7 @@ body {
 }
 
 .grid-header { 
-    font-size: 11px; 
+    font-size: 12px; 
     font-weight: 800; 
     text-transform: uppercase; 
     padding: 6px; 
@@ -328,7 +329,7 @@ body {
     background: transparent; 
     color: var(--color-1); 
     border: 1px solid var(--color-2); 
-    font-size: 11px; 
+    font-size: 12px; 
     font-weight: 700; 
     text-align: center; 
     border-radius: 5px; 
@@ -337,7 +338,7 @@ body {
 }
         
 input[type="time"].input-edit { 
-    font-size: 11px; 
+    font-size: 12px; 
     color-scheme: light; 
 }
         
@@ -1458,7 +1459,7 @@ function renderSchedule() {
     } else {
     colMapel.innerHTML += `<div class="item-box" id="mapel-${index}">${item[0]}</div>`;
     let jamCantik = item[1].replace(/\./g, '&thinsp;:&thinsp;').replace('-', ' — ');
-    colJam.innerHTML += `<div class="item-box" id="jam-${index}" style="font-size: 14px; letter-spacing: -0.2px;">${jamCantik}</div>`;
+    colJam.innerHTML += `<div class="item-box" id="jam-${index}" style="font-size: 12px; letter-spacing: -0.2px;">${jamCantik}</div>`;
     colRuang.innerHTML += `<div class="item-box" id="ruang-${index}">${item[2]}</div>`;
     }
 });
