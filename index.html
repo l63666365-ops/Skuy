@@ -986,6 +986,7 @@ input[type="text"]:focus { border-color: var(--color-2); }
 <div id="customAlert" class="custom-alert">
     <div class="alert-title" id="alertTitle">Pemberitahuan</div>
     <div class="alert-msg" id="alertMsg">Pesan</div>
+    <button class="alert-btn" onclick="closeAlert()">OK</button>
 </div>
 
 <div class="pomo-icon" onclick="openPomo()">⏳</div>
@@ -1269,10 +1270,7 @@ async function fetchJadwalDariSheet() {
         localStorage.setItem('savedJadwal', JSON.stringify(jadwalData));      
         renderSchedule();
         updateStatus();
-        // Update SW dengan data jadwal terbaru setelah fetch berhasil
-        if (Notification.permission === 'granted') {
-            kirimDataKeSW();
-        }
+        // (SW sync dihapus - notif sudah dipanggil langsung dari updateStatus())
     } catch (err) {
         console.log("Error:", err);
     }
@@ -1845,7 +1843,7 @@ function openDocPreview(url, title) {
 
 function closeDocPreview() {
     const modal = document.getElementById('docModal');
-          frame = document.getElementById('docFrame');
+    const frame = document.getElementById('docFrame');
     modal.classList.remove('show');
     setTimeout(() => {
         modal.style.display = 'none';
@@ -2338,76 +2336,6 @@ mulaiNotif();
     }
 }, 10000); 
        
-function cleanOldTasks() {
-    const taskRef = ref(db, 'tasks');
-    const satuMingguMs = 7 * 24 * 60 * 60 * 1000; 
-    const sekarang = Date.now();
-    onValue(taskRef, (snapshot) => {
-        const tasksObj = snapshot.val();
-        if (!tasksObj) return;
-        Object.keys(tasksObj).forEach(id => {
-            const task = tasksObj[id];
-            if (task.done && (sekarang - task.timestamp) > satuMingguMs) {
-                remove(ref(db, `tasks/${id}`));
-            }
-        });
-    }, { onlyOnce: true });
-}
-window.addEventListener('load', () => {
-    setTimeout(cleanOldTasks, 2000);
-});
-
-function listenToTasks() {
-    const taskRef = ref(db, 'tasks');
-    onValue(taskRef, (snapshot) => {
-        const list = document.getElementById('taskList'); 
-        if (!list) return;
-        list.innerHTML = "";
-        const tasksObj = snapshot.val();
-        if (!tasksObj) return;
-        const tasksArray = Object.keys(tasksObj).map(id => ({
-            id: id,
-            ...tasksObj[id]
-        }));
-        tasksArray.sort((a, b) => {
-            if (a.done !== b.done) return a.done ? 1 : -1;
-            return b.timestamp - a.timestamp;
-        });
-        tasksArray.forEach((t) => {
-            const li = document.createElement('li'); 
-            li.className = `task-item ${t.done ? 'done' : ''}`;
-            let imgsHtml = "";
-            if (t.images && t.images.length > 0) {
-                imgsHtml = `<div style="display:flex; flex-wrap:wrap; gap:5px; margin-top:10px;">`;
-                t.images.forEach((imgSrc, imgIndex) => { 
-                    imgsHtml += `<img src="${imgSrc}" class="task-img" style="width:70px; height:70px; object-fit:cover; border-radius:8px;" onclick="openImageFromFirebase('${t.id}', ${imgIndex})">`; 
-                });
-                imgsHtml += `</div>`;
-            }
-            const timeInfo = t.createdAt ? `<div style="font-size: 10px; color: var(--color-3); font-weight: 400; margin-top: 4px; margin-bottom: 4px; opacity: 0.8;">Dicatat: ${t.createdAt}</div>` : "";
-            
-            li.innerHTML = `
-            <div style="display:flex; width:100%; align-items:flex-start; gap:10px;">
-                <input type="checkbox" class="task-check" style="margin-top: 3px;" ${t.done ? 'checked' : ''} onclick="toggleTaskFirebase('${t.id}', ${t.done})">
-                <div style="display: flex; flex-direction: column; flex-grow: 1; min-width: 0;">
-                    <span class="task-text">${t.text}</span>
-                    ${timeInfo}
-                </div>
-                <button class="btn-delete-task" onclick="deleteTaskFirebase('${t.id}')">×</button>
-            </div>
-            ${imgsHtml}
-            <button class="btn-copy-mini" title="Salin Tugas" id="btn-copy-fb-${t.id}">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-            </button>`;
-            
-            list.appendChild(li);
-            document.getElementById(`btn-copy-fb-${t.id}`).addEventListener('click', () => {
-                copyTaskFormat(t.text);
-            });
-        });
-    });
-}
-
 // ════ FONT SIZE NORMALIZATION ════
 // Mengunci ukuran font agar tidak terpengaruh pengaturan font HP user
 (function normalizeFontSize() {
