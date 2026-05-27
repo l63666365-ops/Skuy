@@ -986,7 +986,6 @@ input[type="text"]:focus { border-color: var(--color-2); }
 <div id="customAlert" class="custom-alert">
     <div class="alert-title" id="alertTitle">Pemberitahuan</div>
     <div class="alert-msg" id="alertMsg">Pesan</div>
-    <button class="alert-btn" onclick="closeAlert()">OK</button>
 </div>
 
 <div class="pomo-icon" onclick="openPomo()">⏳</div>
@@ -1141,6 +1140,14 @@ function showAlert(title, msg) {
 function closeAlert() { 
     document.getElementById('customAlert').classList.remove('show'); 
 }
+
+// Tutup alert dengan tap di luar area alert
+document.addEventListener('click', function(e) {
+    const alert = document.getElementById('customAlert');
+    if (alert.classList.contains('show') && !alert.contains(e.target)) {
+        closeAlert();
+    }
+});
   
 let pMin = 25; let pSec = 0; let pInterval; let pIsRunning = false; let pIsWork = true;
    
@@ -1804,8 +1811,8 @@ function renderFilesHtml(t, isCloud, id) {
              onclick="openDocPreview('${fileUrl}', '${fileName}')">
             <span style="font-size: 24px;">📄</span>
             <div style="display: flex; flex-direction: column; overflow: hidden;">
-                <b style="font-size: 13px; color: #052659; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${fileName}</b>
-                <span style="font-size: 10px; font-style: italic; color: #3b6ea5; margin-top: 2px;">Klik untuk lihat file</span>
+                <b style="font-size: 11px; color: #052659; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${fileName}</b>
+                <span style="font-size: 9px; font-style: italic; color: #3b6ea5; margin-top: 2px;">Klik untuk lihat file</span>
             </div>
         </div>`;
           }
