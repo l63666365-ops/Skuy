@@ -1049,7 +1049,6 @@ input[type="text"]:focus { border-color: var(--color-2); }
     <div class="status-now" id="stat-now">Mencari pelajaran...</div>
     <div class="status-next" id="stat-next"></div>
     </div>
-    <div id="notif-btn" onclick="aksikanNotif()" style="font-size:10px; color:var(--color-3); margin-top:6px; text-align:center; cursor:pointer; padding:4px; border-radius:8px; background:var(--bg-color); border:1px solid var(--color-4);">🔔 Aktifkan notifikasi jadwal</div>
 </div>
     
 <div class="nav-day" style="width: 100%;">
@@ -2267,42 +2266,96 @@ function logout() {
 //  NOTIFIKASI STATUS JADWAL - baca langsung dari stat-now & stat-next
 // ════════════════════════════════════════════════════════════════════
 
-let lastNotifText = '';
 let notifIntervalId = null;
 
-function tampilkanNotif() {
-    const judulEl = document.getElementById('stat-now');
-    const isiEl   = document.getElementById('stat-next');
-    if (!judulEl) return;
+function buildNotifTeks() {
+    // Hitung langsung dari data jadwal, sama persis dengan updateStatus()
+    const now = new Date();
+    const currentTimeMs = now.getTime();
+    const currentTimeMin = now.getHours() * 60 + now.getMinutes();
+    const jamGantiHari = 18 * 60;
+    const days = ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"];
+    const todayName = days[now.getDay()];
 
-    const judul = (judulEl.innerText || '').trim();
-    const isi   = isiEl ? (isiEl.innerText || '').trim() : '';
+    const getCountdown = (targetHour, targetMin) => {
+        const targetDate = new Date();
+        targetDate.setHours(targetHour, targetMin, 0, 0);
+        const totalSecs = Math.max(0, Math.floor((targetDate.getTime() - currentTimeMs) / 1000));
+        const h = Math.floor(totalSecs / 3600);
+        const m = Math.floor((totalSecs % 3600) / 60);
+        const s = totalSecs % 60;
+        const parts = [];
+        if (h > 0) parts.push(h + " jam");
+        if (m > 0) parts.push(m + " menit");
+        if (s > 0 || parts.length === 0) parts.push(s + " detik");
+        return parts.join(" ");
+    };
 
-    // Jangan tampilkan kalau belum siap
-    if (!judul || judul === 'Mencari pelajaran...') return;
-
-    // Untuk kondisi statis (tidak ada countdown), skip kalau sama persis
-    const adaCountdown = judul.includes('detik') || judul.includes('menit') || judul.includes('jam')
-                      || isi.includes('detik')  || isi.includes('menit')  || isi.includes('jam');
-    const teksGabung = judul + '|' + isi;
-    if (!adaCountdown && teksGabung === lastNotifText) return;
-    lastNotifText = adaCountdown ? '' : teksGabung; // countdown selalu fresh tiap detik
-
-    // Cara 1: new Notification() langsung (works di browser biasa)
-    if ('Notification' in window && Notification.permission === 'granted') {
-        try {
-            new Notification(judul, {
-                body: isi,
-                icon: './icon-192.png',
-                tag: 'skuy-status',
-                renotify: true,
-                silent: true
-            });
-            return;
-        } catch (e) { /* lanjut ke cara 2 */ }
+    if (currentTimeMin >= jamGantiHari) {
+        const besok = new Date(now);
+        besok.setDate(besok.getDate() + 1);
+        const namaBesok = days[besok.getDay()];
+        if (namaBesok === "Sabtu" || namaBesok === "Minggu") {
+            return { judul: "Libur Akhir Pekan ✨", isi: "" };
+        }
+        return { judul: `Persiapan Besok: ${namaBesok}`, isi: "Tugas sudah diurutkan sesuai jadwal besok" };
     }
 
-    // Cara 2: lewat SW registration (fallback)
+    if (todayName === "Sabtu" || todayName === "Minggu") {
+        return { judul: "Libur Akhir Pekan ✨", isi: "" };
+    }
+
+    let refDate = new Date(now);
+    if (now.getHours() >= 18) refDate.setDate(refDate.getDate() + 1);
+    const autoWeek = (getWeekNumber(refDate) % 2 === 0) ? "m2" : "m1";
+    const listMapel = (jadwalData && jadwalData[autoWeek] && jadwalData[autoWeek][todayName]) || [];
+
+    for (let i = 0; i < listMapel.length; i++) {
+        const timeStr = listMapel[i][1].replace(/\./g, ':').replace(/\s/g, '');
+        const timeRange = timeStr.split('-');
+        if (!timeRange[1]) continue;
+        const start = timeRange[0].split(':').map(Number);
+        const end   = timeRange[1].split(':').map(Number);
+        const startMin = start[0] * 60 + start[1];
+        const endMin   = end[0]   * 60 + end[1];
+
+        if (currentTimeMin >= startMin && currentTimeMin < endMin) {
+            const next = listMapel[i + 1];
+            return {
+                judul: `Sekarang: ${listMapel[i][0]} (berakhir ${getCountdown(end[0], end[1])})`,
+                isi:   next ? `Selanjutnya: ${next[0]}` : "Selanjutnya: Jam Pulang 🎉"
+            };
+        }
+        if (currentTimeMin < startMin) {
+            return {
+                judul: "Istirahat",
+                isi:   `Selanjutnya: ${listMapel[i][0]} (mulai ${getCountdown(start[0], start[1])} lagi)`
+            };
+        }
+    }
+
+    return { judul: "Semua mapel hari ini selesai 🏆", isi: "Waktunya istirahat" };
+}
+
+function tampilkanNotif() {
+    if (!('Notification' in window) || Notification.permission !== 'granted') return;
+
+    const { judul, isi } = buildNotifTeks();
+    if (!judul) return;
+
+    // Cara 1: new Notification() langsung
+    try {
+        new Notification(judul, {
+            body: isi,
+            icon: './icon-192.png',
+            tag: 'skuy-status',
+            renotify: true,
+            silent: true
+        });
+        return;
+    } catch (e) { /* lanjut ke cara 2 */ }
+
+    // Cara 2: lewat SW (fallback)
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.ready.then(reg => {
             reg.showNotification(judul, {
@@ -2322,40 +2375,16 @@ function mulaiIntervalNotif() {
     notifIntervalId = setInterval(tampilkanNotif, 1000);
 }
 
-function aksikanNotif() {
-    if (!('Notification' in window)) {
-        alert('Browser tidak mendukung notifikasi.');
-        return;
-    }
-    if (Notification.permission === 'denied') {
-        alert('Notifikasi diblokir. Buka Pengaturan HP → App → izinkan notifikasi untuk app ini.');
-        return;
-    }
-    Notification.requestPermission().then(p => {
-        if (p === 'granted') {
-            document.getElementById('notif-btn').style.display = 'none';
-            mulaiIntervalNotif();
-        } else {
-            alert('Izin notifikasi ditolak. Aktifkan di pengaturan HP.');
-        }
-    });
-}
-
 function mulaiNotif() {
     if (!('Notification' in window)) return;
 
     if (Notification.permission === 'granted') {
-        // Sudah granted, sembunyikan tombol
-        const btn = document.getElementById('notif-btn');
-        if (btn) btn.style.display = 'none';
-        setTimeout(mulaiIntervalNotif, 2000);
+        setTimeout(mulaiIntervalNotif, 1500);
     } else if (Notification.permission === 'default') {
         // Minta izin saat user tap pertama kali
         document.addEventListener('click', function mintaIzin() {
             Notification.requestPermission().then(p => {
-                if (p === 'granted') {
-                    mulaiIntervalNotif();
-                }
+                if (p === 'granted') mulaiIntervalNotif();
             });
             document.removeEventListener('click', mintaIzin);
         }, { once: true });
