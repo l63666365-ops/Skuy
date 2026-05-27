@@ -1269,6 +1269,10 @@ async function fetchJadwalDariSheet() {
         localStorage.setItem('savedJadwal', JSON.stringify(jadwalData));      
         renderSchedule();
         updateStatus();
+        // Update SW dengan data jadwal terbaru setelah fetch berhasil
+        if (Notification.permission === 'granted') {
+            kirimDataKeSW();
+        }
     } catch (err) {
         console.log("Error:", err);
     }
@@ -2268,21 +2272,45 @@ if ('serviceWorker' in navigator) {
         .then(reg => {
             window._swReg = reg;
             if (Notification.permission === 'default') {
-                Notification.requestPermission();
+                Notification.requestPermission().then(permission => {
+                    if (permission === 'granted') {
+                        kirimDataKeSW();
+                    }
+                });
+            } else if (Notification.permission === 'granted') {
+                kirimDataKeSW();
             }
-        }).catch(() => {});
+        }).catch(err => { console.warn('SW gagal register:', err); });
 }
 
-function tampilNotifJadwal() {
-    // Notifikasi dinonaktifkan (mute)
-    return;
+function kirimDataKeSW() {
+    const reg = window._swReg;
+    if (!reg) return;
+    const sw = reg.active || reg.installing || reg.waiting;
+    if (!sw) return;
+    sw.postMessage({
+        type: 'UPDATE_JADWAL',
+        payload: {
+            jadwal: jadwalData,
+            weekType: currentWeekType,
+            kelas: localStorage.getItem('userKelas') || ''
+        }
+    });
 }
 
-// Jalankan tiap 1 detik — isi notif = persis teks status di layar (hitung mundur real-time)
-setInterval(tampilNotifJadwal, 1000);
+// Kirim update ke SW setiap 10 detik (agar countdown notif tetap segar)
+setInterval(() => {
+    if (Notification.permission === 'granted') {
+        kirimDataKeSW();
+    }
+}, 10000);
 
-// Jalankan pertama kali setelah 2 detik (tunggu status ter-render)
-setTimeout(tampilNotifJadwal, 2000);
+// Kirim pertama kali setelah 2 detik (tunggu jadwal ter-render)
+setTimeout(() => {
+    if (Notification.permission === 'granted') {
+        kirimDataKeSW();
+    }
+}, 2000);
     setInterval(() => {
     if (!isMediaPlaying) {
         console.log("Auto-refresh...");
