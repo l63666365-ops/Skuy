@@ -2401,21 +2401,20 @@ function tampilkanNotif(judul, isi) {
     // Ekstrak nama mapel/status dari judul (hapus bagian countdown)
     const judulBersih = judul.replace(/\(berakhir[^)]*\)/gi, '').replace(/\(mulai[^)]*\)/gi, '').trim();
 
-    const gantiMapel = judulBersih !== lastNotifMapel;
+    // Hanya kirim notif saat mapel/status BERGANTI — tidak kirim ulang selama masih mapel sama
+    if (judulBersih === lastNotifMapel) return;
     lastNotifMapel = judulBersih;
 
-    // Saat ganti mapel: pakai tag BARU → OS anggap notif baru → BUNYI
-    // Saat countdown update (mapel sama): pakai tag SAMA + renotify:false → update teks tanpa bunyi
-    const tag = gantiMapel ? `skuy-status-${Date.now()}` : 'skuy-status';
-    const renotify = gantiMapel;
+    // Isi notif: nama mapel/status TANPA countdown (biar isinya statis, tidak bunyi terus)
+    // Countdown tetap tampil di layar app seperti biasa
 
     // Cara 1: new Notification() langsung
     try {
-        new Notification(judul, {
+        new Notification(judulBersih, {
             body: isi,
             icon: './icon-192.png',
-            tag: tag,
-            renotify: renotify,
+            tag: 'skuy-status',
+            renotify: true,
             silent: false
         });
         return;
@@ -2424,11 +2423,11 @@ function tampilkanNotif(judul, isi) {
     // Cara 2: lewat SW (fallback)
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.ready.then(reg => {
-            reg.showNotification(judul, {
+            reg.showNotification(judulBersih, {
                 body: isi,
                 icon: './icon-192.png',
-                tag: tag,
-                renotify: renotify,
+                tag: 'skuy-status',
+                renotify: true,
                 silent: false
             }).catch(() => {});
         }).catch(() => {});
