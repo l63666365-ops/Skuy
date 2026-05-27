@@ -2401,13 +2401,11 @@ function tampilkanNotif(judul, isi) {
     // Ekstrak nama mapel/status dari judul (hapus bagian countdown)
     const judulBersih = judul.replace(/\(berakhir[^)]*\)/gi, '').replace(/\(mulai[^)]*\)/gi, '').trim();
 
-    // Cek apakah ini pergantian mapel/status
-    const adaPergantiaan = judulBersih !== lastNotifMapel;
+    // Kalau mapel/status SAMA → skip, jangan kirim notif sama sekali (biar gak bunyi)
+    if (judulBersih === lastNotifMapel) return;
     lastNotifMapel = judulBersih;
 
-    // Saat countdown berjalan (mapel sama) → notif update teks tapi SILENT (tidak bunyi)
-    // Saat ganti mapel/status → notif BUNYI
-    const isSilent = !adaPergantiaan;
+    // Hanya kirim notif (dengan bunyi) saat mapel/status benar-benar BERGANTI
 
     // Cara 1: new Notification() langsung
     try {
@@ -2416,7 +2414,7 @@ function tampilkanNotif(judul, isi) {
             icon: './icon-192.png',
             tag: 'skuy-status',
             renotify: true,
-            silent: isSilent
+            silent: false
         });
         return;
     } catch (e) { /* lanjut ke cara 2 */ }
@@ -2429,7 +2427,7 @@ function tampilkanNotif(judul, isi) {
                 icon: './icon-192.png',
                 tag: 'skuy-status',
                 renotify: true,
-                silent: isSilent
+                silent: false
             }).catch(() => {});
         }).catch(() => {});
     }
