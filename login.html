@@ -262,8 +262,10 @@ function togglePassword() {
 
 function handleLogin() {
     const email = document.getElementById('username').value.toLowerCase();
+    const password = document.getElementById('password').value;
     const errorBox = document.getElementById('errorBox');
-    
+    errorBox.style.display = 'none';
+
     if (!email.endsWith("@smkn2sragen.sch.id")) {
         Swal.fire({
             title: 'Akses Ditolak!',
@@ -271,6 +273,12 @@ function handleLogin() {
             icon: 'error',
             confirmButtonColor: '#00203F'
         });
+        return;
+    }
+
+    if (password.trim() === "") {
+        errorBox.style.display = 'block';
+        errorBox.innerText = "Password tidak boleh kosong.";
         return;
     }
 
@@ -283,9 +291,9 @@ function handleLogin() {
     }
 
     if (email.startsWith('sek')) {
-        let rawKelas = email.replace('sek', '').split('@')[0]; 
-        let match = rawKelas.match(/[a-z]+|[0-9]+/gi);
-        let kelasFix = match ? match.join(' ').toUpperCase() : rawKelas.toUpperCase();
+        let rawKelas = email.replace('sek', '').split('@')[0];
+        let parts = rawKelas.match(/[a-z]+|\d+/gi);
+        let kelasFix = parts ? parts.join(' ').toUpperCase() : rawKelas.toUpperCase();
 
         localStorage.setItem('role', 'sekretaris');
         localStorage.setItem('userKelas', kelasFix);

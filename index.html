@@ -414,7 +414,10 @@ input[type="text"]:focus { border-color: var(--color-2); }
     border-left: 4px solid var(--color-3); 
     gap: 8px; 
     color: var(--color-1); 
-    font-weight: 600; 
+    font-weight: 600;
+    transition: all 0.4s ease-in-out;
+    position: relative;
+    padding-bottom: 42px !important;
 }
         
 .task-item.done { 
@@ -796,10 +799,6 @@ input[type="text"]:focus { border-color: var(--color-2); }
     transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); 
 }
  
-.task-item {
-    transition: all 0.4s ease-in-out;
-}
- 
 .admin-selector {
     display: none; 
     flex-direction: column;
@@ -872,24 +871,6 @@ input[type="text"]:focus { border-color: var(--color-2); }
 
 .btn-copy-mini {
     position: absolute;
-    bottom: 10px;
-    left: 44px; /
-    background: #f0f4f8;
-    border: 1px solid var(--color-4);
-    border-radius: 6px;
-    cursor: pointer;
-    opacity: 0.7;
-    padding: 4px 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--color-2);
-    z-index: 5;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.btn-copy-mini {
-    position: absolute;
     bottom: 8px;
     left: 44px; 
     background: #f0f4f8;
@@ -905,11 +886,6 @@ input[type="text"]:focus { border-color: var(--color-2); }
     z-index: 5;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     margin-top: 5px;
-}
-
-.task-item {
-    position: relative;
-    padding-bottom: 42px !important; 
 }
 
 .task-date {
@@ -929,26 +905,7 @@ input[type="text"]:focus { border-color: var(--color-2); }
 }
 
 .task-besok::after {
-    position: absolute;
-    top: 5px;
-    right: 10px;
-    font-size: 8px;
-    font-weight: 800;
-    color: #b8860b;
-    background: #fff9e6;
-    padding: 2px 6px;
-    border-radius: 5px;
-    border: 1px solid #FFD700;
-}
-    
-.task-besok {
-    border-left: 6px solid #FFD700 !important;
-    background: linear-gradient(to right, #fffdf0, #ffffff) !important;
-    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2) !important;
-    position: relative;
-}
-
-.task-besok::after {
+    content: 'BESOK';
     position: absolute;
     top: 5px;
     right: 10px;
@@ -1087,7 +1044,7 @@ input[type="text"]:focus { border-color: var(--color-2); }
     <button type="button" class="btn-add" onclick="addTask()">+</button>
 </div>
 
-<div id="imagePreviewContainer" style="display:none; margin-top:10px; text-align:left; display: flex; flex-wrap: wrap; gap: 5px;"></div>
+<div id="imagePreviewContainer" style="display:none; margin-top:10px; text-align:left; flex-wrap: wrap; gap: 5px;"></div>
     <ul class="task-list" id="taskList"></ul>
 </div>
 
@@ -1567,7 +1524,7 @@ function checkHighlight() {
             const e = tr[1].split(':').map(Number);          
             const startTime = s[0] * 60 + s[1];
             const endTime = e[0] * 60 + e[1];
-            if (ct >= startTime && ct <= endTime) {
+            if (ct >= startTime && ct < endTime) {
                 document.getElementById(`mapel-${index}`)?.classList.add('highlight');
                 document.getElementById(`jam-${index}`)?.classList.add('highlight');
                 document.getElementById(`ruang-${index}`)?.classList.add('highlight');
@@ -1583,7 +1540,7 @@ function checkHighlight() {
 function previewTaskFiles(input) {
     if (input.files) {
         const previewContainer = document.getElementById('imagePreviewContainer');
-        previewContainer.style.display = 'flex';    
+        previewContainer.style.display = 'flex';
         Array.from(input.files).forEach(file => {
             const fileId = Date.now() + Math.random();
             selectedImagesData.push({
@@ -1712,7 +1669,7 @@ function renderTaskItem(id, t, isCloud, canDelete, isTugasBesok) {
     const toggleFunc = isCloud ? `toggleTaskCloud('${id}', ${t.done}, event)` : `toggleTaskLocal('${id}', event)`;
     const deleteFunc = isCloud ? `deleteTaskCloud('${id}', event)` : `deleteTaskLocal('${id}', event)`;
     const rawText = t.text || "";
-    const processedText = typeof linkify === 'function' ? linkify(rawText) : rawText;
+    const processedText = (typeof linkify === 'function') ? linkify(rawText) : rawText;
     const taskDate = t.timestamp ? new Date(t.timestamp) : new Date();
     const tglBlnThn = taskDate.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
     const jamMenit = taskDate.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }).replace('.', ':');
@@ -1963,6 +1920,7 @@ function createConfetti(x, y) {
 
 async function toggleTaskCloud(id, currentStatus, event) {
     const role = localStorage.getItem('role');
+    const userKelas = (localStorage.getItem('userKelas') || 'UMUM').trim();
     const isNowDone = !currentStatus;
     if (isNowDone && event) createConfetti(event.clientX, event.clientY);
     const taskEl = event.target.closest('.task-item');
@@ -1992,6 +1950,8 @@ async function toggleTaskCloud(id, currentStatus, event) {
 
 function toggleTaskLocal(index, event) {
     let tasks = JSON.parse(localStorage.getItem('mySchoolTasks')) || [];
+    const actualIndex = typeof index === 'string' && index.startsWith('local-') ? parseInt(index.replace('local-', ''), 10) : parseInt(index, 10);
+    index = actualIndex;
     const isNowDone = !tasks[index].done;
     if (isNowDone && event) createConfetti(event.clientX, event.clientY);
     const taskEl = event.target.closest('.task-item');
@@ -2005,6 +1965,7 @@ function toggleTaskLocal(index, event) {
 }
 
 async function deleteTaskCloud(id, event) {
+    const userKelas = (localStorage.getItem('userKelas') || 'UMUM').trim();
     const taskEl = event.target.closest('.task-item');
     taskEl.style.opacity = '0';
     taskEl.style.transform = 'translateX(20px)';
@@ -2016,6 +1977,8 @@ async function deleteTaskCloud(id, event) {
 }
 
 function deleteTaskLocal(index, event) {
+    const actualIndex = typeof index === 'string' && index.startsWith('local-') ? parseInt(index.replace('local-', ''), 10) : parseInt(index, 10);
+    index = actualIndex;
     const taskEl = event.target.closest('.task-item');
     taskEl.style.opacity = '0';
     taskEl.style.transform = 'translateX(20px)';
@@ -2049,7 +2012,7 @@ window.onload = function() {
         adminSelector.style.display = 'flex';
         mainContent.style.display = 'none';
         if(btnEdit) btnEdit.style.display = 'block';
-        btnBack.style.display = 'block';
+        btnBack.style.display = 'none';
     } 
     else if (role === 'sekretaris') {
         adminSelector.style.display = 'none';
@@ -2334,17 +2297,8 @@ if ('serviceWorker' in navigator) {
 }
 
 mulaiNotif();
-    setInterval(() => {
-    if (!isMediaPlaying) {
-        console.log("Auto-refresh...");
-        loadTasks();
-    } else {
-        console.log("Refresh ditahan...");
-    }
-}, 10000); 
-       
+
 // ════ FONT SIZE NORMALIZATION ════
-// Mengunci ukuran font agar tidak terpengaruh pengaturan font HP user
 (function normalizeFontSize() {
     var TARGET = 7.5;
     function applyFix() {
