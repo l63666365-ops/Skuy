@@ -2393,7 +2393,6 @@ function logout() {
 // ════════════════════════════════════════════════════════════════════
 
 let lastNotifMapel = '';
-let lastNotifMenitUpdate = -1;
 
 function tampilkanNotif(judul, isi) {
     if (!('Notification' in window) || Notification.permission !== 'granted') return;
@@ -2403,26 +2402,21 @@ function tampilkanNotif(judul, isi) {
     const judulBersih = judul.replace(/\(berakhir[^)]*\)/gi, '').replace(/\(mulai[^)]*\)/gi, '').trim();
 
     const gantiMapel = judulBersih !== lastNotifMapel;
-    const menitSkrg = new Date().getMinutes();
-    const gantiMenit = menitSkrg !== lastNotifMenitUpdate;
-
-    // Kalau mapel sama DAN menit belum berubah → skip sama sekali
-    if (!gantiMapel && !gantiMenit) return;
-
     lastNotifMapel = judulBersih;
-    lastNotifMenitUpdate = menitSkrg;
 
-    // Bunyi HANYA saat ganti mapel/status, update menit = silent
-    const isSilent = !gantiMapel;
+    // Saat ganti mapel: pakai tag BARU → OS anggap notif baru → BUNYI
+    // Saat countdown update (mapel sama): pakai tag SAMA + renotify:false → update teks tanpa bunyi
+    const tag = gantiMapel ? `skuy-status-${Date.now()}` : 'skuy-status';
+    const renotify = gantiMapel;
 
     // Cara 1: new Notification() langsung
     try {
         new Notification(judul, {
             body: isi,
             icon: './icon-192.png',
-            tag: 'skuy-status',
-            renotify: true,
-            silent: isSilent
+            tag: tag,
+            renotify: renotify,
+            silent: false
         });
         return;
     } catch (e) { /* lanjut ke cara 2 */ }
@@ -2433,9 +2427,9 @@ function tampilkanNotif(judul, isi) {
             reg.showNotification(judul, {
                 body: isi,
                 icon: './icon-192.png',
-                tag: 'skuy-status',
-                renotify: true,
-                silent: isSilent
+                tag: tag,
+                renotify: renotify,
+                silent: false
             }).catch(() => {});
         }).catch(() => {});
     }
