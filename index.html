@@ -1049,7 +1049,7 @@ input[type="text"]:focus { border-color: var(--color-2); }
     <div class="status-now" id="stat-now">Mencari pelajaran...</div>
     <div class="status-next" id="stat-next"></div>
     </div>
-    <div id="notif-debug" style="display:none;"></div>
+    <div id="notif-btn" onclick="aksikanNotif()" style="font-size:10px; color:var(--color-3); margin-top:6px; text-align:center; cursor:pointer; padding:4px; border-radius:8px; background:var(--bg-color); border:1px solid var(--color-4);">🔔 Aktifkan notifikasi jadwal</div>
 </div>
     
 <div class="nav-day" style="width: 100%;">
@@ -2315,11 +2315,34 @@ function tampilkanNotif() {
     }
 }
 
+function aksikanNotif() {
+    if (!('Notification' in window)) {
+        alert('Browser tidak mendukung notifikasi.');
+        return;
+    }
+    if (Notification.permission === 'denied') {
+        alert('Notifikasi diblokir. Buka Pengaturan HP → App → izinkan notifikasi untuk app ini.');
+        return;
+    }
+    Notification.requestPermission().then(p => {
+        if (p === 'granted') {
+            document.getElementById('notif-btn').style.display = 'none';
+            // Langsung test notif
+            tampilkanNotif();
+            setInterval(tampilkanNotif, 10000);
+        } else {
+            alert('Izin notifikasi ditolak. Aktifkan di pengaturan HP.');
+        }
+    });
+}
+
 function mulaiNotif() {
     if (!('Notification' in window)) return;
 
     if (Notification.permission === 'granted') {
-        // Langsung jalankan
+        // Sudah granted, sembunyikan tombol
+        const btn = document.getElementById('notif-btn');
+        if (btn) btn.style.display = 'none';
         setTimeout(tampilkanNotif, 2000);
         setInterval(tampilkanNotif, 10000);
     } else if (Notification.permission === 'default') {
