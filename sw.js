@@ -97,7 +97,7 @@ function buildNotifContent() {
         if (namaBesok === 'Sabtu' || namaBesok === 'Minggu') {
             return { title: `🎉 Libur Akhir Pekan${tag}`, body: 'Selamat istirahat!' };
         }
-        return { title: `📋 Persiapan Besok: ${namaBesok}${tag}`, body: 'Cek tugas & jadwal besok.' };
+        return { title: `📋 Persiapan Besok: ${namaBesok}${tag}`, body: 'Tugas sudah diurutkan sesuai jadwal besok' };
     }
 
     // Jadwal hari ini
