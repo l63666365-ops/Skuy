@@ -1492,11 +1492,13 @@ function updateStatus() {
     if (ongoing) {
         statNow.innerHTML = `Sekarang: <b>${ongoing.name}</b> (berakhir ${ongoing.countdown})`;
         statNext.innerText = next ? `Selanjutnya: ${next.name}` : "Selanjutnya: Jam Pulang 🎉";
-        tampilkanNotif(`Sekarang: ${ongoing.name} (berakhir ${ongoing.countdown})`, next ? `Selanjutnya: ${next.name}` : "Selanjutnya: Jam Pulang 🎉");
+        // Notif tanpa countdown — hanya nama mapel + info selanjutnya
+        tampilkanNotif(`Sekarang: ${ongoing.name}`, next ? `Selanjutnya: ${next.name}` : "Selanjutnya: Jam Pulang 🎉");
     } else if (next) {
         statNow.innerHTML = `<b>Istirahat</b>`;
         statNext.innerHTML = `Selanjutnya: <b>${next.name}</b> (mulai ${next.countdown} lagi)`;
-        tampilkanNotif("Istirahat", `Selanjutnya: ${next.name} (mulai ${next.countdown} lagi)`);
+        // Notif tanpa countdown
+        tampilkanNotif("Istirahat", `Selanjutnya: ${next.name}`);
     } else {
         statNow.innerText = "Semua mapel hari ini selesai 🏆"; 
         statNext.innerText = "Waktunya istirahat";
