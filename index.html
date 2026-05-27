@@ -2288,12 +2288,21 @@ function kirimDataKeSW() {
     if (!reg) return;
     const sw = reg.active || reg.installing || reg.waiting;
     if (!sw) return;
+
+    // Ambil teks status yang sudah tampil di layar
+    const statNowEl  = document.getElementById('stat-now');
+    const statNextEl = document.getElementById('stat-next');
+    const statNowText  = statNowEl  ? (statNowEl.innerText  || '').trim() : '';
+    const statNextText = statNextEl ? (statNextEl.innerText || '').trim() : '';
+
     sw.postMessage({
         type: 'UPDATE_JADWAL',
         payload: {
             jadwal: jadwalData,
             weekType: currentWeekType,
-            kelas: localStorage.getItem('userKelas') || ''
+            kelas: localStorage.getItem('userKelas') || '',
+            statNow:  statNowText,
+            statNext: statNextText
         }
     });
 }

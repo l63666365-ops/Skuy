@@ -76,7 +76,15 @@ function buildNotifContent() {
         return { title: '📚 SkuyJadwal', body: 'Buka app untuk lihat jadwal.' };
     }
 
-    const { jadwal, weekType, kelas } = jadwalState;
+    const { jadwal, weekType, kelas, statNow, statNext } = jadwalState;
+
+    // Kalau app sudah kirim teks status langsung, pakai itu
+    if (statNow) {
+        const tag   = kelas ? ` · ${kelas}` : '';
+        const title = `📚 SkuyJadwal${tag}`;
+        const body  = statNext ? `${statNow}\n${statNext}` : statNow;
+        return { title, body };
+    }
     const now        = new Date();
     const days       = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
     const todayName  = days[now.getDay()];
