@@ -1049,7 +1049,7 @@ input[type="text"]:focus { border-color: var(--color-2); }
     <div class="status-now" id="stat-now">Mencari pelajaran...</div>
     <div class="status-next" id="stat-next"></div>
     </div>
-    <div id="notif-debug" style="font-size:10px; color:#888; margin-top:6px; text-align:center; cursor:pointer;" onclick="aksikanNotif()">🔔 Tap untuk aktifkan notifikasi jadwal</div>
+    <div id="notif-debug" style="display:none;"></div>
 </div>
     
 <div class="nav-day" style="width: 100%;">
@@ -2264,129 +2264,84 @@ function logout() {
 }
 
 // ════════════════════════════════════════════════════════════════════
-//  NOTIFIKASI STATUS JADWAL - ambil langsung dari teks di layar
+//  NOTIFIKASI STATUS JADWAL - baca langsung dari stat-now & stat-next
 // ════════════════════════════════════════════════════════════════════
 
-function updateDebugLabel() {
-    const el = document.getElementById('notif-debug');
-    if (!el) return;
-    const perm = ('Notification' in window) ? Notification.permission : 'tidak didukung';
-    const swAktif = !!(window._swReg && (window._swReg.active || navigator.serviceWorker.controller));
-    if (perm === 'granted' && swAktif) {
-        el.textContent = '✅ Notifikasi jadwal aktif';
-        el.style.color = '#28a745';
-    } else if (perm === 'denied') {
-        el.textContent = '🚫 Notifikasi diblokir — izinkan di pengaturan browser';
-        el.style.color = '#dc3545';
-    } else {
-        el.textContent = `🔔 Tap untuk aktifkan notifikasi jadwal (${perm})`;
-        el.style.color = '#888';
-    }
-}
+let lastNotifText = '';
 
-function aksikanNotif() {
-    if (!('Notification' in window)) {
-        alert('Browser ini tidak mendukung notifikasi.');
-        return;
-    }
-    if (Notification.permission === 'denied') {
-        alert('Notifikasi diblokir. Buka pengaturan browser → izinkan notifikasi untuk situs ini.');
-        return;
-    }
-    Notification.requestPermission().then(p => {
-        updateDebugLabel();
-        if (p === 'granted') {
-            kirimDataKeSW();
-        }
-    });
-}
+function tampilkanNotif() {
+    const judulEl = document.getElementById('stat-now');
+    const isiEl   = document.getElementById('stat-next');
+    if (!judulEl) return;
 
-// Register SW supaya notif bisa tampil via SW (lebih stabil di WebView)
-function initSW() {
-    if (!('serviceWorker' in navigator)) return;
+    const judul = (judulEl.innerText || '').trim();
+    const isi   = isiEl ? (isiEl.innerText || '').trim() : '';
 
-    navigator.serviceWorker.register('./sw.js', { scope: './' })
-        .then(reg => {
-            window._swReg = reg;
+    // Jangan tampilkan kalau belum siap atau sama persis dengan sebelumnya
+    if (!judul || judul === 'Mencari pelajaran...') return;
 
-            function cobaKirim() {
-                updateDebugLabel();
-                if (Notification.permission === 'granted') {
-                    setTimeout(kirimDataKeSW, 500);
-                } else if (Notification.permission === 'default') {
-                    Notification.requestPermission().then(p => {
-                        updateDebugLabel();
-                        if (p === 'granted') setTimeout(kirimDataKeSW, 500);
-                    });
-                }
-            }
+    // Untuk kondisi countdown (ada "detik"/"menit"), selalu update
+    const adaCountdown = judul.includes('detik') || judul.includes('menit') || judul.includes('jam')
+                      || isi.includes('detik')  || isi.includes('menit')  || isi.includes('jam');
+    const teksGabung = judul + '|' + isi;
+    if (!adaCountdown && teksGabung === lastNotifText) return;
+    lastNotifText = teksGabung;
 
-            if (reg.active) cobaKirim();
-
-            const sw = reg.installing || reg.waiting;
-            if (sw) {
-                sw.addEventListener('statechange', () => {
-                    if (sw.state === 'activated') cobaKirim();
-                });
-            }
-
-            navigator.serviceWorker.addEventListener('controllerchange', () => {
-                window._swReg = reg;
-                cobaKirim();
+    // Cara 1: new Notification() langsung (works di browser biasa)
+    if ('Notification' in window && Notification.permission === 'granted') {
+        try {
+            new Notification(judul, {
+                body: isi,
+                icon: './icon-192.png',
+                tag: 'skuy-status',
+                renotify: true,
+                silent: true
             });
-        }).catch(err => { console.warn('SW gagal register:', err); });
-}
-
-// Panggil saat user pertama tap (perlu gesture untuk request permission di beberapa browser)
-document.addEventListener('click', function initOnce() {
-    if (Notification.permission === 'default') {
-        Notification.requestPermission().then(p => {
-            updateDebugLabel();
-            if (p === 'granted') kirimDataKeSW();
-        });
+            return;
+        } catch (e) { /* lanjut ke cara 2 */ }
     }
-    document.removeEventListener('click', initOnce);
-}, { once: true });
 
-initSW();
-updateDebugLabel();
-
-function kirimDataKeSW() {
-    const reg = window._swReg;
-    const sw = (reg && (reg.active || reg.installing || reg.waiting))
-               || navigator.serviceWorker.controller;
-    if (!sw) return;
-    if (Notification.permission !== 'granted') return;
-
-    const statNowEl  = document.getElementById('stat-now');
-    const statNextEl = document.getElementById('stat-next');
-    const statNowText  = statNowEl  ? (statNowEl.innerText || '').trim() : '';
-    const statNextText = statNextEl ? (statNextEl.innerText || '').trim() : '';
-
-    // Jangan kirim kalau status belum siap
-    if (!statNowText || statNowText === 'Mencari pelajaran...') return;
-
-    sw.postMessage({
-        type: 'UPDATE_JADWAL',
-        payload: {
-            jadwal: jadwalData,
-            weekType: currentWeekType,
-            kelas: localStorage.getItem('userKelas') || '',
-            statNow:  statNowText,
-            statNext: statNextText
-        }
-    });
+    // Cara 2: lewat SW registration (fallback)
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.ready.then(reg => {
+            reg.showNotification(judul, {
+                body: isi,
+                icon: './icon-192.png',
+                tag: 'skuy-status',
+                renotify: true,
+                silent: true
+            }).catch(() => {});
+        }).catch(() => {});
+    }
 }
 
-// Kirim update ke SW setiap 10 detik
-setInterval(() => {
-    if (Notification.permission === 'granted') kirimDataKeSW();
-}, 10000);
+function mulaiNotif() {
+    if (!('Notification' in window)) return;
 
-// Kirim pertama kali setelah 3 detik (tunggu jadwal & SW ter-render)
-setTimeout(() => {
-    if (Notification.permission === 'granted') kirimDataKeSW();
-}, 3000);
+    if (Notification.permission === 'granted') {
+        // Langsung jalankan
+        setTimeout(tampilkanNotif, 2000);
+        setInterval(tampilkanNotif, 10000);
+    } else if (Notification.permission === 'default') {
+        // Minta izin saat user tap pertama kali
+        document.addEventListener('click', function mintaIzin() {
+            Notification.requestPermission().then(p => {
+                if (p === 'granted') {
+                    setTimeout(tampilkanNotif, 1000);
+                    setInterval(tampilkanNotif, 10000);
+                }
+            });
+            document.removeEventListener('click', mintaIzin);
+        }, { once: true });
+    }
+}
+
+// Daftarkan SW (tetap perlu untuk fallback & PWA)
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js', { scope: './' }).catch(() => {});
+}
+
+mulaiNotif();
     setInterval(() => {
     if (!isMediaPlaying) {
         console.log("Auto-refresh...");
