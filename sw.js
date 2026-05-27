@@ -63,8 +63,8 @@ function tickNotif() {
         tag: NOTIF_TAG,           // overwrite notif lama → tidak numpuk
         renotify: false,          // tidak bunyi saat update
         silent: true,
-        icon: './1000222713-removebg-preview.png',
-        badge: './1000222713-removebg-preview.png',
+        icon: './icon-192.png',
+        badge: './icon-192.png',
         requireInteraction: false,
         data: { url: './index.html' }
     }).catch(() => {});
