@@ -2280,12 +2280,14 @@ function tampilkanNotif() {
     // Jangan tampilkan kalau belum siap atau sama persis dengan sebelumnya
     if (!judul || judul === 'Mencari pelajaran...') return;
 
-    // Untuk kondisi countdown (ada "detik"/"menit"), selalu update
+    // Untuk kondisi statis (tidak ada countdown), skip kalau sama persis
     const adaCountdown = judul.includes('detik') || judul.includes('menit') || judul.includes('jam')
                       || isi.includes('detik')  || isi.includes('menit')  || isi.includes('jam');
     const teksGabung = judul + '|' + isi;
     if (!adaCountdown && teksGabung === lastNotifText) return;
     lastNotifText = teksGabung;
+    // Reset last agar countdown selalu fresh tiap interval
+    if (adaCountdown) lastNotifText = '';
 
     // Cara 1: new Notification() langsung (works di browser biasa)
     if ('Notification' in window && Notification.permission === 'granted') {
@@ -2329,7 +2331,7 @@ function aksikanNotif() {
             document.getElementById('notif-btn').style.display = 'none';
             // Langsung test notif
             tampilkanNotif();
-            setInterval(tampilkanNotif, 10000);
+            setInterval(tampilkanNotif, 1000);
         } else {
             alert('Izin notifikasi ditolak. Aktifkan di pengaturan HP.');
         }
@@ -2344,14 +2346,14 @@ function mulaiNotif() {
         const btn = document.getElementById('notif-btn');
         if (btn) btn.style.display = 'none';
         setTimeout(tampilkanNotif, 2000);
-        setInterval(tampilkanNotif, 10000);
+        setInterval(tampilkanNotif, 1000);
     } else if (Notification.permission === 'default') {
         // Minta izin saat user tap pertama kali
         document.addEventListener('click', function mintaIzin() {
             Notification.requestPermission().then(p => {
                 if (p === 'granted') {
                     setTimeout(tampilkanNotif, 1000);
-                    setInterval(tampilkanNotif, 10000);
+                    setInterval(tampilkanNotif, 1000);
                 }
             });
             document.removeEventListener('click', mintaIzin);
