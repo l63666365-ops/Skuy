@@ -1291,8 +1291,8 @@ function updateTime() {
     if(!isEditMode) checkHighlight();
 }
 
-setInterval(updateTime, 1000); 
-updateTime(); 
+// Clock interval dijalankan dari window.onload agar urutan inisialisasi benar
+let _clockInterval = null;
        
 function updateStatus() {
     const now = new Date(); 
@@ -2047,10 +2047,17 @@ window.onload = function() {
     } catch(e) {
         jadwalData = { m1: {}, m2: {} };
     }
-    updateTime(); 
-    setAutoWeek(); 
-    renderSchedule(); 
+    // Urutan inisialisasi yang benar:
+    // 1. Set minggu otomatis dulu
+    setAutoWeek();
+    // 2. Render jadwal dari cache lokal
+    renderSchedule();
+    // 3. Load tugas
     loadTasks();
+    // 4. Start clock (updateTime memanggil updateStatus & checkHighlight setiap detik)
+    updateTime();
+    _clockInterval = setInterval(updateTime, 1000);
+    // 5. Fetch jadwal terbaru dari server (async, update di background)
     fetchJadwalDariSheet();
 };
 
