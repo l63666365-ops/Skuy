@@ -1070,10 +1070,13 @@ function linkify(text) {
 }
 
 const firebaseTugasURL = "https://jadwal-19962-default-rtdb.asia-southeast1.firebasedatabase.app/tugas_cloud";
-    const userKelas = (localStorage.getItem("userKelas") || "UMUM").trim();   
+
+// Auth check — dijalankan segera, sebelum DOM lain dibutuhkan
+(function authCheck() {
     if (localStorage.getItem('isLoggedIn') !== 'true') {
-    window.location.href = 'login.html';  
-}
+        window.location.replace('login.html');
+    }
+})();
        
 function bukaKamera(event) {
     if (event) {
@@ -1200,7 +1203,14 @@ function showMotivation() {
         timerQuote = setTimeout(() => { popup.classList.remove('show'); }, 4000);
 }
     
-let jadwalData = JSON.parse(localStorage.getItem('jadwalData')) || { m1: {}, m2: {} };
+// Init jadwalData dari cache lokal dulu (key: savedJadwal) agar tidak kosong saat offline/refresh
+let jadwalData = (() => {
+    try {
+        const saved = localStorage.getItem('savedJadwal');
+        if (saved) return JSON.parse(saved);
+    } catch(e) {}
+    return { m1: {}, m2: {} };
+})();
 let backupJadwal = null;
 let currentViewDate = new Date(); 
 let lastDateStr = currentViewDate.toDateString(); 
@@ -2029,9 +2039,13 @@ window.onload = function() {
     const savedBg = localStorage.getItem('savedBg');
     if (savedBg) document.body.style.backgroundImage = `linear-gradient(rgba(255,255,255,0.9), rgba(255,255,255,0.9)), url('${savedBg}')`;
     
-    const localJadwal = localStorage.getItem('savedJadwal');
-    if (localJadwal) {
-        jadwalData = JSON.parse(localJadwal);
+    // jadwalData sudah di-init dari savedJadwal saat halaman load,
+    // tapi coba parse ulang di sini untuk jaga-jaga
+    try {
+        const localJadwal = localStorage.getItem('savedJadwal');
+        if (localJadwal) jadwalData = JSON.parse(localJadwal);
+    } catch(e) {
+        jadwalData = { m1: {}, m2: {} };
     }
     updateTime(); 
     setAutoWeek(); 
@@ -2292,9 +2306,14 @@ function mulaiNotif() {
     }
 }
 
-// Daftarkan SW (tetap perlu untuk fallback & PWA)
+// Daftarkan SW + force update agar versi baru langsung aktif
 if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./sw.js', { scope: './' }).catch(() => {});
+    navigator.serviceWorker.register('./sw.js', { scope: './', updateViaCache: 'none' })
+        .then(reg => {
+            // Paksa cek update SW setiap halaman dibuka
+            reg.update();
+        })
+        .catch(() => {});
 }
 
 mulaiNotif();
