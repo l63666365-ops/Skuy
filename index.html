@@ -2392,27 +2392,27 @@ function logout() {
 //  NOTIFIKASI STATUS JADWAL - dipanggil langsung dari updateStatus()
 // ════════════════════════════════════════════════════════════════════
 
-let lastNotifJudul = '';
-let lastNotifIsi = '';
+let lastNotifMapel = '';
 
 function tampilkanNotif(judul, isi) {
     if (!('Notification' in window) || Notification.permission !== 'granted') return;
     if (!judul) return;
 
-    // Skip kalau teks persis sama (tidak ada perubahan)
-    if (judul === lastNotifJudul && isi === lastNotifIsi) return;
-    lastNotifJudul = judul;
-    lastNotifIsi = isi;
+    // Ekstrak nama mapel/status dari judul (hapus bagian countdown)
+    const judulBersih = judul.replace(/\(berakhir[^)]*\)/gi, '').replace(/\(mulai[^)]*\)/gi, '').trim();
 
-    // Selalu silent — notif update tiap detik tapi tidak pernah bunyi
+    // Hanya kirim notif saat mapel/status BERGANTI — countdown tidak trigger notif sama sekali
+    if (judulBersih === lastNotifMapel) return;
+    lastNotifMapel = judulBersih;
+
     // Cara 1: new Notification() langsung
     try {
-        new Notification(judul, {
+        new Notification(judulBersih, {
             body: isi,
             icon: './icon-192.png',
             tag: 'skuy-status',
             renotify: true,
-            silent: true
+            silent: false
         });
         return;
     } catch (e) { /* lanjut ke cara 2 */ }
@@ -2420,12 +2420,12 @@ function tampilkanNotif(judul, isi) {
     // Cara 2: lewat SW (fallback)
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.ready.then(reg => {
-            reg.showNotification(judul, {
+            reg.showNotification(judulBersih, {
                 body: isi,
                 icon: './icon-192.png',
                 tag: 'skuy-status',
                 renotify: true,
-                silent: true
+                silent: false
             }).catch(() => {});
         }).catch(() => {});
     }
