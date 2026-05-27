@@ -254,7 +254,7 @@ body {
 <div class="input-group">
     <label>Password</label>
     <div class="pass-wrapper">
-        <input type="password" id="password" placeholder="Masukkan password... (opsional)">
+        <input type="password" id="password" placeholder="Masukkan password...">
         <div class="toggle-pass" id="eyeBtn" onclick="togglePassword()">
             <svg id="eyeIcon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
         </div>
@@ -297,7 +297,7 @@ function handleLogin() {
     if (!email.endsWith("@smkn2sragen.sch.id")) {
         Swal.fire({
             title: 'Akses Ditolak!',
-            text: 'Gunakan email sekolah kamu yang berakhiran @smkn2sragen.sch.id',
+            text: 'Mohon gunakan email sekolah!',
             icon: 'error',
             confirmButtonText: 'Oke, Mengerti',
             confirmButtonColor: '#052659',
@@ -389,4 +389,4 @@ function handleLogin() {
     
 </script>
 </body>
-  </html>
+</html>
