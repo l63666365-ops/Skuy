@@ -2271,22 +2271,43 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./sw.js', { scope: './' })
         .then(reg => {
             window._swReg = reg;
-            if (Notification.permission === 'default') {
-                Notification.requestPermission().then(permission => {
-                    if (permission === 'granted') {
-                        kirimDataKeSW();
-                    }
-                });
-            } else if (Notification.permission === 'granted') {
-                kirimDataKeSW();
+
+            function cobaKirim() {
+                if (Notification.permission === 'granted') {
+                    kirimDataKeSW();
+                } else if (Notification.permission === 'default') {
+                    Notification.requestPermission().then(permission => {
+                        if (permission === 'granted') kirimDataKeSW();
+                    });
+                }
             }
+
+            // Kalau SW sudah aktif, langsung kirim
+            if (reg.active) {
+                cobaKirim();
+            }
+
+            // Tunggu SW jadi aktif (pertama install atau update)
+            const sw = reg.installing || reg.waiting;
+            if (sw) {
+                sw.addEventListener('statechange', () => {
+                    if (sw.state === 'activated') cobaKirim();
+                });
+            }
+
+            // Fallback: SW diambil alih (setelah skipWaiting + claim)
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+                window._swReg = reg;
+                cobaKirim();
+            });
         }).catch(err => { console.warn('SW gagal register:', err); });
 }
 
 function kirimDataKeSW() {
     const reg = window._swReg;
-    if (!reg) return;
-    const sw = reg.active || reg.installing || reg.waiting;
+    // Coba ambil SW yang aktif: dari reg, atau dari controller langsung
+    const sw = (reg && (reg.active || reg.installing || reg.waiting))
+               || navigator.serviceWorker.controller;
     if (!sw) return;
 
     // Ambil teks status yang sudah tampil di layar
