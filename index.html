@@ -1049,6 +1049,7 @@ input[type="text"]:focus { border-color: var(--color-2); }
     <div class="status-now" id="stat-now">Mencari pelajaran...</div>
     <div class="status-next" id="stat-next"></div>
     </div>
+    <div id="notif-debug" style="font-size:10px; color:#888; margin-top:6px; text-align:center; cursor:pointer;" onclick="aksikanNotif()">🔔 Tap untuk aktifkan notifikasi jadwal</div>
 </div>
     
 <div class="nav-day" style="width: 100%;">
@@ -2266,6 +2267,40 @@ function logout() {
 //  NOTIFIKASI STATUS JADWAL - ambil langsung dari teks di layar
 // ════════════════════════════════════════════════════════════════════
 
+function updateDebugLabel() {
+    const el = document.getElementById('notif-debug');
+    if (!el) return;
+    const perm = ('Notification' in window) ? Notification.permission : 'tidak didukung';
+    const swAktif = !!(window._swReg && (window._swReg.active || navigator.serviceWorker.controller));
+    if (perm === 'granted' && swAktif) {
+        el.textContent = '✅ Notifikasi jadwal aktif';
+        el.style.color = '#28a745';
+    } else if (perm === 'denied') {
+        el.textContent = '🚫 Notifikasi diblokir — izinkan di pengaturan browser';
+        el.style.color = '#dc3545';
+    } else {
+        el.textContent = `🔔 Tap untuk aktifkan notifikasi jadwal (${perm})`;
+        el.style.color = '#888';
+    }
+}
+
+function aksikanNotif() {
+    if (!('Notification' in window)) {
+        alert('Browser ini tidak mendukung notifikasi.');
+        return;
+    }
+    if (Notification.permission === 'denied') {
+        alert('Notifikasi diblokir. Buka pengaturan browser → izinkan notifikasi untuk situs ini.');
+        return;
+    }
+    Notification.requestPermission().then(p => {
+        updateDebugLabel();
+        if (p === 'granted') {
+            kirimDataKeSW();
+        }
+    });
+}
+
 // Register SW supaya notif bisa tampil via SW (lebih stabil di WebView)
 function initSW() {
     if (!('serviceWorker' in navigator)) return;
@@ -2275,18 +2310,18 @@ function initSW() {
             window._swReg = reg;
 
             function cobaKirim() {
+                updateDebugLabel();
                 if (Notification.permission === 'granted') {
-                    setTimeout(kirimDataKeSW, 500); // beri jeda SW siap
+                    setTimeout(kirimDataKeSW, 500);
                 } else if (Notification.permission === 'default') {
                     Notification.requestPermission().then(p => {
+                        updateDebugLabel();
                         if (p === 'granted') setTimeout(kirimDataKeSW, 500);
                     });
                 }
             }
 
-            if (reg.active) {
-                cobaKirim();
-            }
+            if (reg.active) cobaKirim();
 
             const sw = reg.installing || reg.waiting;
             if (sw) {
@@ -2306,6 +2341,7 @@ function initSW() {
 document.addEventListener('click', function initOnce() {
     if (Notification.permission === 'default') {
         Notification.requestPermission().then(p => {
+            updateDebugLabel();
             if (p === 'granted') kirimDataKeSW();
         });
     }
@@ -2313,6 +2349,7 @@ document.addEventListener('click', function initOnce() {
 }, { once: true });
 
 initSW();
+updateDebugLabel();
 
 function kirimDataKeSW() {
     const reg = window._swReg;
