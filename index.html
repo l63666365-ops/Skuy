@@ -1105,9 +1105,9 @@ input[type="text"]:focus { border-color: var(--color-2); }
     
 <div id="wrapperBackBtn" style="width: 100%; display: flex; justify-content: flex-start; padding: 0 5px;">
         <button id="btnBackToAdmin" onclick="backToAdminMenu()" 
-            style="display:none; background: #4a6fa5; color: white; border: none; padding: 10px 20px; border-radius: 10px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 0 #2c3e50; font-size: 12px;">
-            ← KEMBALI KE PILIH KELAS
-      </button>
+            style="display:none; background: var(--color-2); color: white; border: none; padding: 11px 20px; border-radius: 12px; font-weight: 800; cursor: pointer; box-shadow: 0 5px 0 var(--color-1); font-size: 12px; letter-spacing: 0.5px; text-transform: uppercase; transition: all 0.1s ease;">
+            ← Panel Monitoring Admin
+        </button>
 </div>
 
 <div class="glass-card header-strip" style="width: 100%; margin-top: 0;">
@@ -2195,6 +2195,7 @@ function adminLihatJadwal(kelas) {
     const adminSelector = document.getElementById('adminSelector');
     adminSelector.style.display = 'none';
     mainContent.style.display = 'flex';
+    document.getElementById('btnBackToAdmin').style.display = 'inline-flex';
     fetchJadwalDariSheet().then(() => {
         setTimeout(() => {
             const targets = [
@@ -2216,6 +2217,7 @@ function adminLihatJadwal(kelas) {
 function backToAdminMenu() {
     document.getElementById('adminSelector').style.display = 'flex';
     document.getElementById('mainScheduleContent').style.display = 'none';
+    document.getElementById('btnBackToAdmin').style.display = 'none';
 }
         
 function openImage(taskIndex, imgIndex) {
