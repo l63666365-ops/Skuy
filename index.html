@@ -2268,6 +2268,7 @@ function logout() {
 // ════════════════════════════════════════════════════════════════════
 
 let lastNotifText = '';
+let notifIntervalId = null;
 
 function tampilkanNotif() {
     const judulEl = document.getElementById('stat-now');
@@ -2277,7 +2278,7 @@ function tampilkanNotif() {
     const judul = (judulEl.innerText || '').trim();
     const isi   = isiEl ? (isiEl.innerText || '').trim() : '';
 
-    // Jangan tampilkan kalau belum siap atau sama persis dengan sebelumnya
+    // Jangan tampilkan kalau belum siap
     if (!judul || judul === 'Mencari pelajaran...') return;
 
     // Untuk kondisi statis (tidak ada countdown), skip kalau sama persis
@@ -2285,9 +2286,7 @@ function tampilkanNotif() {
                       || isi.includes('detik')  || isi.includes('menit')  || isi.includes('jam');
     const teksGabung = judul + '|' + isi;
     if (!adaCountdown && teksGabung === lastNotifText) return;
-    lastNotifText = teksGabung;
-    // Reset last agar countdown selalu fresh tiap interval
-    if (adaCountdown) lastNotifText = '';
+    lastNotifText = adaCountdown ? '' : teksGabung; // countdown selalu fresh tiap detik
 
     // Cara 1: new Notification() langsung (works di browser biasa)
     if ('Notification' in window && Notification.permission === 'granted') {
@@ -2317,6 +2316,12 @@ function tampilkanNotif() {
     }
 }
 
+function mulaiIntervalNotif() {
+    if (notifIntervalId) return; // cegah dobel interval
+    tampilkanNotif();
+    notifIntervalId = setInterval(tampilkanNotif, 1000);
+}
+
 function aksikanNotif() {
     if (!('Notification' in window)) {
         alert('Browser tidak mendukung notifikasi.');
@@ -2329,9 +2334,7 @@ function aksikanNotif() {
     Notification.requestPermission().then(p => {
         if (p === 'granted') {
             document.getElementById('notif-btn').style.display = 'none';
-            // Langsung test notif
-            tampilkanNotif();
-            setInterval(tampilkanNotif, 1000);
+            mulaiIntervalNotif();
         } else {
             alert('Izin notifikasi ditolak. Aktifkan di pengaturan HP.');
         }
@@ -2345,15 +2348,13 @@ function mulaiNotif() {
         // Sudah granted, sembunyikan tombol
         const btn = document.getElementById('notif-btn');
         if (btn) btn.style.display = 'none';
-        setTimeout(tampilkanNotif, 2000);
-        setInterval(tampilkanNotif, 1000);
+        setTimeout(mulaiIntervalNotif, 2000);
     } else if (Notification.permission === 'default') {
         // Minta izin saat user tap pertama kali
         document.addEventListener('click', function mintaIzin() {
             Notification.requestPermission().then(p => {
                 if (p === 'granted') {
-                    setTimeout(tampilkanNotif, 1000);
-                    setInterval(tampilkanNotif, 1000);
+                    mulaiIntervalNotif();
                 }
             });
             document.removeEventListener('click', mintaIzin);
