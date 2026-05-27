@@ -1336,16 +1336,19 @@ function updateStatus() {
         const namaBesok = days[besok.getDay()];
         if (namaBesok === "Sabtu" || namaBesok === "Minggu") {
             statNow.innerText = "Libur Akhir Pekan ✨"; 
-            statNext.innerText = ""; 
+            statNext.innerText = "";
+            tampilkanNotif("Libur Akhir Pekan ✨", "");
         } else {
             statNow.innerHTML = `<b>Persiapan Besok: ${namaBesok}</b>`;
             statNext.innerText = "Tugas sudah diurutkan sesuai jadwal besok";
+            tampilkanNotif(`Persiapan Besok: ${namaBesok}`, "Tugas sudah diurutkan sesuai jadwal besok");
         }
         return;
     }
     if(todayName === "Sabtu" || todayName === "Minggu") {
         statNow.innerText = "Libur Akhir Pekan ✨"; 
-        statNext.innerText = ""; 
+        statNext.innerText = "";
+        tampilkanNotif("Libur Akhir Pekan ✨", "");
         return;
     }
     // Gunakan virtual date untuk cek minggu: setelah jam 18 = sudah masuk hari berikutnya
@@ -1389,12 +1392,15 @@ function updateStatus() {
     if (ongoing) {
         statNow.innerHTML = `Sekarang: <b>${ongoing.name}</b> (berakhir ${ongoing.countdown})`;
         statNext.innerText = next ? `Selanjutnya: ${next.name}` : "Selanjutnya: Jam Pulang 🎉";
+        tampilkanNotif(`Sekarang: ${ongoing.name} (berakhir ${ongoing.countdown})`, next ? `Selanjutnya: ${next.name}` : "Selanjutnya: Jam Pulang 🎉");
     } else if (next) {
         statNow.innerHTML = `<b>Istirahat</b>`;
         statNext.innerHTML = `Selanjutnya: <b>${next.name}</b> (mulai ${next.countdown} lagi)`;
+        tampilkanNotif("Istirahat", `Selanjutnya: ${next.name} (mulai ${next.countdown} lagi)`);
     } else {
         statNow.innerText = "Semua mapel hari ini selesai 🏆"; 
         statNext.innerText = "Waktunya istirahat";
+        tampilkanNotif("Semua mapel hari ini selesai 🏆", "Waktunya istirahat");
     }
 }
     
@@ -2263,85 +2269,22 @@ function logout() {
 }
 
 // ════════════════════════════════════════════════════════════════════
-//  NOTIFIKASI STATUS JADWAL - baca langsung dari stat-now & stat-next
+//  NOTIFIKASI STATUS JADWAL - dipanggil langsung dari updateStatus()
 // ════════════════════════════════════════════════════════════════════
 
-let notifIntervalId = null;
+let lastNotifJudul = '';
+let lastNotifIsi = '';
 
-function buildNotifTeks() {
-    // Hitung langsung dari data jadwal, sama persis dengan updateStatus()
-    const now = new Date();
-    const currentTimeMs = now.getTime();
-    const currentTimeMin = now.getHours() * 60 + now.getMinutes();
-    const jamGantiHari = 18 * 60;
-    const days = ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"];
-    const todayName = days[now.getDay()];
-
-    const getCountdown = (targetHour, targetMin) => {
-        const targetDate = new Date();
-        targetDate.setHours(targetHour, targetMin, 0, 0);
-        const totalSecs = Math.max(0, Math.floor((targetDate.getTime() - currentTimeMs) / 1000));
-        const h = Math.floor(totalSecs / 3600);
-        const m = Math.floor((totalSecs % 3600) / 60);
-        const s = totalSecs % 60;
-        const parts = [];
-        if (h > 0) parts.push(h + " jam");
-        if (m > 0) parts.push(m + " menit");
-        if (s > 0 || parts.length === 0) parts.push(s + " detik");
-        return parts.join(" ");
-    };
-
-    if (currentTimeMin >= jamGantiHari) {
-        const besok = new Date(now);
-        besok.setDate(besok.getDate() + 1);
-        const namaBesok = days[besok.getDay()];
-        if (namaBesok === "Sabtu" || namaBesok === "Minggu") {
-            return { judul: "Libur Akhir Pekan ✨", isi: "" };
-        }
-        return { judul: `Persiapan Besok: ${namaBesok}`, isi: "Tugas sudah diurutkan sesuai jadwal besok" };
-    }
-
-    if (todayName === "Sabtu" || todayName === "Minggu") {
-        return { judul: "Libur Akhir Pekan ✨", isi: "" };
-    }
-
-    let refDate = new Date(now);
-    if (now.getHours() >= 18) refDate.setDate(refDate.getDate() + 1);
-    const autoWeek = (getWeekNumber(refDate) % 2 === 0) ? "m2" : "m1";
-    const listMapel = (jadwalData && jadwalData[autoWeek] && jadwalData[autoWeek][todayName]) || [];
-
-    for (let i = 0; i < listMapel.length; i++) {
-        const timeStr = listMapel[i][1].replace(/\./g, ':').replace(/\s/g, '');
-        const timeRange = timeStr.split('-');
-        if (!timeRange[1]) continue;
-        const start = timeRange[0].split(':').map(Number);
-        const end   = timeRange[1].split(':').map(Number);
-        const startMin = start[0] * 60 + start[1];
-        const endMin   = end[0]   * 60 + end[1];
-
-        if (currentTimeMin >= startMin && currentTimeMin < endMin) {
-            const next = listMapel[i + 1];
-            return {
-                judul: `Sekarang: ${listMapel[i][0]} (berakhir ${getCountdown(end[0], end[1])})`,
-                isi:   next ? `Selanjutnya: ${next[0]}` : "Selanjutnya: Jam Pulang 🎉"
-            };
-        }
-        if (currentTimeMin < startMin) {
-            return {
-                judul: "Istirahat",
-                isi:   `Selanjutnya: ${listMapel[i][0]} (mulai ${getCountdown(start[0], start[1])} lagi)`
-            };
-        }
-    }
-
-    return { judul: "Semua mapel hari ini selesai 🏆", isi: "Waktunya istirahat" };
-}
-
-function tampilkanNotif() {
+function tampilkanNotif(judul, isi) {
     if (!('Notification' in window) || Notification.permission !== 'granted') return;
-
-    const { judul, isi } = buildNotifTeks();
     if (!judul) return;
+
+    // Skip kalau isi sama persis (hanya untuk teks statis, countdown selalu beda)
+    const adaCountdown = judul.includes('detik') || judul.includes('menit') || judul.includes('jam')
+                      || isi.includes('detik') || isi.includes('menit') || isi.includes('jam');
+    if (!adaCountdown && judul === lastNotifJudul && isi === lastNotifIsi) return;
+    lastNotifJudul = judul;
+    lastNotifIsi = isi;
 
     // Cara 1: new Notification() langsung
     try {
@@ -2369,23 +2312,12 @@ function tampilkanNotif() {
     }
 }
 
-function mulaiIntervalNotif() {
-    if (notifIntervalId) return; // cegah dobel interval
-    tampilkanNotif();
-    notifIntervalId = setInterval(tampilkanNotif, 1000);
-}
-
 function mulaiNotif() {
     if (!('Notification' in window)) return;
-
-    if (Notification.permission === 'granted') {
-        setTimeout(mulaiIntervalNotif, 1500);
-    } else if (Notification.permission === 'default') {
+    if (Notification.permission === 'default') {
         // Minta izin saat user tap pertama kali
         document.addEventListener('click', function mintaIzin() {
-            Notification.requestPermission().then(p => {
-                if (p === 'granted') mulaiIntervalNotif();
-            });
+            Notification.requestPermission();
             document.removeEventListener('click', mintaIzin);
         }, { once: true });
     }
