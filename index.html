@@ -872,6 +872,88 @@ input[type="text"]:focus { border-color: var(--color-2); }
     opacity: 1;
 }
 
+/* ── Saving Alert (Menyimpan Jadwal) ── */
+#savingAlert {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.85);
+    background: var(--white);
+    border: 1.5px solid var(--color-4);
+    padding: 28px 24px 22px;
+    border-radius: 22px;
+    width: 82%;
+    max-width: 290px;
+    z-index: 3500;
+    text-align: center;
+    display: none;
+    box-shadow: 0 24px 60px rgba(5, 38, 89, 0.18);
+    opacity: 0;
+    transition: opacity 0.25s ease, transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+}
+#savingAlert.show {
+    display: block;
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
+#savingOverlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(2, 16, 36, 0.35);
+    z-index: 3499;
+    display: none;
+    backdrop-filter: blur(2px);
+    opacity: 0;
+    transition: opacity 0.25s ease;
+}
+#savingOverlay.show {
+    display: block;
+    opacity: 1;
+}
+#savingAlert .saving-spinner {
+    width: 52px;
+    height: 52px;
+    margin: 0 auto 14px;
+}
+#savingAlert .saving-spinner svg {
+    animation: spin 1s linear infinite;
+    width: 52px;
+    height: 52px;
+}
+#savingAlert .saving-spinner .track { stroke: var(--color-5); }
+#savingAlert .saving-spinner .fill {
+    stroke: var(--color-2);
+    stroke-dasharray: 110;
+    stroke-dashoffset: 30;
+}
+#savingAlert .saving-title {
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--color-2);
+    margin-bottom: 6px;
+    letter-spacing: -0.3px;
+}
+#savingAlert .saving-msg {
+    font-size: 12px;
+    color: var(--color-3);
+    font-weight: 600;
+    line-height: 1.5;
+}
+#savingAlert .saving-bar-wrap {
+    margin-top: 14px;
+    background: var(--color-5);
+    border-radius: 99px;
+    height: 6px;
+    overflow: hidden;
+}
+#savingAlert .saving-bar {
+    height: 100%;
+    width: 0%;
+    border-radius: 99px;
+    background: linear-gradient(90deg, var(--color-3), var(--color-2));
+    animation: barGrow 3s ease-in-out infinite;
+}
+
 .btn-delete-row {
     position: absolute;
     top: -5px;
@@ -1198,6 +1280,21 @@ input[type="text"]:focus { border-color: var(--color-2); }
     <div class="upload-bar-wrap"><div class="upload-bar"></div></div>
 </div>
 
+<!-- Saving Alert - Sedang menyimpan jadwal ke server -->
+<div id="savingOverlay"></div>
+<div id="savingAlert">
+    <div class="saving-spinner">
+        <svg viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle class="track" cx="26" cy="26" r="22" stroke-width="5" fill="none"/>
+            <circle class="fill"  cx="26" cy="26" r="22" stroke-width="5" fill="none"
+                    stroke-linecap="round" transform="rotate(-90 26 26)"/>
+        </svg>
+    </div>
+    <div class="saving-title">Menyimpan Jadwal...</div>
+    <div class="saving-msg">Sabar ya, perubahan sedang<br>dikirim ke server 🗂️</div>
+    <div class="saving-bar-wrap"><div class="saving-bar"></div></div>
+</div>
+
 <!-- ✅ Success Alert - Jadwal Tersimpan -->
 <div id="successOverlay"></div>
 <div id="successAlert">
@@ -1433,6 +1530,21 @@ function closeUploadAlert() {
     const ua = document.getElementById('uploadAlert');
     ua.classList.remove('show');
     setTimeout(() => { ua.style.display = 'none'; }, 280);
+}
+
+function showSavingAlert() {
+    document.getElementById('savingOverlay').classList.add('show');
+    const sa = document.getElementById('savingAlert');
+    sa.style.display = 'block';
+    void sa.offsetWidth;
+    sa.classList.add('show');
+}
+
+function closeSavingAlert() {
+    document.getElementById('savingOverlay').classList.remove('show');
+    const sa = document.getElementById('savingAlert');
+    sa.classList.remove('show');
+    setTimeout(() => { sa.style.display = 'none'; }, 280);
 }
 
 // Tutup alert dengan tap di luar area alert
@@ -1836,7 +1948,7 @@ async function saveJadwal() {
         jadwal: jadwalData[currentWeekType][dayName]
     };
     try {
-        showAlert("Sinkronisasi", "Sedang mengirim perubahan ke server...");
+        showSavingAlert();
         const response = await fetch(urlGAS, {
             method: 'POST',
             body: JSON.stringify(payload)
@@ -1847,10 +1959,15 @@ async function saveJadwal() {
             const btn = document.getElementById('btn-edit-mode');
             btn.innerText = '📌 EDIT JADWAL HARIAN';
             btn.classList.remove('editing');   
+            closeSavingAlert();
             showSuccessAlert(userKelas);
             renderSchedule();
+        } else {
+            closeSavingAlert();
+            showAlert("Gagal", "Server merespon dengan error. Coba lagi ya.");
         }
     } catch (error) {
+        closeSavingAlert();
         showAlert("Offline", "Cek koneksi internet");
         console.error("Error saving to sheet", error);
     }
