@@ -635,6 +635,147 @@ input[type="text"]:focus { border-color: var(--color-2); }
     margin-top: 8px; 
 }
 
+/* ── Success Alert (Jadwal Tersimpan) ── */
+#successAlert {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.75);
+    background: var(--white);
+    border-radius: 28px;
+    width: 82%;
+    max-width: 300px;
+    z-index: 3600;
+    text-align: center;
+    display: none;
+    padding: 34px 24px 28px;
+    box-shadow: 0 30px 70px rgba(5, 38, 89, 0.2);
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    overflow: hidden;
+}
+#successAlert.show {
+    display: block;
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
+#successOverlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(2, 16, 36, 0.45);
+    z-index: 3599;
+    display: none;
+    backdrop-filter: blur(3px);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+#successOverlay.show {
+    display: block;
+    opacity: 1;
+}
+.success-icon-wrap {
+    width: 72px;
+    height: 72px;
+    background: linear-gradient(135deg, #28a745, #20c050);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 18px;
+    box-shadow: 0 8px 25px rgba(40, 167, 69, 0.4);
+    animation: successPop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s both;
+}
+@keyframes successPop {
+    0%   { transform: scale(0); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+.success-checkmark {
+    width: 36px;
+    height: 36px;
+    stroke: white;
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    fill: none;
+}
+.success-checkmark .check-path {
+    stroke-dasharray: 50;
+    stroke-dashoffset: 50;
+    animation: drawCheck 0.4s ease 0.35s forwards;
+}
+@keyframes drawCheck {
+    to { stroke-dashoffset: 0; }
+}
+.success-title {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--color-2);
+    margin-bottom: 6px;
+    letter-spacing: -0.5px;
+    animation: fadeSlideUp 0.4s ease 0.2s both;
+}
+.success-sub {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-3);
+    line-height: 1.6;
+    margin-bottom: 6px;
+    animation: fadeSlideUp 0.4s ease 0.25s both;
+}
+@keyframes fadeSlideUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+.success-kelas-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--color-2), var(--color-3));
+    color: white;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 5px 16px;
+    border-radius: 20px;
+    letter-spacing: 0.5px;
+    margin: 10px auto 20px;
+    animation: fadeSlideUp 0.4s ease 0.3s both;
+}
+.success-btn {
+    background: linear-gradient(135deg, var(--color-2), var(--color-3));
+    color: white;
+    border: none;
+    padding: 13px;
+    border-radius: 14px;
+    font-weight: 800;
+    font-size: 13px;
+    cursor: pointer;
+    width: 100%;
+    letter-spacing: 0.5px;
+    box-shadow: 0 6px 20px rgba(5, 38, 89, 0.25);
+    transition: transform 0.1s, box-shadow 0.1s;
+    animation: fadeSlideUp 0.4s ease 0.35s both;
+}
+.success-btn:active {
+    transform: scale(0.97);
+    box-shadow: 0 3px 10px rgba(5, 38, 89, 0.2);
+}
+.success-sparkles {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    overflow: hidden;
+    border-radius: 28px;
+}
+.sparkle {
+    position: absolute;
+    border-radius: 50%;
+    animation: sparkleFly 0.9s ease-out forwards;
+    opacity: 0;
+}
+@keyframes sparkleFly {
+    0%   { transform: scale(0) translate(0,0); opacity: 1; }
+    100% { transform: scale(1) translate(var(--sx), var(--sy)); opacity: 0; }
+}
+
 /* ── Upload Alert ── */
 #uploadAlert {
     position: fixed;
@@ -1057,6 +1198,21 @@ input[type="text"]:focus { border-color: var(--color-2); }
     <div class="upload-bar-wrap"><div class="upload-bar"></div></div>
 </div>
 
+<!-- ✅ Success Alert - Jadwal Tersimpan -->
+<div id="successOverlay"></div>
+<div id="successAlert">
+    <div class="success-sparkles" id="successSparkles"></div>
+    <div class="success-icon-wrap">
+        <svg class="success-checkmark" viewBox="0 0 36 36">
+            <path class="check-path" d="M8 18 L15 25 L28 11"/>
+        </svg>
+    </div>
+    <div class="success-title">Berhasil! 🎉</div>
+    <div class="success-sub">Jadwal sudah diperbarui<br>dan tersimpan di server</div>
+    <div class="success-kelas-badge" id="successKelasLabel">—</div>
+    <button class="success-btn" onclick="closeSuccessAlert()">OK, Siap!</button>
+</div>
+
 <div class="pomo-icon" onclick="openPomo()">⏳</div>
 
 <div id="pomoOverlay" class="pomo-overlay">
@@ -1211,6 +1367,56 @@ function showAlert(title, msg) {
     
 function closeAlert() { 
     document.getElementById('customAlert').classList.remove('show'); 
+}
+
+function showSuccessAlert(kelas) {
+    const overlay = document.getElementById('successOverlay');
+    const box     = document.getElementById('successAlert');
+    const badge   = document.getElementById('successKelasLabel');
+    badge.textContent = kelas || '—';
+    // Tampilkan
+    overlay.style.display = 'block';
+    box.style.display = 'block';
+    void box.offsetWidth; // reflow
+    overlay.classList.add('show');
+    box.classList.add('show');
+    // Bikin sparkle
+    spawnSparkles();
+}
+
+function closeSuccessAlert() {
+    const overlay = document.getElementById('successOverlay');
+    const box     = document.getElementById('successAlert');
+    overlay.classList.remove('show');
+    box.classList.remove('show');
+    setTimeout(() => {
+        overlay.style.display = 'none';
+        box.style.display = 'none';
+        document.getElementById('successSparkles').innerHTML = '';
+    }, 350);
+}
+
+function spawnSparkles() {
+    const container = document.getElementById('successSparkles');
+    container.innerHTML = '';
+    const colors = ['#28a745','#20c050','#5483b3','#ffd700','#052659','#7da0ca','#ffffff'];
+    for (let i = 0; i < 22; i++) {
+        const el = document.createElement('div');
+        el.className = 'sparkle';
+        const size = 5 + Math.random() * 8;
+        const angle = Math.random() * Math.PI * 2;
+        const dist  = 60 + Math.random() * 80;
+        el.style.cssText = `
+            width:${size}px; height:${size}px;
+            background:${colors[i % colors.length]};
+            left:${20 + Math.random() * 60}%;
+            top:${10 + Math.random() * 40}%;
+            --sx:${(Math.cos(angle)*dist).toFixed(1)}px;
+            --sy:${(Math.sin(angle)*dist).toFixed(1)}px;
+            animation-delay:${(Math.random()*0.3).toFixed(2)}s;
+        `;
+        container.appendChild(el);
+    }
 }
 
 function showUploadAlert() {
@@ -1641,7 +1847,7 @@ async function saveJadwal() {
             const btn = document.getElementById('btn-edit-mode');
             btn.innerText = '📌 EDIT JADWAL HARIAN';
             btn.classList.remove('editing');   
-            showAlert("Berhasil!", "Jadwal " + userKelas + " udah diperbarui di server,");
+            showSuccessAlert(userKelas);
             renderSchedule();
         }
     } catch (error) {
