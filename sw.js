@@ -61,8 +61,8 @@ function tickNotif() {
     self.registration.showNotification(title, {
         body,
         tag: NOTIF_TAG,           // overwrite notif lama → tidak numpuk
-        renotify: false,          // tidak bunyi saat update
-        silent: true,
+        renotify: true,           // paksa tampil ulang supaya notif muncul di panel
+        silent: true,             // tidak bunyi saat update
         icon: './icon-192.png',
         badge: './icon-192.png',
         requireInteraction: false,
