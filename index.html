@@ -1240,6 +1240,35 @@ input[type="text"]:focus { border-color: var(--color-2); }
     border: 1px solid #FFD700;
 }
 
+    /* ON: goyang lembut seperti lonceng berdering pelan */
+@keyframes bellRing {
+    0%   { transform: rotate(0deg); }
+    20%  { transform: rotate(8deg); }
+    45%  { transform: rotate(-6deg); }
+    65%  { transform: rotate(4deg); }
+    80%  { transform: rotate(-2deg); }
+    100% { transform: rotate(0deg); }
+}
+
+/* OFF: ayunan tunggal pelan lalu diam — seperti lonceng diredam */
+@keyframes bellSettle {
+    0%   { transform: rotate(0deg); }
+    30%  { transform: rotate(-10deg); }
+    60%  { transform: rotate(4deg); }
+    80%  { transform: rotate(-2deg); }
+    100% { transform: rotate(0deg); }
+}
+
+.bell-ring {
+    animation: bellRing 0.7s ease-in-out;
+    transform-origin: top center;
+}
+
+.bell-settle {
+    animation: bellSettle 0.8s ease-in-out;
+    transform-origin: top center;
+}
+    
 </style>
 </head>
 <body>
@@ -1313,15 +1342,14 @@ input[type="text"]:focus { border-color: var(--color-2); }
     <button class="success-btn" onclick="closeSuccessAlert()">OK, Siap!</button>
 </div>
 
-<div class="pomo-icon" onclick="openPomo()">⏳</div>
-
-<div id="pomoOverlay" class="pomo-overlay">
-    <div class="pomo-box">
-        <div class="close-pomo" onclick="closePomo()" style="position: absolute; top: 10px; right: 20px; font-size: 32px; cursor: pointer;">×</div>
-        <div id="pomoLabel" class="pomo-status" style="letter-spacing: 2px; font-weight: bold; color: var(--color-3);">SIAP FOKUS?</div>
-        <div id="pomoDisplay" class="pomo-time-big">25:00</div>
-        <button id="pomoBtn" class="pomo-btn-main" onclick="toggleTimer()">MULAI</button>
-    </div>
+<div class="pomo-icon" id="notif-btn" onclick="toggleNotif()" title="Toggle Notifikasi">
+    <svg id="notif-icon-on" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M7.58 4.08L6.15 2.65C3.75 4.48 2.17 7.3 2.03 10.5h2c.15-2.65 1.51-4.97 3.55-6.42zm12.39 6.42h2c-.15-3.2-1.73-6.02-4.12-7.85l-1.42 1.43c2.02 1.45 3.38 3.77 3.54 6.42zM18 11c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2v-5zm-6 11c.14 0 .27-.01.4-.03.65-.14 1.18-.58 1.44-1.17.1-.24.16-.5.16-.8h-4c0 1.1.9 2 2 2z"/>
+</svg>
+    <svg id="notif-icon-off" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor" style="display:none">
+        <path d="M20 18.69L7.84 6.14 5.27 3.49 4 4.76l2.2 2.2A6.95 6.95 0 005 11v5l-2 2v1h13.73l2 2L20 19.69zM12 22c1.11 0 2-.89 2-2h-4c0 1.11.89 2 2 2zm6-7.32V11c0-3.08-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68c-.98.23-1.87.66-2.63 1.24L18 13.68z" opacity="0.7"/>
+        <line x1="3" y1="3" x2="21" y2="21" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+    </svg>
 </div>
 
 <div class="container">
@@ -1557,55 +1585,6 @@ document.addEventListener('click', function(e) {
         closeAlert();
     }
 });
-  
-let pMin = 25; let pSec = 0; let pInterval; let pIsRunning = false; let pIsWork = true;
-   
-function openPomo() { 
-    document.getElementById('pomoOverlay').style.display = 'flex'; 
-}
-    
-function closePomo() { 
-    document.getElementById('pomoOverlay').style.display = 'none'; 
-}
-
-function toggleTimer() {
-        const btn = document.getElementById('pomoBtn');
-        if (!pIsRunning) {
-            pIsRunning = true; btn.innerText = "BERHENTI"; btn.style.background = "#dc3545";
-            pInterval = setInterval(runTimer, 1000);
-        } else {
-            clearInterval(pInterval); pIsRunning = false;
-            btn.innerText = pIsWork ? "MULAI" : "LANJUT ISTIRAHAT"; btn.style.background = "var(--color-2)";
-     }
-}
-
-function runTimer() {
-        if (pSec === 0) {
-            if (pMin === 0) {
-                clearInterval(pInterval);
-                pIsWork = !pIsWork;
-                if (!pIsWork) {
-                    pMin = 5;
-                    showAlert("ISTIRAHAT", "Waktunya istirahat,\nJangan lupa minum air putih ya");
-                    document.getElementById('pomoLabel').innerText = "ISTIRAHAT";
-                } else {
-                    pMin = 25;
-                    showAlert("FOKUS LAGI!", "Ayo semangat lagi belajarnya!");
-                    document.getElementById('pomoLabel').innerText = "SESI FOKUS";
-                }
-                pSec = 0; pIsRunning = false;
-                document.getElementById('pomoBtn').innerText = "MULAI";
-                document.getElementById('pomoBtn').style.background = "var(--color-2)";
-            } else { pMin--; pSec = 59; }
-        } else { pSec--; }
-        updatePomoView();
-}
-       
-function updatePomoView() {
-        const m = pMin < 10 ? '0' + pMin : pMin;
-        const s = pSec < 10 ? '0' + pSec : pSec;
-        document.getElementById('pomoDisplay').innerText = m + ":" + s;
-}
 
 const quotes = [
     "Hasil yang besar butuh ketenangan yang panjang", "Tetaplah rendah hati sampai kamu tidak perlu lagi memperkenalkan diri", "Jangan sibuk memberi tahu orang lain, tunjukkan saja hasilnya", "Disiplin adalah bentuk paling tinggi dari mencintai diri sendiri", "Jangan biarkan emosi mengacaukan rencana yang sudah kamu buat", "Pemenang tidak bicara soal rencana, mereka bicara soal eksekusi", "Fokus pada apa yang bisa kamu kendalikan, sisanya biarkan waktu yang jawab", "Kualitas kerja kamu adalah cerminan dari rasa hormatmu pada diri sendiri", "Lebih baik berjalan pelan daripada berhenti karena terlalu banyak bicara", "Standar kamu adalah apa yang kamu terima, bukan apa yang kamu harapkan", "Orang yang paling kuat adalah yang bisa menguasai dirinya sendiri", "Buatlah dirimu sulit untuk digantikan karena kualitasmu, bukan karena posisimu", "Diam itu emas, tapi hasil yang bicara itu berlian", "Kerjakan dalam sunyi, biarkan kesuksesanmu yang membuat kegaduhan", "Ubah rasa lelah menjadi hasil yang nyata", "Jangan biarkan gangguan kecil merusak rencana besar", "Konsistensi adalah kunci yang membedakan amatir dan profesional", "Hargai waktumu karena itu adalah aset yang tidak bisa dibeli", "Jadilah versi terbaik dari dirimu sendiri setiap hari", "Kesuksesan dimulai dari keputusan untuk mencoba", "Fokus pada kemajuan, bukan kesempurnaan", "Tantangan adalah cara semesta menguji kesiapanmu", "Jangan membandingkan bab pertamamu dengan bab kesepuluh orang lain", "Satu langkah kecil lebih baik daripada seribu rencana tanpa aksi", "Kekuatan karakter terlihat saat situasi sedang tidak berpihak padamu", "Masa depanmu ditentukan oleh apa yang kamu lakukan hari ini", "Jadilah pribadi yang sulit dicari dan sulit dilupakan karena kualitasmu", "Keberuntungan adalah pertemuan antara persiapan dan kesempatan",
@@ -2473,6 +2452,18 @@ window.onload = function() {
     const mainContent = document.getElementById('mainScheduleContent');
     const btnEdit = document.getElementById('btn-edit-mode');
     const btnBack = document.getElementById('btnBackToAdmin');
+    // Sync ikon notif sesuai state tersimpan
+(function syncNotifIcon() {
+    const iconOn  = document.getElementById('notif-icon-on');
+    const iconOff = document.getElementById('notif-icon-off');
+    if (notifEnabled) {
+        iconOn.style.display  = '';
+        iconOff.style.display = 'none';
+    } else {
+        iconOn.style.display  = 'none';
+        iconOff.style.display = '';
+    }
+})();
     if (role === 'admin') {
         const pomoIcon = document.querySelector('.pomo-icon');
         if (pomoIcon) pomoIcon.style.display = 'none';
@@ -2721,8 +2712,68 @@ function logout() {
 // ════════════════════════════════════════════════════════════════════
 
 let lastNotifMapel = '';
+let notifEnabled = localStorage.getItem('notifEnabled') !== 'false'; // default ON
+let lastNotifRef = null; // referensi notif terakhir biar bisa ditutup
+
+function toggleNotif() {
+    notifEnabled = !notifEnabled;
+
+    // Animasi sesuai kondisi ON/OFF
+    if (notifEnabled) {
+        // ON: lonceng berdering lembut
+        const iconOn = document.getElementById('notif-icon-on');
+        iconOn.classList.remove('bell-ring');
+        void iconOn.offsetWidth;
+        iconOn.classList.add('bell-ring');
+        iconOn.addEventListener('animationend', () => {
+            iconOn.classList.remove('bell-ring');
+        }, { once: true });
+    } else {
+        // OFF: lonceng ayun pelan lalu diam
+        const iconOff = document.getElementById('notif-icon-off');
+        iconOff.classList.remove('bell-settle');
+        void iconOff.offsetWidth;
+        iconOff.classList.add('bell-settle');
+        iconOff.addEventListener('animationend', () => {
+            iconOff.classList.remove('bell-settle');
+        }, { once: true });
+    }
+    
+    localStorage.setItem('notifEnabled', String(notifEnabled));
+
+    const iconOn  = document.getElementById('notif-icon-on');
+    const iconOff = document.getElementById('notif-icon-off');
+
+    if (notifEnabled) {
+        iconOn.style.display  = '';
+        iconOff.style.display = 'none';
+        mulaiNotif();
+        lastNotifMapel = ''; // paksa kirim notif baru setelah dinyalakan
+    } else {
+        iconOn.style.display  = 'none';
+        iconOff.style.display = '';
+
+        // Tutup via referensi langsung (kalau ada)
+        if (lastNotifRef) {
+            try { lastNotifRef.close(); } catch(e) {}
+            lastNotifRef = null;
+        }
+
+        // Kirim pesan ke SW buat nutup notif dari sisinya (paling reliable di Android)
+        if ('serviceWorker' in navigator) {
+            if (navigator.serviceWorker.controller) {
+                navigator.serviceWorker.controller.postMessage({ type: 'CLOSE_ALL_NOTIF' });
+            }
+            // Fallback: tutup langsung dari halaman
+            navigator.serviceWorker.ready.then(reg => {
+                reg.getNotifications().then(list => list.forEach(n => n.close()));
+            }).catch(() => {});
+        }
+    }
+}
 
 function tampilkanNotif(judul, isi) {
+    if (!notifEnabled) return;   // ← TAMBAH INI
     if (!('Notification' in window) || Notification.permission !== 'granted') return;
     if (!judul) return;
 
@@ -2736,15 +2787,15 @@ function tampilkanNotif(judul, isi) {
     // Isi notif: nama mapel/status TANPA countdown (biar isinya statis, tidak bunyi terus)
     // Countdown tetap tampil di layar app seperti biasa
 
-    // Cara 1: new Notification() langsung
     try {
-        new Notification(judulBersih, {
+        const notif = new Notification(judulBersih, {
             body: isi,
             icon: './icon-192.png',
             tag: 'skuy-status',
             renotify: true,
             silent: false
         });
+        lastNotifRef = notif; // simpan referensi biar bisa ditutup saat OFF
         return;
     } catch (e) { /* lanjut ke cara 2 */ }
 
@@ -2803,3 +2854,5 @@ mulaiNotif();
 })();
 
     </script>
+</body>
+    </html>
