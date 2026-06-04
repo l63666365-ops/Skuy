@@ -1,5 +1,5 @@
 // SkuyJadwal Service Worker v2 - cache busting + background notification
-const CACHE_VERSION = 'skuy-v2';
+const CACHE_VERSION = 'skuy-v3';
 const CACHE_NAME = CACHE_VERSION;
 
 // Hapus semua cache lama saat SW baru aktif
@@ -62,6 +62,11 @@ self.addEventListener('message', (event) => {
         if (!notifInterval) {
             notifInterval = setInterval(tickNotif, 10000);
         }
+    }
+
+    if (event.data.type === 'CLOSE_ALL_NOTIF') {
+        self.registration.getNotifications()
+            .then(list => list.forEach(n => n.close()));
     }
 
     if (event.data.type === 'STOP_NOTIF') {
@@ -154,4 +159,4 @@ function countdown(ms) {
     if (m) p.push(`${m} menit`);
     if (s || !p.length) p.push(`${s} detik`);
     return p.join(' ');
-}
+                }
