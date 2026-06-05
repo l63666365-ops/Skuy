@@ -1240,6 +1240,27 @@ input[type="text"]:focus { border-color: var(--color-2); }
     border: 1px solid #FFD700;
 }
 
+    .task-hariini {
+    border-left: 6px solid #FFD700 !important;
+    background: linear-gradient(to right, #fffdf0, #ffffff) !important;
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2) !important;
+    position: relative;
+}
+
+.task-hariini::after {
+    content: 'HARI INI';
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    font-size: 10px;
+    font-weight: 800;
+    color: #b8860b;
+    background: #fff9e6;
+    padding: 2px 6px;
+    border-radius: 5px;
+    border: 1px solid #FFD700;
+}
+    
     /* ON: goyang lembut seperti lonceng berdering pelan */
 @keyframes bellRing {
     0%   { transform: rotate(0deg); }
@@ -2056,10 +2077,11 @@ async function loadTasks() {
 const days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
     const sekarang = new Date();
     const jamSekarang = sekarang.getHours();
-    let targetHariIdx = sekarang.getDay();
-    if (jamSekarang >= 18) {
-        targetHariIdx = (targetHariIdx + 1) % 7;
-    }  
+let targetHariIdx = sekarang.getDay();
+const isBesokMode = jamSekarang >= 18; // true = 18:00-23:59, false = 00:00-17:59
+if (isBesokMode) {
+    targetHariIdx = (targetHariIdx + 1) % 7;
+}
     const namaHariTarget = days[targetHariIdx];
     const jadwalBesok = (typeof jadwalData !== 'undefined' && typeof currentWeekType !== 'undefined' && jadwalData[currentWeekType]) 
         ? jadwalData[currentWeekType][namaHariTarget] || [] 
@@ -2100,16 +2122,17 @@ list.innerHTML = "";
             });
         }
         if (typeof renderTaskItem === 'function') {
-            renderTaskItem(t.id, t, t.isCloud, canDelete, isTugasBesok);
+            renderTaskItem(t.id, t, t.isCloud, canDelete, isTugasBesok, isBesokMode);
         }
     });
 }
 
-function renderTaskItem(id, t, isCloud, canDelete, isTugasBesok) {
+function renderTaskItem(id, t, isCloud, canDelete, isTugasBesok, isBesokMode) {
     const list = document.getElementById('taskList');
     if (!list) return;
     const li = document.createElement('li');
-    li.className = `task-item ${t.done ? 'done' : ''} ${isTugasBesok ? 'task-besok' : ''}`;
+    const badgeClass = isTugasBesok ? (isBesokMode ? 'task-besok' : 'task-hariini') : '';
+    li.className = `task-item ${t.done ? 'done' : ''} ${badgeClass}`;
     li.style.cssText = "flex-direction: column; align-items: flex-start; position: relative; padding-bottom: 15px;";
     const toggleFunc = isCloud ? `toggleTaskCloud('${id}', ${t.done}, event)` : `toggleTaskLocal('${id}', event)`;
     const deleteFunc = isCloud ? `deleteTaskCloud('${id}', event)` : `deleteTaskLocal('${id}', event)`;
