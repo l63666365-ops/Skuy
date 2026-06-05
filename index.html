@@ -1261,6 +1261,14 @@ input[type="text"]:focus { border-color: var(--color-2); }
     border: 1px solid #FFD700;
 }
     
+    /* Tugas HARI INI/BESOK yang sudah dicentang: badge tetap, tapi redup */
+.task-besok.done,
+.task-hariini.done {
+    background: linear-gradient(to right, #fdf8e0, #f8f8f8) !important;
+    box-shadow: none !important;
+    border-left: 6px solid #c8a800 !important;
+}
+    
     /* ON: goyang lembut seperti lonceng berdering pelan */
 @keyframes bellRing {
     0%   { transform: rotate(0deg); }
@@ -2087,42 +2095,42 @@ if (isBesokMode) {
         ? jadwalData[currentWeekType][namaHariTarget] || [] 
         : [];
     const daftarMapelBesok = jadwalBesok.map(item => item[0].toLowerCase().trim());
+    // Pre-compute urutan jadwal untuk SEMUA tugas (termasuk yang sudah done)
+    combinedTasks.forEach(t => {
+        const teks = (t.text || "").toLowerCase();
+        let urutan = 999;
+        daftarMapelBesok.forEach((mapel, index) => {
+            const regex = new RegExp("\\b" + mapel + "\\b", "i");
+            if (regex.test(teks) || teks.includes(mapel + ":")) {
+                urutan = Math.min(urutan, index);
+            }
+        });
+        t._urutan = urutan;
+        t._isBesok = urutan < 999;
+    });
+
     combinedTasks.sort((a, b) => {
-        if (a.done !== b.done) return a.done ? 1 : -1;
-        if (!a.done) {
-            const teksA = (a.text || "").toLowerCase();
-            const teksB = (b.text || "").toLowerCase();
-            let urutanA = 999;
-            let urutanB = 999;
-            daftarMapelBesok.forEach((mapel, index) => {
-                const regex = new RegExp("\\b" + mapel + "\\b", "i");
-                if (regex.test(teksA) || teksA.includes(mapel + ":")) {
-                    urutanA = Math.min(urutanA, index);
-                }
-                if (regex.test(teksB) || teksB.includes(mapel + ":")) {
-                    urutanB = Math.min(urutanB, index);
-                }
-            });
-            if (urutanA !== urutanB) return urutanA - urutanB;
+        // Tugas berkategori (HARI INI/BESOK) selalu di atas, done atau tidak
+        if (a._isBesok !== b._isBesok) return a._isBesok ? -1 : 1;
+
+        if (a._isBesok && b._isBesok) {
+            // Urut sesuai urutan jadwal
+            if (a._urutan !== b._urutan) return a._urutan - b._urutan;
+            // Urutan jadwal sama: yang belum selesai lebih atas
+            if (a.done !== b.done) return a.done ? 1 : -1;
+            return (b.timestamp || 0) - (a.timestamp || 0);
         }
+
+        // Tugas biasa: belum selesai lebih atas, lalu urut timestamp
+        if (a.done !== b.done) return a.done ? 1 : -1;
         return (b.timestamp || 0) - (a.timestamp || 0);
-});
-    
-list.innerHTML = "";
+    });
+
+    list.innerHTML = "";
     combinedTasks.forEach(t => {
         const canDelete = t.isCloud ? (role === 'sekretaris' || role === 'admin') : true;
-        const teksTugas = (t.text || "").toLowerCase();
-        let isTugasBesok = false;
-        if (!t.done) {
-            daftarMapelBesok.forEach(mapel => {
-                const regex = new RegExp("\\b" + mapel + "\\b", "i");
-                if (regex.test(teksTugas)) {
-                    isTugasBesok = true;
-                }
-            });
-        }
         if (typeof renderTaskItem === 'function') {
-            renderTaskItem(t.id, t, t.isCloud, canDelete, isTugasBesok, isBesokMode);
+            renderTaskItem(t.id, t, t.isCloud, canDelete, t._isBesok, isBesokMode);
         }
     });
 }
@@ -2878,4 +2886,4 @@ mulaiNotif();
 
     </script>
 </body>
-    </html>
+                                                             </html>
