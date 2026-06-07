@@ -1874,7 +1874,7 @@ function renderSchedule() {
     const days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
     const dayName = days[currentViewDate.getDay()];
     const isLibur = (dayName === "Sabtu" || dayName === "Minggu");
-    document.getElementById('display-day').innerText = currentViewDate.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'short' });
+    document.getElementById('display-day').innerText = currentViewDate.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long' });
     const colMapel = document.getElementById('col-mapel'); 
     const colJam = document.getElementById('col-jam'); 
     const colRuang = document.getElementById('col-ruang');
@@ -2147,15 +2147,35 @@ function renderTaskItem(id, t, isCloud, canDelete, isTugasBesok, isBesokMode) {
     const rawText = t.text || "";
     const processedText = (typeof linkify === 'function') ? linkify(rawText) : rawText;
     const taskDate = t.timestamp ? new Date(t.timestamp) : new Date();
-    const tglBlnThn = taskDate.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
-    const jamMenit = taskDate.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }).replace('.', ':');
-    const formatLengkap = `Dicatat: ${tglBlnThn} • ${jamMenit}`;
+    const tglBlnThn = taskDate.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+const jamMenit = taskDate.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }).replace('.', ':');
+const formatLengkap = `Dicatat: ${tglBlnThn} • ${jamMenit}`;
+
+// Hitung keterangan relatif
+const selisihMs = Date.now() - (t.timestamp || 0);
+const selisihMenit = Math.floor(selisihMs / 60000);
+const selisihJam = Math.floor(selisihMs / 3600000);
+const selisihHari = Math.floor(selisihMs / 86400000);
+const selisihMinggu = Math.floor(selisihHari / 7);
+const selisihBulan = Math.floor(selisihHari / 30);
+const selisihTahun = Math.floor(selisihHari / 365);
+let waktuRelatif;
+if (selisihMenit < 1) waktuRelatif = "baru saja";
+else if (selisihMenit < 60) waktuRelatif = `${selisihMenit} menit yang lalu`;
+else if (selisihJam < 24) waktuRelatif = `${selisihJam} jam yang lalu`;
+else if (selisihHari === 1) waktuRelatif = "kemarin";
+else if (selisihHari < 7) waktuRelatif = `${selisihHari} hari yang lalu`;
+else if (selisihMinggu < 4) waktuRelatif = `${selisihMinggu} minggu yang lalu`;
+else if (selisihBulan < 12) waktuRelatif = `${selisihBulan} bulan yang lalu`;
+else waktuRelatif = `${selisihTahun} tahun yang lalu`;
+    
     li.innerHTML = `
     <div style="display:flex; width:100%; align-items:center; gap:10px;">
         <input type="checkbox" class="task-check" ${t.done ? 'checked' : ''} onclick="${toggleFunc}">
         <div style="display: flex; flex-direction: column; flex-grow: 1;">
             <span class="task-text">${processedText}</span>
-            <span class="task-date">${formatLengkap}</span>
+            <span class="task-date" style="display: block; margin-bottom: 0;">${formatLengkap}</span>
+<span class="task-date" style="opacity: 0.6; font-style: italic; display: block; margin-top: 1px;">(${waktuRelatif})</span>
         </div>
         ${canDelete ? `<button class="btn-delete-task" onclick="${deleteFunc}">×</button>` : ''}
     </div>
