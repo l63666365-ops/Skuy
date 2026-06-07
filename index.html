@@ -2519,8 +2519,11 @@ window.onload = function() {
     const pomoIcon = document.querySelector('.pomo-icon');
     if (pomoIcon) pomoIcon.style.display = 'none';
     
-    const adminViewingKelas = sessionStorage.getItem('adminViewingKelas'); // ← TAMBAH
+    const btnKeluar = document.getElementById('btnKeluar'); // ← TAMBAH
+    if (btnKeluar) btnKeluar.style.display = 'none';        // ← TAMBAH
     
+    const adminViewingKelas = sessionStorage.getItem('adminViewingKelas');
+    // ... sisa kode tetap sama
     if (adminViewingKelas) { // ← TAMBAH: kalau lagi lihat kelas tertentu, langsung masuk
         adminSelector.style.display = 'none';
         mainContent.style.display = 'flex';
@@ -2763,7 +2766,7 @@ function logout() {
     localStorage.removeItem('isLoggedIn');
     localStorage.removeItem('userKelas');
     localStorage.removeItem('role');
-    // Hentikan notifikasi background saat logout
+    sessionStorage.removeItem('adminViewingKelas'); // ← TAMBAH INI
     if (window._swReg) {
         window._swReg.active?.postMessage({ type: 'STOP_NOTIF' });
     }
