@@ -1409,18 +1409,18 @@ input[type="text"]:focus { border-color: var(--color-2); }
             <button class="item-box" onclick="adminLihatJadwal('TKJ 2')" style="cursor:pointer; background:var(--white)">TKJ 2</button>
 </div>
         
-<button onclick="logout()" class="btn-save" style="background: var(--white); margin-top: 20px; color: #dc3545; border: 2px solid #dc3545; box-shadow: 0 6px 0 #dc3545;">
-               LOGOUT ADMIN
-      </button>
+<button onclick="logout()" style="background-color: var(--white); color: var(--color-2); border: 2px solid var(--color-2); border-radius: 10px; padding: 12px 20px; font-size: 13px; font-weight: 800; text-transform: uppercase; cursor: pointer; width: 100%; box-shadow: 0 5px 0 var(--color-2); margin-top: 20px;">
+    Keluar
+</button>
 </div>
 
 <div id="mainScheduleContent" style="display: flex; flex-direction: column; gap: 20px; width: 100%; align-items: center;">
     
 <div id="wrapperBackBtn" style="width: 100%; display: flex; justify-content: flex-start; padding: 0 5px;">
         <button id="btnBackToAdmin" onclick="backToAdminMenu()" 
-            style="display:none; background: var(--color-2); color: white; border: none; padding: 11px 20px; border-radius: 12px; font-weight: 800; cursor: pointer; box-shadow: 0 5px 0 var(--color-1); font-size: 12px; letter-spacing: 0.5px; text-transform: uppercase; transition: all 0.1s ease;">
-            ← Panel Monitoring Admin
-        </button>
+    style="display:none; background: var(--color-2); color: white; border: none; padding: 11px 20px; border-radius: 12px; font-weight: 800; cursor: pointer; box-shadow: 0 5px 0 var(--color-1); font-size: 13px; letter-spacing: 0.3px; transition: all 0.1s ease;">
+    &#10094; Kembali
+</button>
 </div>
 
 <div class="glass-card header-strip" style="width: 100%; margin-top: 0;">
@@ -1479,7 +1479,7 @@ input[type="text"]:focus { border-color: var(--color-2); }
 </div>
 
 <div style="margin-top: 5px; padding: 0 10px; width: 100%;">
-    <button onclick="logout()" style="background-color: var(--white); color: var(--color-2); border: 2px solid var(--color-2); border-radius: 10px; padding: 12px 20px; font-size: 13px; font-weight: 800; text-transform: uppercase; cursor: pointer; width: 100%; box-shadow: 0 5px 0 var(--color-2);">
+    <button id="btnKeluar" onclick="logout()" style="background-color: var(--white); color: var(--color-2); border: 2px solid var(--color-2); border-radius: 10px; padding: 12px 20px; font-size: 13px; font-weight: 800; text-transform: uppercase; cursor: pointer; width: 100%; box-shadow: 0 5px 0 var(--color-2);">
      Keluar
     </button>
     </div>
@@ -2516,13 +2516,23 @@ window.onload = function() {
     }
 })();
     if (role === 'admin') {
-        const pomoIcon = document.querySelector('.pomo-icon');
-        if (pomoIcon) pomoIcon.style.display = 'none';
+    const pomoIcon = document.querySelector('.pomo-icon');
+    if (pomoIcon) pomoIcon.style.display = 'none';
+    
+    const adminViewingKelas = sessionStorage.getItem('adminViewingKelas'); // ← TAMBAH
+    
+    if (adminViewingKelas) { // ← TAMBAH: kalau lagi lihat kelas tertentu, langsung masuk
+        adminSelector.style.display = 'none';
+        mainContent.style.display = 'flex';
+        if(btnEdit) btnEdit.style.display = 'block';
+        btnBack.style.display = 'inline-flex';
+    } else { // ← yang lama jadi else
         adminSelector.style.display = 'flex';
         mainContent.style.display = 'none';
         if(btnEdit) btnEdit.style.display = 'block';
         btnBack.style.display = 'none';
-    } 
+    }
+}
     else if (role === 'sekretaris') {
         adminSelector.style.display = 'none';
         mainContent.style.display = 'flex';
@@ -2561,6 +2571,7 @@ window.onload = function() {
 
 function adminLihatJadwal(kelas) {
     localStorage.setItem('userKelas', kelas); 
+    sessionStorage.setItem('adminViewingKelas', kelas);
     const mainContent = document.getElementById('mainScheduleContent');
     const adminSelector = document.getElementById('adminSelector');
     adminSelector.style.display = 'none';
@@ -2585,6 +2596,7 @@ function adminLihatJadwal(kelas) {
 }
 
 function backToAdminMenu() {
+    sessionStorage.removeItem('adminViewingKelas');
     document.getElementById('adminSelector').style.display = 'flex';
     document.getElementById('mainScheduleContent').style.display = 'none';
     document.getElementById('btnBackToAdmin').style.display = 'none';
