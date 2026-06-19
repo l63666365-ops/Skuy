@@ -471,10 +471,24 @@
         }
 
         .task-check {
+            display: none;
             width: 18px;
             height: 18px;
             cursor: pointer;
             accent-color: var(--color-2);
+        }
+
+        .task-check-custom {
+            width: 26px;
+            height: 26px;
+            min-width: 26px;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: transform 0.15s ease;
+        }
+
+        .task-check-custom:active {
+            transform: scale(0.85);
         }
 
         .task-text {
@@ -2442,7 +2456,19 @@
 
                 li.innerHTML = `
     <div style="display:flex; width:100%; align-items:center; gap:10px;">
-        <input type="checkbox" class="task-check" ${t.done ? 'checked' : ''} onclick="${toggleFunc}">
+        <div class="task-check-custom" onclick="${toggleFunc}">
+  ${t.done ?
+                        `<svg viewBox="0 0 24 24" fill="none" width="20" height="20">
+        <path d="M 18.9 6.2 A 9 9 0 1 1 14.3 3.3" 
+              stroke="var(--color-2)" stroke-width="2.2" stroke-linecap="round"/>
+        <path d="M 7 12 L 10.5 15.5 L 19 1" 
+              stroke="var(--color-2)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>` :
+                        `<svg viewBox="0 0 24 24" fill="none" width="20" height="20">
+        <circle cx="12" cy="12" r="9" stroke="#aac0d8" stroke-width="1.8"/>
+    </svg>`
+                    }
+</div>
         <div style="display: flex; flex-direction: column; flex-grow: 1;">
             <span class="task-text">${processedText}</span>
             <span class="task-date" style="display: block; margin-bottom: 0;">${formatLengkap}</span>
