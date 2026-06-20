@@ -1,5 +1,5 @@
 // SkuyJadwal Service Worker v5 - offline page embedded langsung di SW
-const CACHE_VERSION = 'skuy-v10';
+const CACHE_VERSION = 'skuy-v11';
 const CACHE_NAME = CACHE_VERSION;
 
 // HTML offline di-embed langsung di sini — tidak butuh file offline.html di server
@@ -91,30 +91,51 @@ p{font-size:13px;color:#5483b3;font-weight:500;line-height:1.7;margin-bottom:24p
   <h1>Kamu Lagi Offline</h1>
   <p>Koneksi internet tidak terdeteksi.<br>Cek koneksi lalu coba lagi ya.</p>
   <div class="tips">
-    <div class="tips-title"><svg xmlns="http://w3.org" viewBox="0 0 24 24" width="12" height="12" fill="none">
-  <!-- Efek Kilau/Glow Lembut -->
-  <circle cx="12" cy="11" r="6" fill="#FCD34D" opacity="0.15" filter="blur(1px)"/>
-  
-  <!-- Sinar Lampu (Garis Cahaya Modern) -->
-  <g stroke="#F59E0B" stroke-width="2" stroke-linecap="round">
-    <path d="M12 3V1.5" />
-    <path d="M18.36 5.64l1.06-1.06" />
-    <path d="M21 11h1.5" />
-    <path d="M18.36 16.36l1.06 1.06" />
-    <path d="M5.64 5.64L4.58 4.58" />
-    <path d="M3 11H1.5" />
-    <path d="M5.64 16.36l-1.06 1.06" />
+    <div class="tips-title"><svg xmlns="http://w3.org" viewBox="0 0 100 100" width="10" height="10">
+  <defs>
+    <!-- Efek Pendaran Cahaya (Glow Effect) -->
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="6" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+
+    <!-- Gradasi Warna Kuning Bohlam -->
+    <radialGradient id="bulbYellow" cx="50%" cy="40%" r="50%">
+      <stop offset="0%" stop-color="#FFFFCC" />
+      <stop offset="70%" stop-color="#FFD700" />
+      <stop offset="100%" stop-color="#FF9900" />
+    </radialGradient>
+  </defs>
+
+  <!-- Sinar Lampu Belakang (Glow) -->
+  <circle cx="50" cy="42" r="28" fill="#FFE600" opacity="0.3" filter="url(#glow)" />
+
+  <!-- Garis Sinar Luar -->
+  <g stroke="#FFD700" stroke-width="3.5" stroke-linecap="round">
+    <line x1="50" y1="8" x2="50" y2="15" />
+    <line x1="18" y1="42" x2="25" y2="42" />
+    <line x1="82" y1="42" x2="75" y2="42" />
+    <line x1="27" y1="20" x2="33" y2="25" />
+    <line x1="73" y1="20" x2="67" y2="25" />
   </g>
 
-  <!-- Badan Utama Bola Lampu -->
-  <path d="M12 18c-3.87 0-7-3.13-7-7a7 7 0 0 1 11.95-4.95A6.96 6.96 0 0 1 19 11c0 3.87-3.13 7-7 7Z" fill="#FEF3C7" fill-opacity="0.3" stroke="#D97706" stroke-width="2" stroke-linejoin="round" />
-  <path d="M9 18c0 1.5 1 2.5 3 2.5s3-1 3-2.5" stroke="#D97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+  <!-- Badan Kaca Bohlam -->
+  <path d="M32,53 C32,32 68,32 68,53 C68,61 62,65 59,71 L41,71 C38,65 32,61 32,53 Z" fill="url(#bulbYellow)" stroke="#FF9900" stroke-width="2" />
 
-  <!-- Dudukan/Ulir Lampu (Base) -->
-  <path d="M10.5 22h3" stroke="#B45309" stroke-width="2" stroke-linecap="round" />
+  <!-- Filamen Dalam (Kawat) -->
+  <path d="M44,71 L44,53 Q50,45 56,53 L56,71" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" filter="url(#glow)" />
 
-  <!-- Filamen Dalam Bentuk Hati/Ide Minimalis -->
-  <path d="M12 14.5V11.5M10 9.5a2 2 0 1 1 4 0c0 1-2 2-2 2" stroke="#F59E0B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+  <!-- Fitting / Dudukan Logam Lampu -->
+  <g fill="#9E9E9E" stroke="#757575" stroke-width="1.5" stroke-linejoin="round">
+    <path d="M40,71 H60 V75 H40 Z" />
+    <path d="M42,75 H58 V79 H42 Z" />
+    <path d="M44,79 H56 V82 H44 Z" />
+    <!-- Ujung Bawah -->
+    <path d="M46,82 C46,85 54,85 54,82 Z" fill="#424242" stroke="#424242" />
+  </g>
 </svg>
  Coba Langkah Ini:</div>
     <div class="tips-item"><div class="tips-dot"></div><span>Aktifkan WiFi atau data seluler</span></div>
