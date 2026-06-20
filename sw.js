@@ -1,5 +1,5 @@
 // SkuyJadwal Service Worker v5 - offline page embedded langsung di SW
-const CACHE_VERSION = 'skuy-v8';
+const CACHE_VERSION = 'skuy-v9';
 const CACHE_NAME = CACHE_VERSION;
 
 // HTML offline di-embed langsung di sini — tidak butuh file offline.html di server
@@ -91,7 +91,32 @@ p{font-size:13px;color:#5483b3;font-weight:500;line-height:1.7;margin-bottom:24p
   <h1>Kamu Lagi Offline</h1>
   <p>Koneksi internet tidak terdeteksi.<br>Cek koneksi lalu coba lagi ya.</p>
   <div class="tips">
-    <div class="tips-title">💡 Coba Langkah Ini:</div>
+    <div class="tips-title"><svg xmlns="http://w3.org" viewBox="0 0 24 24" width="5" height="5" fill="none">
+  <!-- Efek Kilau/Glow Lembut -->
+  <circle cx="12" cy="11" r="6" fill="#FCD34D" opacity="0.15" filter="blur(1px)"/>
+  
+  <!-- Sinar Lampu (Garis Cahaya Modern) -->
+  <g stroke="#F59E0B" stroke-width="2" stroke-linecap="round">
+    <path d="M12 3V1.5" />
+    <path d="M18.36 5.64l1.06-1.06" />
+    <path d="M21 11h1.5" />
+    <path d="M18.36 16.36l1.06 1.06" />
+    <path d="M5.64 5.64L4.58 4.58" />
+    <path d="M3 11H1.5" />
+    <path d="M5.64 16.36l-1.06 1.06" />
+  </g>
+
+  <!-- Badan Utama Bola Lampu -->
+  <path d="M12 18c-3.87 0-7-3.13-7-7a7 7 0 0 1 11.95-4.95A6.96 6.96 0 0 1 19 11c0 3.87-3.13 7-7 7Z" fill="#FEF3C7" fill-opacity="0.3" stroke="#D97706" stroke-width="2" stroke-linejoin="round" />
+  <path d="M9 18c0 1.5 1 2.5 3 2.5s3-1 3-2.5" stroke="#D97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+
+  <!-- Dudukan/Ulir Lampu (Base) -->
+  <path d="M10.5 22h3" stroke="#B45309" stroke-width="2" stroke-linecap="round" />
+
+  <!-- Filamen Dalam Bentuk Hati/Ide Minimalis -->
+  <path d="M12 14.5V11.5M10 9.5a2 2 0 1 1 4 0c0 1-2 2-2 2" stroke="#F59E0B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+</svg>
+ Coba Langkah Ini:</div>
     <div class="tips-item"><div class="tips-dot"></div><span>Aktifkan WiFi atau data seluler</span></div>
     <div class="tips-item"><div class="tips-dot"></div><span>Pindah ke lokasi dengan sinyal lebih kuat</span></div>
     <div class="tips-item"><div class="tips-dot"></div><span>Matikan &amp; nyalakan ulang koneksi</span></div>
