@@ -1,5 +1,5 @@
 // SkuyJadwal Service Worker v5 - offline page embedded langsung di SW
-const CACHE_VERSION = 'skuy-v9';
+const CACHE_VERSION = 'skuy-v10';
 const CACHE_NAME = CACHE_VERSION;
 
 // HTML offline di-embed langsung di sini — tidak butuh file offline.html di server
@@ -91,7 +91,7 @@ p{font-size:13px;color:#5483b3;font-weight:500;line-height:1.7;margin-bottom:24p
   <h1>Kamu Lagi Offline</h1>
   <p>Koneksi internet tidak terdeteksi.<br>Cek koneksi lalu coba lagi ya.</p>
   <div class="tips">
-    <div class="tips-title"><svg xmlns="http://w3.org" viewBox="0 0 24 24" width="5" height="5" fill="none">
+    <div class="tips-title"><svg xmlns="http://w3.org" viewBox="0 0 24 24" width="12" height="12" fill="none">
   <!-- Efek Kilau/Glow Lembut -->
   <circle cx="12" cy="11" r="6" fill="#FCD34D" opacity="0.15" filter="blur(1px)"/>
   
