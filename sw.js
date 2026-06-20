@@ -1,5 +1,5 @@
 // SkuyJadwal Service Worker v5 - offline page embedded langsung di SW
-const CACHE_VERSION = 'skuy-v7';
+const CACHE_VERSION = 'skuy-v8';
 const CACHE_NAME = CACHE_VERSION;
 
 // HTML offline di-embed langsung di sini — tidak butuh file offline.html di server
@@ -88,10 +88,10 @@ p{font-size:13px;color:#5483b3;font-weight:500;line-height:1.7;margin-bottom:24p
       <svg viewBox="0 0 14 14"><line x1="2" y1="2" x2="12" y2="12"/><line x1="12" y1="2" x2="2" y2="12"/></svg>
     </div>
   </div>
-  <h1>Kamu Lagi Offline 😴</h1>
+  <h1>Kamu Lagi Offline</h1>
   <p>Koneksi internet tidak terdeteksi.<br>Cek koneksi lalu coba lagi ya.</p>
   <div class="tips">
-    <div class="tips-title">💡 Coba Langkah Ini</div>
+    <div class="tips-title">💡 Coba Langkah Ini:</div>
     <div class="tips-item"><div class="tips-dot"></div><span>Aktifkan WiFi atau data seluler</span></div>
     <div class="tips-item"><div class="tips-dot"></div><span>Pindah ke lokasi dengan sinyal lebih kuat</span></div>
     <div class="tips-item"><div class="tips-dot"></div><span>Matikan &amp; nyalakan ulang koneksi</span></div>
