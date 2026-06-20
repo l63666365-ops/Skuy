@@ -1,5 +1,5 @@
 // SkuyJadwal Service Worker v5 - offline page embedded langsung di SW
-const CACHE_VERSION = 'skuy-v12';
+const CACHE_VERSION = 'skuy-v13';
 const CACHE_NAME = CACHE_VERSION;
 
 // HTML offline di-embed langsung di sini — tidak butuh file offline.html di server
@@ -137,7 +137,7 @@ p{font-size:13px;color:#5483b3;font-weight:500;line-height:1.7;margin-bottom:24p
     <path d="M46,82 C46,85 54,85 54,82 Z" fill="#424242" stroke="#424242" />
   </g>
 </svg>
- Coba Langkah Ini:</div>
+ Coba Langkah Ini :</div>
     <div class="tips-item"><div class="tips-dot"></div><span>Aktifkan WiFi atau data seluler</span></div>
     <div class="tips-item"><div class="tips-dot"></div><span>Pindah ke lokasi dengan sinyal lebih kuat</span></div>
     <div class="tips-item"><div class="tips-dot"></div><span>Matikan &amp; nyalakan ulang koneksi</span></div>
