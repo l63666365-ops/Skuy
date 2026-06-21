@@ -1,5 +1,5 @@
 // SkuyJadwal Service Worker v9 - fix format jam offline page
-const CACHE_VERSION = 'skuy-v21';
+const CACHE_VERSION = 'skuy-v22';
 const CACHE_NAME = CACHE_VERSION;
 const FONT_CACHE = 'skuy-fonts-v1';
 
@@ -339,7 +339,8 @@ function buildSchedulePreview() {
     var jamRaw = list[i][1] || '';
     var jamNorm = jamRaw.replace(/\./g, ':').replace(/\s/g, '');
     var parts = jamNorm.split('-');
-    var jamCantik = parts.length === 2 ? parts[0] + ' &mdash; ' + parts[1] : jamRaw;
+    var fmtTime = function(t) { return t.replace(':', ' : '); };
+    var jamCantik = parts.length === 2 ? fmtTime(parts[0]) + ' &mdash; ' + fmtTime(parts[1]) : jamRaw;
     html += '<div class="sched-row"><div class="sched-mapel">' + list[i][0] + '</div><div class="sched-meta"><span>' + jamCantik + '</span><span class="sep">&middot;</span><span class="ruang">&#128205; ' + list[i][2] + '</span></div></div>';
   }
   inner.innerHTML = html;
