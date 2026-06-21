@@ -1,6 +1,10 @@
-// SkuyJadwal Service Worker v7 - offline page maskot interaktif, embedded langsung di SW
-const CACHE_VERSION = 'skuy-v16';
+// SkuyJadwal Service Worker v8 - font Poppins di-cache biar offline page sama fontnya
+const CACHE_VERSION = 'skuy-v17';
 const CACHE_NAME = CACHE_VERSION;
+const FONT_CACHE = 'skuy-fonts-v1';
+
+// URL CSS font Poppins yang mau di-cache (weights yang dipakai: 400,600,700,800)
+const POPPINS_CSS_URL = 'https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap';
 
 // HTML offline di-embed langsung di sini — tidak butuh file offline.html di server
 const OFFLINE_HTML = `<!DOCTYPE html>
@@ -353,14 +357,56 @@ document.getElementById('schedToggle').addEventListener('click', function () {
 </body>
 </html>`;
 
-// ─── Install: tidak perlu cache file eksternal ────────────────────────────────
-self.addEventListener('install', () => self.skipWaiting());
+// ─── Install: cache font Poppins saat SW dipasang (device pasti online saat ini) ──
+self.addEventListener('install', (event) => {
+    event.waitUntil(
+        (async () => {
+            // Langsung aktif tanpa nunggu tab lama
+            self.skipWaiting();
 
-// ─── Activate: hapus semua cache versi lama ───────────────────────────────────
-self.addEventListener('activate', (e) => {
-    e.waitUntil(
+            // Cache font Poppins ke font-cache terpisah
+            try {
+                const fontCache = await caches.open(FONT_CACHE);
+
+                // Fetch CSS font (perlu User-Agent header biar Google Fonts kasih woff2)
+                const cssResponse = await fetch(POPPINS_CSS_URL, {
+                    headers: { 'User-Agent': 'Mozilla/5.0 (Linux; Android 10) AppleWebKit/537.36 Chrome/120 Mobile Safari/537.36' }
+                });
+
+                if (cssResponse.ok) {
+                    // Simpan CSS-nya
+                    await fontCache.put(POPPINS_CSS_URL, cssResponse.clone());
+
+                    // Parse CSS untuk dapetin URL file .woff2 di dalamnya, terus cache satu-satu
+                    const cssText = await cssResponse.text();
+                    const fontUrls = [...cssText.matchAll(/url\((https:\/\/fonts\.gstatic\.com[^)]+)\)/g)]
+                        .map(m => m[1]);
+
+                    await Promise.allSettled(
+                        fontUrls.map(async (url) => {
+                            try {
+                                const fontRes = await fetch(url);
+                                if (fontRes.ok) await fontCache.put(url, fontRes);
+                            } catch (_) { /* skip kalau gagal */ }
+                        })
+                    );
+                }
+            } catch (err) {
+                // Kalau install gagal fetch font (harusnya tidak, tapi jaga-jaga)
+                console.warn('[SW] Gagal cache font Poppins:', err);
+            }
+        })()
+    );
+});
+
+// ─── Activate: hapus semua cache versi lama, tapi JANGAN hapus font cache ────
+self.addEventListener('activate', (event) => {
+    event.waitUntil(
         caches.keys().then(keys =>
-            Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
+            Promise.all(
+                keys.filter(k => k !== CACHE_NAME && k !== FONT_CACHE)
+                    .map(k => caches.delete(k))
+            )
         ).then(() => clients.claim())
     );
 });
@@ -369,15 +415,40 @@ self.addEventListener('activate', (e) => {
 self.addEventListener('fetch', (event) => {
     const url = new URL(event.request.url);
 
-    // Jangan intercept request ke luar domain (Firebase, Cloudinary, GAS, dll)
+    // ── 1. Intercept request ke Google Fonts & gstatic → cache-first ──────────
+    if (
+        url.hostname === 'fonts.googleapis.com' ||
+        url.hostname === 'fonts.gstatic.com'
+    ) {
+        event.respondWith(
+            caches.open(FONT_CACHE).then(async (cache) => {
+                const cached = await cache.match(event.request);
+                if (cached) return cached;
+
+                // Kalau belum ada di cache, coba fetch & simpan
+                try {
+                    const response = await fetch(event.request);
+                    if (response && response.status === 200) {
+                        cache.put(event.request, response.clone());
+                    }
+                    return response;
+                } catch (_) {
+                    // Offline dan tidak ada cache → return 404 (browser gracefully fallback ke font sistem)
+                    return new Response('', { status: 404 });
+                }
+            })
+        );
+        return;
+    }
+
+    // ── 2. Jangan intercept request ke luar domain lain (Firebase, Cloudinary, GAS, dll) ──
     if (url.origin !== self.location.origin) return;
 
-    // Navigasi / dokumen HTML → network dulu, kalau gagal → serve OFFLINE_HTML langsung
+    // ── 3. Navigasi / dokumen HTML → network dulu, kalau gagal → serve OFFLINE_HTML ──
     if (event.request.mode === 'navigate') {
         event.respondWith(
             fetch(event.request)
                 .then(res => {
-                    // Simpan ke cache kalau berhasil
                     if (res && res.status === 200) {
                         const clone = res.clone();
                         caches.open(CACHE_NAME).then(c => c.put(event.request, clone));
@@ -394,7 +465,7 @@ self.addEventListener('fetch', (event) => {
         return;
     }
 
-    // Aset statis (JS, CSS, gambar): cache-first, fallback network
+    // ── 4. Aset statis (JS, CSS, gambar): cache-first, fallback network ────────
     event.respondWith(
         caches.match(event.request).then(cached => {
             if (cached) return cached;
