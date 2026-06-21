@@ -579,3 +579,9 @@ function countdown(ms) {
     if (s || !p.length) p.push(`${s} detik`);
     return p.join(' ');
 }
+
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js?v=23', { scope: './', updateViaCache: 'none' })
+        .then(reg => reg.update())
+        .catch(() => {});
+}
