@@ -1,5 +1,5 @@
 // SkuyJadwal Service Worker v8 - font Poppins di-cache biar offline page sama fontnya
-const CACHE_VERSION = 'skuy-v17';
+const CACHE_VERSION = 'skuy-v18';
 const CACHE_NAME = CACHE_VERSION;
 const FONT_CACHE = 'skuy-fonts-v1';
 
@@ -336,7 +336,8 @@ function buildSchedulePreview() {
   }
   var html = '<div class="sched-head">' + label + (kelas ? ' &middot; ' + kelas : '') + '</div>';
   for (var i = 0; i < list.length; i++) {
-    html += '<div class="sched-row"><div class="sched-mapel">' + list[i][0] + '</div><div class="sched-meta"><span>' + list[i][1] + '</span><span class="sep">&middot;</span><span class="ruang">&#128205; ' + list[i][2] + '</span></div></div>';
+    var jamCantik = list[i][1].replace(/\./g, '\u2009:\u2009').replace('-', ' \u2014 ');
+    html += '<div class="sched-row"><div class="sched-mapel">' + list[i][0] + '</div><div class="sched-meta"><span>' + jamCantik + '</span><span class="sep">&middot;</span><span class="ruang">&#128205; ' + list[i][2] + '</span></div></div>';
   }
   inner.innerHTML = html;
 }
