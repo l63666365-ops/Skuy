@@ -1,5 +1,5 @@
-// SkuyJadwal Service Worker v5 - offline page embedded langsung di SW
-const CACHE_VERSION = 'skuy-v13';
+// SkuyJadwal Service Worker v7 - offline page maskot interaktif, embedded langsung di SW
+const CACHE_VERSION = 'skuy-v16';
 const CACHE_NAME = CACHE_VERSION;
 
 // HTML offline di-embed langsung di sini — tidak butuh file offline.html di server
@@ -17,155 +17,338 @@ body{
   background-color:#f1f6f9;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cdefs%3E%3Cstyle%3E.b%7Bfill:none;stroke:%23052659;stroke-width:0.7;opacity:0.13%7D%3C/style%3E%3C/defs%3E%3Ccircle class='b' cx='20' cy='20' r='12'/%3E%3Ccircle class='b' cx='60' cy='20' r='12'/%3E%3Ccircle class='b' cx='20' cy='60' r='12'/%3E%3Ccircle class='b' cx='60' cy='60' r='12'/%3E%3Ccircle class='b' cx='40' cy='40' r='12'/%3E%3Ccircle class='b' cx='0' cy='40' r='12'/%3E%3Ccircle class='b' cx='80' cy='40' r='12'/%3E%3Ccircle class='b' cx='40' cy='0' r='12'/%3E%3Ccircle class='b' cx='40' cy='80' r='12'/%3E%3Ccircle class='b' cx='20' cy='20' r='5'/%3E%3Ccircle class='b' cx='60' cy='20' r='5'/%3E%3Ccircle class='b' cx='20' cy='60' r='5'/%3E%3Ccircle class='b' cx='60' cy='60' r='5'/%3E%3Ccircle class='b' cx='40' cy='40' r='5'/%3E%3Cpath class='b' d='M40 28 L52 40 L40 52 L28 40 Z'/%3E%3Cpath class='b' d='M20 8 L28 16 L20 24 L12 16 Z'/%3E%3Cpath class='b' d='M60 8 L68 16 L60 24 L52 16 Z'/%3E%3Cpath class='b' d='M20 56 L28 64 L20 72 L12 64 Z'/%3E%3Cpath class='b' d='M60 56 L68 64 L60 72 L52 64 Z'/%3E%3C/svg%3E");
   background-size:80px 80px;
-  min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px 20px;
+  min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px 16px;
 }
 .card{
-  background:#fff;border-radius:24px;padding:40px 28px 36px;
-  text-align:center;max-width:340px;width:100%;
-  box-shadow:0 8px 32px rgba(5,38,89,.12),0 2px 8px rgba(0,0,0,.06);
-  border:1px solid rgba(193,232,255,.6);
-  animation:popIn .6s cubic-bezier(.34,1.56,.64,1);
+  background:#fff;border-radius:28px;padding:38px 26px 28px;
+  text-align:center;max-width:330px;width:100%;
+  box-shadow:0 10px 36px rgba(5,38,89,.10);
+  border:1px solid rgba(193,232,255,.55);
+  animation:popIn .55s cubic-bezier(.34,1.56,.64,1);
 }
-@keyframes popIn{from{opacity:0;transform:scale(.85) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}
-.wifi-wrap{width:80px;height:80px;margin:0 auto 20px;position:relative;display:flex;align-items:center;justify-content:center;}
-.wifi-icon{animation:float 3s ease-in-out infinite;}
-@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
-.wifi-icon svg{width:72px;height:72px;}
-.arc{fill:none;stroke-linecap:round;}
-.arc-1{stroke:#c1e8ff;stroke-width:5;animation:arcFade 2s ease-in-out infinite 0s;}
-.arc-2{stroke:#7da0ca;stroke-width:5;animation:arcFade 2s ease-in-out infinite .3s;}
-.arc-3{stroke:#5483b3;stroke-width:5;animation:arcFade 2s ease-in-out infinite .6s;}
-.dot{fill:#052659;animation:arcFade 2s ease-in-out infinite .9s;}
-@keyframes arcFade{0%,100%{opacity:.2}50%{opacity:1}}
-.x-mark{
-  position:absolute;top:-4px;right:-4px;width:26px;height:26px;
-  background:#ff4d4d;border-radius:50%;border:2.5px solid #fff;
-  display:flex;align-items:center;justify-content:center;
-  box-shadow:0 2px 6px rgba(255,77,77,.4);
-  animation:xPop .5s cubic-bezier(.34,1.56,.64,1) .4s both;
-}
-@keyframes xPop{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
-.x-mark svg{width:13px;height:13px;stroke:#fff;stroke-width:2.5;stroke-linecap:round;fill:none;}
-h1{font-size:22px;font-weight:800;color:#052659;letter-spacing:-.5px;margin-bottom:8px;}
-p{font-size:13px;color:#5483b3;font-weight:500;line-height:1.7;margin-bottom:24px;}
-.tips{background:#c1e8ff;border:1px solid #7da0ca;border-radius:14px;padding:14px 16px;text-align:left;margin-bottom:24px;}
-.tips-title{font-size:11px;font-weight:800;color:#052659;text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;}
-.tips-item{display:flex;align-items:flex-start;gap:8px;margin-bottom:6px;font-size:12px;color:#052659;font-weight:600;}
-.tips-item:last-child{margin-bottom:0;}
-.tips-dot{width:6px;height:6px;min-width:6px;background:#5483b3;border-radius:50%;margin-top:5px;}
-.btn-retry{
-  width:100%;background:#052659;color:#fff;border:none;padding:14px;
-  border-radius:13px;font-size:13px;font-weight:800;cursor:pointer;
-  letter-spacing:.5px;text-transform:uppercase;
-  box-shadow:0 6px 0 #021024;margin-bottom:4px;
-  transition:all .1s ease;display:flex;align-items:center;justify-content:center;gap:8px;
-}
-.btn-retry:active{box-shadow:0 2px 0 #021024;transform:translateY(4px);}
-@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
-.spin{animation:spin .8s linear infinite;}
-#status-pill{
-  display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:700;
-  color:#5483b3;background:#f0f7ff;border:1px solid #7da0ca;
-  border-radius:20px;padding:4px 12px;margin-top:14px;
-}
-.pulse-dot{width:7px;height:7px;background:#ff4d4d;border-radius:50%;animation:pulseDot 1.5s ease-in-out infinite;}
-@keyframes pulseDot{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.5);opacity:.5}}
-.footer-note{font-size:10px;color:#7da0ca;margin-top:18px;font-weight:500;}
+@keyframes popIn{from{opacity:0;transform:scale(.9) translateY(14px)}to{opacity:1;transform:scale(1) translateY(0)}}
+
+.mascot-wrap{position:relative;width:140px;height:150px;margin:0 auto 6px;display:flex;align-items:center;justify-content:center;}
+.mascot-glow{position:absolute;width:118px;height:118px;border-radius:50%;background:var(--c5);animation:glowPulse 3s ease-in-out infinite;}
+@keyframes glowPulse{0%,100%{transform:scale(1);opacity:.5;}50%{transform:scale(1.1);opacity:.7;}}
+.mascot-shadow{position:absolute;bottom:10px;width:62px;height:12px;border-radius:50%;background:rgba(5,38,89,.14);animation:shadowPulse 2.6s ease-in-out infinite;}
+@keyframes shadowPulse{0%,100%{transform:scaleX(1);opacity:.45;}50%{transform:scaleX(.82);opacity:.25;}}
+.mascot-bot{position:relative;z-index:2;animation:botBob 2.8s ease-in-out infinite;transform-origin:bottom center;}
+@keyframes botBob{0%,100%{transform:translateY(0) rotate(-3deg);}50%{transform:translateY(-6px) rotate(3deg);}}
+.mascot-bot svg{width:108px;height:128px;display:block;}
+
+.eye{animation:blink 4.4s ease-in-out infinite;transform-origin:center;}
+.eye.right{animation-delay:.15s;}
+@keyframes blink{0%,90%,100%{transform:scaleY(1);}93%,96%{transform:scaleY(.1);}}
+
+.mouth-happy{opacity:0;transition:opacity .3s;}
+.mascot-bot.online .mouth-sad{opacity:0;}
+.mascot-bot.online .mouth-happy{opacity:1;}
+
+.ant-tip{fill:var(--c4);animation:tipPulse 1.5s ease-in-out infinite;transition:fill .3s;}
+.mascot-bot.online .ant-tip{fill:#28a745;animation:none;}
+@keyframes tipPulse{0%,100%{opacity:.55;}50%{opacity:1;}}
+.ant-halo{fill:var(--c4);opacity:0;transition:opacity .3s;}
+.mascot-bot.online .ant-halo{opacity:.3;}
+
+.sig{stroke:var(--c4);fill:none;stroke-width:2.5;stroke-linecap:round;transition:opacity .3s;}
+.sig1{animation:sigFade 1.8s ease-in-out infinite 0s;}
+.sig2{animation:sigFade 1.8s ease-in-out infinite .25s;}
+.sig3{animation:sigFade 1.8s ease-in-out infinite .5s;}
+@keyframes sigFade{0%,100%{opacity:.15;}50%{opacity:.85;}}
+.mascot-bot.online .sig{opacity:0;animation:none;}
+
+h1{font-size:20px;font-weight:800;color:var(--c2);letter-spacing:-.4px;margin-bottom:10px;}
+
+.status-line{display:flex;align-items:center;justify-content:center;gap:7px;min-height:36px;margin-bottom:20px;padding:0 6px;}
+.status-dot{width:6px;height:6px;border-radius:50%;background:#ff4d4d;flex-shrink:0;animation:dotPulse 1.4s ease-in-out infinite;}
+.status-dot.amber{background:#ffaa00;}
+.status-dot.green{background:#28a745;animation:none;}
+@keyframes dotPulse{0%,100%{transform:scale(1);opacity:1;}50%{transform:scale(1.6);opacity:.5;}}
+.status-text{font-size:12.5px;font-weight:600;color:var(--c3);transition:opacity .25s;line-height:1.5;}
+.status-text.amber{color:#b8860b;}
+.status-text.green{color:#1f8a3c;}
+
+.btn-retry{position:relative;width:100%;background:var(--c2);color:#fff;border:none;padding:14px;border-radius:14px;font-size:13px;font-weight:800;cursor:pointer;letter-spacing:.4px;text-transform:uppercase;overflow:hidden;margin-bottom:16px;transition:transform .1s;}
+.btn-retry:active{transform:scale(.97);}
+.btn-retry .fill{position:absolute;left:0;top:0;bottom:0;width:0%;background:rgba(255,255,255,.16);transition:width 1s linear;}
+.btn-retry .label{position:relative;z-index:2;}
+.btn-retry.shake{animation:shake .4s ease;}
+@keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-5px);}75%{transform:translateX(5px);}}
+
+.sched-link{display:flex;align-items:center;justify-content:center;gap:6px;font-size:11.5px;font-weight:700;color:var(--c3);cursor:pointer;padding:4px 0 2px;user-select:none;}
+.sched-link .chev{font-size:9px;transition:transform .25s;display:inline-block;}
+.sched-link.open .chev{transform:rotate(180deg);}
+.sched-list{max-height:0;overflow:hidden;transition:max-height .3s ease;text-align:left;}
+.sched-list-inner{padding-top:10px;}
+.sched-row{padding:8px 2px;border-bottom:1px solid #eef3f7;}
+.sched-row:last-child{border-bottom:none;}
+.sched-mapel{color:var(--c2);font-weight:700;font-size:11.5px;margin-bottom:3px;}
+.sched-meta{display:flex;align-items:center;gap:5px;color:var(--c3);font-weight:600;font-size:10.5px;}
+.sched-meta .sep{opacity:.5;}
+.sched-meta .ruang{display:flex;align-items:center;gap:3px;}
+.sched-head{font-size:10px;font-weight:800;color:var(--c3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;text-align:center;}
+.sched-empty{font-size:11px;color:var(--c3);font-weight:600;text-align:center;padding:8px 4px;}
+
+.footer-note{font-size:9.5px;color:var(--c4);margin-top:16px;font-weight:500;}
+
+.confetti-piece{position:fixed;width:7px;height:7px;border-radius:2px;z-index:999;pointer-events:none;animation:flyOut .8s ease-out forwards;}
+@keyframes flyOut{0%{transform:translate(0,0) scale(1);opacity:1;}100%{transform:translate(var(--x),var(--y)) scale(.5);opacity:0;}}
+.sparkle{position:fixed;border-radius:50%;z-index:998;pointer-events:none;animation:sparkleFly .9s ease-out forwards;opacity:0;}
+@keyframes sparkleFly{0%{transform:scale(0) translate(0,0);opacity:1;}100%{transform:scale(1) translate(var(--sx),var(--sy));opacity:0;}}
+
 </style>
 </head>
 <body>
+
 <div class="card">
-  <div class="wifi-wrap">
-    <div class="wifi-icon">
-      <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
-        <path class="arc arc-1" d="M12 38 Q40 10 68 38"/>
-        <path class="arc arc-2" d="M22 48 Q40 28 58 48"/>
-        <path class="arc arc-3" d="M32 58 Q40 46 48 58"/>
-        <circle class="dot" cx="40" cy="66" r="4.5"/>
+  <div class="mascot-wrap">
+    <div class="mascot-glow"></div>
+    <div class="mascot-shadow"></div>
+    <div class="mascot-bot" id="mascotBot">
+      <svg viewBox="0 -14 120 154" xmlns="http://www.w3.org/2000/svg">
+        <path class="sig sig3" d="M43,-3 Q60,-17 77,-3"/>
+        <path class="sig sig2" d="M48,2 Q60,-9 72,2"/>
+        <path class="sig sig1" d="M53,7 Q60,-1 67,7"/>
+        <circle class="ant-halo" cx="60" cy="22" r="12"/>
+        <line x1="60" y1="44" x2="60" y2="26" stroke="#5483b3" stroke-width="4" stroke-linecap="round"/>
+        <circle class="ant-tip" cx="60" cy="22" r="6"/>
+        <rect x="20" y="40" width="80" height="80" rx="28" fill="#052659"/>
+        <rect x="32" y="56" width="56" height="46" rx="18" fill="#c1e8ff"/>
+        <circle class="eye left" cx="48" cy="78" r="5" fill="#021024"/>
+        <circle class="eye right" cx="72" cy="78" r="5" fill="#021024"/>
+        <path class="mouth-sad" d="M50,95 Q60,89 70,95" stroke="#021024" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <path class="mouth-happy" d="M50,90 Q60,99 70,90" stroke="#021024" stroke-width="3" fill="none" stroke-linecap="round"/>
       </svg>
     </div>
-    <div class="x-mark">
-      <svg viewBox="0 0 14 14"><line x1="2" y1="2" x2="12" y2="12"/><line x1="12" y1="2" x2="2" y2="12"/></svg>
-    </div>
   </div>
+
   <h1>Kamu Lagi Offline</h1>
-  <p>Koneksi internet tidak terdeteksi.<br>Cek koneksi lalu coba lagi ya.</p>
-  <div class="tips">
-    <div class="tips-title"><svg xmlns="http://w3.org" viewBox="0 0 100 100" width="12" height="12">
-  <defs>
-    <!-- Efek Pendaran Cahaya (Glow Effect) -->
-    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-      <feGaussianBlur stdDeviation="6" result="blur" />
-      <feMerge>
-        <feMergeNode in="blur" />
-        <feMergeNode in="SourceGraphic" />
-      </feMerge>
-    </filter>
 
-    <!-- Gradasi Warna Kuning Bohlam -->
-    <radialGradient id="bulbYellow" cx="50%" cy="40%" r="50%">
-      <stop offset="0%" stop-color="#FFFFCC" />
-      <stop offset="70%" stop-color="#FFD700" />
-      <stop offset="100%" stop-color="#FF9900" />
-    </radialGradient>
-  </defs>
-
-  <!-- Sinar Lampu Belakang (Glow) -->
-  <circle cx="50" cy="42" r="28" fill="#FFE600" opacity="0.3" filter="url(#glow)" />
-
-  <!-- Garis Sinar Luar -->
-  <g stroke="#FFD700" stroke-width="3.5" stroke-linecap="round">
-    <line x1="50" y1="8" x2="50" y2="15" />
-    <line x1="18" y1="42" x2="25" y2="42" />
-    <line x1="82" y1="42" x2="75" y2="42" />
-    <line x1="27" y1="20" x2="33" y2="25" />
-    <line x1="73" y1="20" x2="67" y2="25" />
-  </g>
-
-  <!-- Badan Kaca Bohlam -->
-  <path d="M32,53 C32,32 68,32 68,53 C68,61 62,65 59,71 L41,71 C38,65 32,61 32,53 Z" fill="url(#bulbYellow)" stroke="#FF9900" stroke-width="2" />
-
-  <!-- Filamen Dalam (Kawat) -->
-  <path d="M44,71 L44,53 Q50,45 56,53 L56,71" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" filter="url(#glow)" />
-
-  <!-- Fitting / Dudukan Logam Lampu -->
-  <g fill="#9E9E9E" stroke="#757575" stroke-width="1.5" stroke-linejoin="round">
-    <path d="M40,71 H60 V75 H40 Z" />
-    <path d="M42,75 H58 V79 H42 Z" />
-    <path d="M44,79 H56 V82 H44 Z" />
-    <!-- Ujung Bawah -->
-    <path d="M46,82 C46,85 54,85 54,82 Z" fill="#424242" stroke="#424242" />
-  </g>
-</svg>
- Coba Langkah Ini :</div>
-    <div class="tips-item"><div class="tips-dot"></div><span>Aktifkan WiFi atau data seluler</span></div>
-    <div class="tips-item"><div class="tips-dot"></div><span>Pindah ke lokasi dengan sinyal lebih kuat</span></div>
-    <div class="tips-item"><div class="tips-dot"></div><span>Matikan &amp; nyalakan ulang koneksi</span></div>
-    <div class="tips-item"><div class="tips-dot"></div><span>Tap "Coba Lagi" setelah koneksi pulih</span></div>
+  <div class="status-line">
+    <span class="status-dot" id="statusDot"></span>
+    <span class="status-text" id="statusText">Koneksi internet kamu lagi putus</span>
   </div>
-  <button class="btn-retry" id="retryBtn" onclick="retryNow()">
-    <svg id="retryIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-      <polyline points="23 4 23 10 17 10"/>
-      <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
-    </svg>
-    Coba Lagi
+
+  <button class="btn-retry" id="retryBtn">
+    <span class="fill" id="retryFill"></span>
+    <span class="label" id="retryLabel">Coba Lagi</span>
   </button>
-  <div id="status-pill"><div class="pulse-dot"></div> Menunggu koneksi...</div>
-  <div class="footer-note">© 2026 SkuyJadwal · SMK Negeri 2 Sragen</div>
+
+  <div class="sched-link" id="schedToggle">
+    <span>Lihat jadwal tersimpan hari ini</span>
+    <span class="chev">&#9662;</span>
+  </div>
+  <div class="sched-list" id="schedList">
+    <div class="sched-list-inner" id="schedInner"></div>
+  </div>
+
+  <div class="footer-note">&copy; 2026 SkuyJadwal &middot; SMK Negeri 2 Sragen</div>
 </div>
+
 <script>
-function retryNow(){
-  document.getElementById('retryIcon').classList.add('spin');
-  document.getElementById('retryBtn').innerHTML='<svg class="spin" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg> Mengecek...';
-  setTimeout(()=>window.location.reload(),800);
+var messages = [
+  'Koneksi internet kamu lagi putus',
+  'Coba aktifkan WiFi atau data seluler',
+  'Sedang mencari sinyal di sekitar...',
+  'Pindah ke tempat dengan sinyal lebih kuat',
+  'Mencoba menyambung ulang...',
+  'Matikan & nyalakan koneksi sebentar',
+  'Menunggu jaringan kembali...'
+];
+var msgIndex = 0;
+var msgTimer = null;
+var resolved = false;
+
+function setStatusColor(cls) {
+  document.getElementById('statusDot').className = 'status-dot' + (cls ? ' ' + cls : '');
+  document.getElementById('statusText').className = 'status-text' + (cls ? ' ' + cls : '');
 }
-const pill=document.getElementById('status-pill');
-setInterval(()=>{
-  if(navigator.onLine){
-    pill.innerHTML='<div style="width:7px;height:7px;background:#28a745;border-radius:50%;"></div> Koneksi pulih! Membuka...';
-    setTimeout(()=>window.location.href='./',600);
+
+function showMessage(text) {
+  var el = document.getElementById('statusText');
+  el.style.opacity = 0;
+  setTimeout(function () {
+    el.innerText = text;
+    el.style.opacity = 1;
+  }, 200);
+}
+
+function nextMessage() {
+  msgIndex = (msgIndex + 1) % messages.length;
+  showMessage(messages[msgIndex]);
+}
+
+function restartMessageLoop() {
+  if (msgTimer) clearInterval(msgTimer);
+  msgTimer = setInterval(nextMessage, 3000);
+}
+restartMessageLoop();
+
+var RETRY_SECONDS = 5;
+var retrySecLeft = RETRY_SECONDS;
+
+function updateFill() {
+  var pct = ((RETRY_SECONDS - retrySecLeft) / RETRY_SECONDS) * 100;
+  document.getElementById('retryFill').style.width = pct + '%';
+}
+
+function goOnline() {
+  if (resolved) return;
+  resolved = true;
+  clearInterval(msgTimer);
+  clearInterval(retryInterval);
+  setStatusColor('green');
+  showMessage('Sinyal balik! Membuka jadwal kamu...');
+  document.getElementById('mascotBot').classList.add('online');
+  document.getElementById('retryLabel').innerText = 'Membuka...';
+  document.getElementById('retryFill').style.transition = 'width .3s';
+  document.getElementById('retryFill').style.width = '100%';
+  burstConfetti();
+  spawnSparkles();
+  setTimeout(function () { window.location.href = './'; }, 800);
+}
+
+function checkConnection(manual) {
+  if (resolved) return;
+  if (navigator.onLine) {
+    goOnline();
+    return;
   }
-},4000);
+  if (manual) {
+    var btn = document.getElementById('retryBtn');
+    btn.classList.remove('shake');
+    void btn.offsetWidth;
+    btn.classList.add('shake');
+    clearInterval(msgTimer);
+    setStatusColor('amber');
+    showMessage('Masih belum konek, coba lagi sebentar');
+    setTimeout(function () {
+      if (!resolved) {
+        setStatusColor('');
+        restartMessageLoop();
+      }
+    }, 1800);
+  }
+  retrySecLeft = RETRY_SECONDS;
+  updateFill();
+}
+
+var retryInterval = setInterval(function () {
+  if (resolved) return;
+  retrySecLeft--;
+  updateFill();
+  if (retrySecLeft <= 0) {
+    checkConnection(false);
+  }
+}, 1000);
+
+document.getElementById('retryBtn').addEventListener('click', function () {
+  checkConnection(true);
+});
+
+window.addEventListener('online', goOnline);
+
+function burstConfetti() {
+  var colors = ['#28a745', '#20c050', '#5483b3', '#ffd700', '#052659', '#7da0ca'];
+  var cx = window.innerWidth / 2;
+  var cy = window.innerHeight / 2 - 60;
+  for (var i = 0; i < 26; i++) {
+    var el = document.createElement('div');
+    el.className = 'confetti-piece';
+    el.style.background = colors[i % colors.length];
+    var angle = Math.random() * Math.PI * 2;
+    var velocity = 50 + Math.random() * 80;
+    el.style.setProperty('--x', (Math.cos(angle) * velocity) + 'px');
+    el.style.setProperty('--y', (Math.sin(angle) * velocity) + 'px');
+    el.style.left = cx + 'px';
+    el.style.top = cy + 'px';
+    document.body.appendChild(el);
+    setTimeout(function (node) { return function () { node.remove(); }; }(el), 800);
+  }
+}
+
+function spawnSparkles() {
+  var colors = ['#28a745', '#20c050', '#5483b3', '#ffd700', '#052659', '#7da0ca', '#ffffff'];
+  var rect = document.querySelector('.card').getBoundingClientRect();
+  for (var i = 0; i < 16; i++) {
+    var el = document.createElement('div');
+    el.className = 'sparkle';
+    var size = 4 + Math.random() * 6;
+    var angle = Math.random() * Math.PI * 2;
+    var dist = 40 + Math.random() * 60;
+    el.style.width = size + 'px';
+    el.style.height = size + 'px';
+    el.style.background = colors[i % colors.length];
+    el.style.left = (rect.left + rect.width / 2) + 'px';
+    el.style.top = (rect.top + 90) + 'px';
+    el.style.setProperty('--sx', (Math.cos(angle) * dist) + 'px');
+    el.style.setProperty('--sy', (Math.sin(angle) * dist) + 'px');
+    el.style.animationDelay = (Math.random() * 0.25) + 's';
+    document.body.appendChild(el);
+    setTimeout(function (node) { return function () { node.remove(); }; }(el), 1000);
+  }
+}
+
+function getWeekNumber(d) {
+  d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+  d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
+  var yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+  return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+}
+
+function buildSchedulePreview() {
+  var days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+  var now = new Date();
+  var isBesok = now.getHours() >= 18;
+  var refDate = new Date(now);
+  if (isBesok) refDate.setDate(refDate.getDate() + 1);
+  var dayName = days[refDate.getDay()];
+  var weekType = (getWeekNumber(refDate) % 2 === 0) ? 'm2' : 'm1';
+  var label = isBesok ? 'Jadwal besok' : 'Jadwal hari ini';
+
+  var inner = document.getElementById('schedInner');
+  var savedRaw = null;
+  var kelas = null;
+  try {
+    savedRaw = localStorage.getItem('savedJadwal');
+    kelas = localStorage.getItem('userKelas');
+  } catch (e) {}
+
+  if (dayName === 'Sabtu' || dayName === 'Minggu') {
+    inner.innerHTML = '<div class="sched-empty">Libur akhir pekan, santai dulu ya</div>';
+    return;
+  }
+  if (!savedRaw) {
+    inner.innerHTML = '<div class="sched-empty">Belum ada jadwal tersimpan di perangkat ini.</div>';
+    return;
+  }
+  var jadwalData;
+  try { jadwalData = JSON.parse(savedRaw); } catch (e) { jadwalData = {}; }
+  var list = (jadwalData[weekType] && jadwalData[weekType][dayName]) || [];
+  if (list.length === 0) {
+    inner.innerHTML = '<div class="sched-empty">Tidak ada data jadwal tersimpan untuk hari ini.</div>';
+    return;
+  }
+  var html = '<div class="sched-head">' + label + (kelas ? ' &middot; ' + kelas : '') + '</div>';
+  for (var i = 0; i < list.length; i++) {
+    html += '<div class="sched-row"><div class="sched-mapel">' + list[i][0] + '</div><div class="sched-meta"><span>' + list[i][1] + '</span><span class="sep">&middot;</span><span class="ruang">&#128205; ' + list[i][2] + '</span></div></div>';
+  }
+  inner.innerHTML = html;
+}
+
+var schedOpen = false;
+document.getElementById('schedToggle').addEventListener('click', function () {
+  schedOpen = !schedOpen;
+  this.classList.toggle('open', schedOpen);
+  var panel = document.getElementById('schedList');
+  if (schedOpen) {
+    buildSchedulePreview();
+    panel.style.maxHeight = panel.scrollHeight + 'px';
+  } else {
+    panel.style.maxHeight = '0px';
+  }
+});
 </script>
 </body>
 </html>`;
