@@ -1,5 +1,5 @@
-// SkuyJadwal Service Worker v8 - font Poppins di-cache biar offline page sama fontnya
-const CACHE_VERSION = 'skuy-v20';
+// SkuyJadwal Service Worker v9 - fix format jam offline page
+const CACHE_VERSION = 'skuy-v21';
 const CACHE_NAME = CACHE_VERSION;
 const FONT_CACHE = 'skuy-fonts-v1';
 
@@ -363,11 +363,11 @@ document.getElementById('schedToggle').addEventListener('click', function () {
 
 // ─── Install: cache font Poppins saat SW dipasang (device pasti online saat ini) ──
 self.addEventListener('install', (event) => {
+    // Paksa SW baru langsung aktif tanpa nunggu tab lama ditutup
+    self.skipWaiting();
+
     event.waitUntil(
         (async () => {
-            // Langsung aktif tanpa nunggu tab lama
-            self.skipWaiting();
-
             // Cache font Poppins ke font-cache terpisah
             try {
                 const fontCache = await caches.open(FONT_CACHE);
