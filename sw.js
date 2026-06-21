@@ -1,5 +1,5 @@
 // SkuyJadwal Service Worker v9 - fix format jam offline page
-const CACHE_VERSION = 'skuy-v23';
+const CACHE_VERSION = 'skuy-v25';
 const CACHE_NAME = CACHE_VERSION;
 const FONT_CACHE = 'skuy-fonts-v1';
 
@@ -578,10 +578,4 @@ function countdown(ms) {
     if (m) p.push(`${m} menit`);
     if (s || !p.length) p.push(`${s} detik`);
     return p.join(' ');
-}
-
-if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./sw.js?v=23', { scope: './', updateViaCache: 'none' })
-        .then(reg => reg.update())
-        .catch(() => {});
 }
