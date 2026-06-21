@@ -1,12 +1,10 @@
 // SkuyJadwal Service Worker v9 - fix format jam offline page
-const CACHE_VERSION = 'skuy-v22';
+const CACHE_VERSION = 'skuy-v23';
 const CACHE_NAME = CACHE_VERSION;
 const FONT_CACHE = 'skuy-fonts-v1';
 
-// URL CSS font Poppins yang mau di-cache (weights yang dipakai: 400,600,700,800)
 const POPPINS_CSS_URL = 'https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap';
 
-// HTML offline di-embed langsung di sini — tidak butuh file offline.html di server
 const OFFLINE_HTML = `<!DOCTYPE html>
 <html lang="id">
 <head>
@@ -337,11 +335,21 @@ function buildSchedulePreview() {
   var html = '<div class="sched-head">' + label + (kelas ? ' &middot; ' + kelas : '') + '</div>';
   for (var i = 0; i < list.length; i++) {
     var jamRaw = list[i][1] || '';
+    // Normalisasi: ganti titik → titik dua, buang spasi
     var jamNorm = jamRaw.replace(/\./g, ':').replace(/\s/g, '');
     var parts = jamNorm.split('-');
+    // Tambah spasi di sekitar titik dua supaya jadi "07 : 45"
     var fmtTime = function(t) { return t.replace(':', ' : '); };
-    var jamCantik = parts.length === 2 ? fmtTime(parts[0]) + ' &mdash; ' + fmtTime(parts[1]) : jamRaw;
-    html += '<div class="sched-row"><div class="sched-mapel">' + list[i][0] + '</div><div class="sched-meta"><span>' + jamCantik + '</span><span class="sep">&middot;</span><span class="ruang">&#128205; ' + list[i][2] + '</span></div></div>';
+    var jamCantik = parts.length === 2
+      ? fmtTime(parts[0]) + ' &mdash; ' + fmtTime(parts[1])
+      : jamRaw;
+    html += '<div class="sched-row">'
+      + '<div class="sched-mapel">' + list[i][0] + '</div>'
+      + '<div class="sched-meta">'
+      + '<span>' + jamCantik + '</span>'
+      + '<span class="sep">&middot;</span>'
+      + '<span class="ruang">&#128205; ' + list[i][2] + '</span>'
+      + '</div></div>';
   }
   inner.innerHTML = html;
 }
@@ -358,53 +366,42 @@ document.getElementById('schedToggle').addEventListener('click', function () {
     panel.style.maxHeight = '0px';
   }
 });
-</script>
+<\/script>
 </body>
 </html>`;
 
-// ─── Install: cache font Poppins saat SW dipasang (device pasti online saat ini) ──
+// ─── Install ──────────────────────────────────────────────────────────────────
 self.addEventListener('install', (event) => {
-    // Paksa SW baru langsung aktif tanpa nunggu tab lama ditutup
     self.skipWaiting();
-
     event.waitUntil(
         (async () => {
-            // Cache font Poppins ke font-cache terpisah
             try {
                 const fontCache = await caches.open(FONT_CACHE);
-
-                // Fetch CSS font (perlu User-Agent header biar Google Fonts kasih woff2)
                 const cssResponse = await fetch(POPPINS_CSS_URL, {
                     headers: { 'User-Agent': 'Mozilla/5.0 (Linux; Android 10) AppleWebKit/537.36 Chrome/120 Mobile Safari/537.36' }
                 });
-
                 if (cssResponse.ok) {
-                    // Simpan CSS-nya
                     await fontCache.put(POPPINS_CSS_URL, cssResponse.clone());
-
-                    // Parse CSS untuk dapetin URL file .woff2 di dalamnya, terus cache satu-satu
                     const cssText = await cssResponse.text();
                     const fontUrls = [...cssText.matchAll(/url\((https:\/\/fonts\.gstatic\.com[^)]+)\)/g)]
                         .map(m => m[1]);
-
                     await Promise.allSettled(
                         fontUrls.map(async (url) => {
                             try {
                                 const fontRes = await fetch(url);
                                 if (fontRes.ok) await fontCache.put(url, fontRes);
-                            } catch (_) { /* skip kalau gagal */ }
+                            } catch (_) {}
                         })
                     );
                 }
             } catch (err) {
-                // Kalau install gagal fetch font (harusnya tidak, tapi jaga-jaga)
                 console.warn('[SW] Gagal cache font Poppins:', err);
             }
         })()
     );
 });
 
-// ─── Activate: hapus semua cache versi lama, tapi JANGAN hapus font cache ────
+// ─── Activate ─────────────────────────────────────────────────────────────────
 self.addEventListener('activate', (event) => {
     event.waitUntil(
         caches.keys().then(keys =>
@@ -420,7 +417,6 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
     const url = new URL(event.request.url);
 
-    // ── 1. Intercept request ke Google Fonts & gstatic → cache-first ──────────
     if (
         url.hostname === 'fonts.googleapis.com' ||
         url.hostname === 'fonts.gstatic.com'
@@ -429,8 +425,6 @@ self.addEventListener('fetch', (event) => {
             caches.open(FONT_CACHE).then(async (cache) => {
                 const cached = await cache.match(event.request);
                 if (cached) return cached;
-
-                // Kalau belum ada di cache, coba fetch & simpan
                 try {
                     const response = await fetch(event.request);
                     if (response && response.status === 200) {
@@ -438,7 +432,6 @@ self.addEventListener('fetch', (event) => {
                     }
                     return response;
                 } catch (_) {
-                    // Offline dan tidak ada cache → return 404 (browser gracefully fallback ke font sistem)
                     return new Response('', { status: 404 });
                 }
             })
@@ -446,10 +439,8 @@ self.addEventListener('fetch', (event) => {
         return;
     }
 
-    // ── 2. Jangan intercept request ke luar domain lain (Firebase, Cloudinary, GAS, dll) ──
     if (url.origin !== self.location.origin) return;
 
-    // ── 3. Navigasi / dokumen HTML → network dulu, kalau gagal → serve OFFLINE_HTML ──
     if (event.request.mode === 'navigate') {
         event.respondWith(
             fetch(event.request)
@@ -470,7 +461,6 @@ self.addEventListener('fetch', (event) => {
         return;
     }
 
-    // ── 4. Aset statis (JS, CSS, gambar): cache-first, fallback network ────────
     event.respondWith(
         caches.match(event.request).then(cached => {
             if (cached) return cached;
@@ -485,7 +475,7 @@ self.addEventListener('fetch', (event) => {
     );
 });
 
-// ─── Background Notification ─────────────────────────────────────────────────
+// ─── Background Notification ──────────────────────────────────────────────────
 const NOTIF_TAG = 'skuyjadwal-status';
 let jadwalState = null;
 let lastNotifBody = '';
