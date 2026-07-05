@@ -1,5 +1,5 @@
-// SkuyJadwal Service Worker v9 - fix format jam offline page
-const CACHE_VERSION = 'skuy-v26';
+// SkuyJadwal Service Worker v10 - update background offline page jadi gradient
+const CACHE_VERSION = 'skuy-v27';
 const CACHE_NAME = CACHE_VERSION;
 const FONT_CACHE = 'skuy-fonts-v1';
 
@@ -13,12 +13,12 @@ const OFFLINE_HTML = `<!DOCTYPE html>
 <title>Offline – SkuyJadwal</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap');
-:root{--c1:#021024;--c2:#052659;--c3:#5483b3;--c4:#7da0ca;--c5:#c1e8ff;--cbg:#f1f6f9;--ccard:#fff;--caccent:#c1e8ff;--mountain-bg:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25' viewBox='0 0 1600 800'%3E%3Cg fill-opacity='0.19'%3E%3Cpolygon fill='%23021024' points='800 100 0 200 0 800 1600 800 1600 200'/%3E%3Cpolygon fill='%23052659' points='800 200 0 400 0 800 1600 800 1600 400'/%3E%3Cpolygon fill='%235483b3' points='800 300 0 600 0 800 1600 800 1600 600'/%3E%3Cpolygon fill='%237da0ca' points='1600 800 800 400 0 800'/%3E%3Cpolygon fill='%23a3c7e6' points='1280 800 800 500 320 800'/%3E%3Cpolygon fill='%23dbeeff' points='533.3 800 1066.7 800 800 600'/%3E%3Cpolygon fill='%23eef7ff' points='684.1 800 914.3 800 800 700'/%3E%3C/g%3E%3C/svg%3E");}
-[data-theme="dark"]{--c1:#e9eff7;--c2:#3f7ab8;--c5:#16233a;--cbg:#050b16;--ccard:#101c30;--caccent:#c1e8ff;--mountain-bg:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25' viewBox='0 0 1600 800'%3E%3Cg fill-opacity='0.19'%3E%3Cpolygon fill='%235a5a5a' points='800 100 0 200 0 800 1600 800 1600 200'/%3E%3Cpolygon fill='%237f7f7f' points='800 200 0 400 0 800 1600 800 1600 400'/%3E%3Cpolygon fill='%239c9c9c' points='800 300 0 600 0 800 1600 800 1600 600'/%3E%3Cpolygon fill='%23b4b4b4' points='1600 800 800 400 0 800'/%3E%3Cpolygon fill='%23c9c9c9' points='1280 800 800 500 320 800'/%3E%3Cpolygon fill='%23dcdcdc' points='533.3 800 1066.7 800 800 600'/%3E%3Cpolygon fill='%23EEE' points='684.1 800 914.3 800 800 700'/%3E%3C/g%3E%3C/svg%3E");}
+:root{--c1:#021024;--c2:#052659;--c3:#5483b3;--c4:#7da0ca;--c5:#c1e8ff;--cbg:#e2e5f0;--ccard:#fff;--caccent:#c1e8ff;--bg-gradient:linear-gradient(135deg, #e2e5f0 0%, #d4daf0 50%, #cbd2eb 100%);--bg-blobs:radial-gradient(circle at 80% 20%, rgba(255,255,255,0.4) 0%, transparent 40%),radial-gradient(circle at 20% 60%, rgba(200,207,235,0.6) 0%, transparent 50%),radial-gradient(circle at 70% 80%, rgba(218,224,245,0.5) 0%, transparent 45%);}
+[data-theme="dark"]{--c1:#e9eff7;--c2:#3f7ab8;--c5:#16233a;--cbg:#0a1128;--ccard:#101c30;--caccent:#c1e8ff;--bg-gradient:linear-gradient(135deg, #0a1128 0%, #10193a 50%, #16233a 100%);--bg-blobs:radial-gradient(circle at 80% 20%, rgba(63,122,184,0.18) 0%, transparent 40%),radial-gradient(circle at 20% 60%, rgba(22,35,58,0.75) 0%, transparent 50%),radial-gradient(circle at 70% 80%, rgba(16,28,48,0.6) 0%, transparent 45%);}
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
 body{
   background-color:var(--cbg);
-  background-image:var(--mountain-bg);
+  background-image:var(--bg-blobs), var(--bg-gradient);
   background-attachment:fixed;
   background-size:cover;
   background-position:center;
