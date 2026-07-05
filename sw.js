@@ -1,5 +1,5 @@
 // SkuyJadwal Service Worker v9 - fix format jam offline page
-const CACHE_VERSION = 'skuy-v25';
+const CACHE_VERSION = 'skuy-v26';
 const CACHE_NAME = CACHE_VERSION;
 const FONT_CACHE = 'skuy-fonts-v1';
 
@@ -13,16 +13,26 @@ const OFFLINE_HTML = `<!DOCTYPE html>
 <title>Offline – SkuyJadwal</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap');
-:root{--c1:#021024;--c2:#052659;--c3:#5483b3;--c4:#7da0ca;--c5:#c1e8ff;}
+:root{--c1:#021024;--c2:#052659;--c3:#5483b3;--c4:#7da0ca;--c5:#c1e8ff;--cbg:#f1f6f9;--ccard:#fff;--caccent:#c1e8ff;--mountain-bg:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25' viewBox='0 0 1600 800'%3E%3Cg fill-opacity='0.19'%3E%3Cpolygon fill='%23021024' points='800 100 0 200 0 800 1600 800 1600 200'/%3E%3Cpolygon fill='%23052659' points='800 200 0 400 0 800 1600 800 1600 400'/%3E%3Cpolygon fill='%235483b3' points='800 300 0 600 0 800 1600 800 1600 600'/%3E%3Cpolygon fill='%237da0ca' points='1600 800 800 400 0 800'/%3E%3Cpolygon fill='%23a3c7e6' points='1280 800 800 500 320 800'/%3E%3Cpolygon fill='%23dbeeff' points='533.3 800 1066.7 800 800 600'/%3E%3Cpolygon fill='%23eef7ff' points='684.1 800 914.3 800 800 700'/%3E%3C/g%3E%3C/svg%3E");}
+[data-theme="dark"]{--c1:#e9eff7;--c2:#3f7ab8;--c5:#16233a;--cbg:#050b16;--ccard:#101c30;--caccent:#c1e8ff;--mountain-bg:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25' viewBox='0 0 1600 800'%3E%3Cg fill-opacity='0.19'%3E%3Cpolygon fill='%235a5a5a' points='800 100 0 200 0 800 1600 800 1600 200'/%3E%3Cpolygon fill='%237f7f7f' points='800 200 0 400 0 800 1600 800 1600 400'/%3E%3Cpolygon fill='%239c9c9c' points='800 300 0 600 0 800 1600 800 1600 600'/%3E%3Cpolygon fill='%23b4b4b4' points='1600 800 800 400 0 800'/%3E%3Cpolygon fill='%23c9c9c9' points='1280 800 800 500 320 800'/%3E%3Cpolygon fill='%23dcdcdc' points='533.3 800 1066.7 800 800 600'/%3E%3Cpolygon fill='%23EEE' points='684.1 800 914.3 800 800 700'/%3E%3C/g%3E%3C/svg%3E");}
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
 body{
-  background-color:#f1f6f9;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cdefs%3E%3Cstyle%3E.b%7Bfill:none;stroke:%23052659;stroke-width:0.7;opacity:0.13%7D%3C/style%3E%3C/defs%3E%3Ccircle class='b' cx='20' cy='20' r='12'/%3E%3Ccircle class='b' cx='60' cy='20' r='12'/%3E%3Ccircle class='b' cx='20' cy='60' r='12'/%3E%3Ccircle class='b' cx='60' cy='60' r='12'/%3E%3Ccircle class='b' cx='40' cy='40' r='12'/%3E%3Ccircle class='b' cx='0' cy='40' r='12'/%3E%3Ccircle class='b' cx='80' cy='40' r='12'/%3E%3Ccircle class='b' cx='40' cy='0' r='12'/%3E%3Ccircle class='b' cx='40' cy='80' r='12'/%3E%3Ccircle class='b' cx='20' cy='20' r='5'/%3E%3Ccircle class='b' cx='60' cy='20' r='5'/%3E%3Ccircle class='b' cx='20' cy='60' r='5'/%3E%3Ccircle class='b' cx='60' cy='60' r='5'/%3E%3Ccircle class='b' cx='40' cy='40' r='5'/%3E%3Cpath class='b' d='M40 28 L52 40 L40 52 L28 40 Z'/%3E%3Cpath class='b' d='M20 8 L28 16 L20 24 L12 16 Z'/%3E%3Cpath class='b' d='M60 8 L68 16 L60 24 L52 16 Z'/%3E%3Cpath class='b' d='M20 56 L28 64 L20 72 L12 64 Z'/%3E%3Cpath class='b' d='M60 56 L68 64 L60 72 L52 64 Z'/%3E%3C/svg%3E");
-  background-size:80px 80px;
+  background-color:var(--cbg);
+  background-image:var(--mountain-bg);
+  background-attachment:fixed;
+  background-size:cover;
+  background-position:center;
+  color:var(--c1);
   min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px 16px;
 }
+.theme-toggle-btn{position:fixed;top:14px;left:14px;width:42px;height:42px;border-radius:50%;background:var(--ccard);border:1px solid var(--c4);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:50;box-shadow:0 4px 15px rgba(5,38,89,.15);}
+.theme-toggle-btn:active{transform:scale(.9);}
+.theme-toggle-btn svg{width:20px;height:20px;stroke:var(--c2);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.theme-toggle-btn .icon-moon{display:none;}
+[data-theme="dark"] .theme-toggle-btn .icon-sun{display:none;}
+[data-theme="dark"] .theme-toggle-btn .icon-moon{display:block;}
 .card{
-  background:#fff;border-radius:28px;padding:38px 26px 28px;
+  background:var(--ccard);border-radius:28px;padding:38px 26px 28px;
   text-align:center;max-width:330px;width:100%;
   box-shadow:0 10px 36px rgba(5,38,89,.10);
   border:1px solid rgba(193,232,255,.55);
@@ -31,7 +41,7 @@ body{
 @keyframes popIn{from{opacity:0;transform:scale(.9) translateY(14px)}to{opacity:1;transform:scale(1) translateY(0)}}
 
 .mascot-wrap{position:relative;width:140px;height:150px;margin:0 auto 6px;display:flex;align-items:center;justify-content:center;}
-.mascot-glow{position:absolute;width:118px;height:118px;border-radius:50%;background:var(--c5);animation:glowPulse 3s ease-in-out infinite;}
+.mascot-glow{position:absolute;width:118px;height:118px;border-radius:50%;background:var(--caccent);animation:glowPulse 3s ease-in-out infinite;}
 @keyframes glowPulse{0%,100%{transform:scale(1);opacity:.5;}50%{transform:scale(1.1);opacity:.7;}}
 .mascot-shadow{position:absolute;bottom:10px;width:62px;height:12px;border-radius:50%;background:rgba(5,38,89,.14);animation:shadowPulse 2.6s ease-in-out infinite;}
 @keyframes shadowPulse{0%,100%{transform:scaleX(1);opacity:.45;}50%{transform:scaleX(.82);opacity:.25;}}
@@ -71,7 +81,7 @@ h1{font-size:20px;font-weight:800;color:var(--c2);letter-spacing:-.4px;margin-bo
 .status-text.amber{color:#b8860b;}
 .status-text.green{color:#1f8a3c;}
 
-.btn-retry{position:relative;width:100%;background:var(--c2);color:#fff;border:none;padding:14px;border-radius:14px;font-size:13px;font-weight:800;cursor:pointer;letter-spacing:.4px;text-transform:uppercase;overflow:hidden;margin-bottom:16px;transition:transform .1s;}
+.btn-retry{position:relative;width:100%;background:var(--c2);color:var(--caccent);border:none;padding:14px;border-radius:14px;font-size:13px;font-weight:800;cursor:pointer;letter-spacing:.4px;text-transform:uppercase;overflow:hidden;margin-bottom:16px;transition:transform .1s;}
 .btn-retry:active{transform:scale(.97);}
 .btn-retry .fill{position:absolute;left:0;top:0;bottom:0;width:0%;background:rgba(255,255,255,.16);transition:width 1s linear;}
 .btn-retry .label{position:relative;z-index:2;}
@@ -83,7 +93,7 @@ h1{font-size:20px;font-weight:800;color:var(--c2);letter-spacing:-.4px;margin-bo
 .sched-link.open .chev{transform:rotate(180deg);}
 .sched-list{max-height:0;overflow:hidden;transition:max-height .3s ease;text-align:left;}
 .sched-list-inner{padding-top:10px;}
-.sched-row{padding:8px 2px;border-bottom:1px solid #eef3f7;}
+.sched-row{padding:8px 2px;border-bottom:1px solid var(--c5);}
 .sched-row:last-child{border-bottom:none;}
 .sched-mapel{color:var(--c2);font-weight:700;font-size:11.5px;margin-bottom:3px;}
 .sched-meta{display:flex;align-items:center;gap:5px;color:var(--c3);font-weight:600;font-size:10.5px;}
@@ -99,9 +109,28 @@ h1{font-size:20px;font-weight:800;color:var(--c2);letter-spacing:-.4px;margin-bo
 .sparkle{position:fixed;border-radius:50%;z-index:998;pointer-events:none;animation:sparkleFly .9s ease-out forwards;opacity:0;}
 @keyframes sparkleFly{0%{transform:scale(0) translate(0,0);opacity:1;}100%{transform:scale(1) translate(var(--sx),var(--sy));opacity:0;}}
 
+[data-theme="dark"] .mascot-body-shape{fill:var(--c2);}
+
 </style>
+<script>
+(function () {
+  var saved = localStorage.getItem('skuyTheme');
+  var theme = saved || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  document.documentElement.setAttribute('data-theme', theme);
+})();
+function toggleTheme() {
+  var current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+  var next = current === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('skuyTheme', next);
+}
+</script>
 </head>
 <body>
+<button class="theme-toggle-btn" onclick="toggleTheme()" aria-label="Ganti tema terang/gelap">
+  <svg class="icon-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg>
+  <svg class="icon-moon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"></path></svg>
+</button>
 
 <div class="card">
   <div class="mascot-wrap">
@@ -115,8 +144,8 @@ h1{font-size:20px;font-weight:800;color:var(--c2);letter-spacing:-.4px;margin-bo
         <circle class="ant-halo" cx="60" cy="22" r="12"/>
         <line x1="60" y1="44" x2="60" y2="26" stroke="#5483b3" stroke-width="4" stroke-linecap="round"/>
         <circle class="ant-tip" cx="60" cy="22" r="6"/>
-        <rect x="20" y="40" width="80" height="80" rx="28" fill="#052659"/>
-        <rect x="32" y="56" width="56" height="46" rx="18" fill="#c1e8ff"/>
+        <rect class="mascot-body-shape" x="20" y="40" width="80" height="80" rx="28" fill="#052659"/>
+        <rect class="mascot-face-shape" x="32" y="56" width="56" height="46" rx="18" fill="#c1e8ff"/>
         <circle class="eye left" cx="48" cy="78" r="5" fill="#021024"/>
         <circle class="eye right" cx="72" cy="78" r="5" fill="#021024"/>
         <path class="mouth-sad" d="M50,95 Q60,89 70,95" stroke="#021024" stroke-width="3" fill="none" stroke-linecap="round"/>
