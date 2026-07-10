@@ -2171,6 +2171,7 @@
                 }
                 if (virtualDate.toDateString() !== lastDateStr) {
                     lastDateStr = virtualDate.toDateString();
+                    if (isEditMode) saveTemporarily();
                     currentViewDate = new Date(virtualDate);
                     setAutoWeek();
                     renderSchedule();
@@ -2274,6 +2275,7 @@
                 dayDisplay.classList.remove('animate-swap');
                 void grid.offsetWidth;
                 void dayDisplay.offsetWidth;
+                if (isEditMode) saveTemporarily();
                 currentViewDate.setDate(currentViewDate.getDate() + offset);
                 renderSchedule();
                 grid.classList.add('animate-swap');
@@ -2281,6 +2283,7 @@
             }
 
             function setWeek(week) {
+                if (isEditMode) saveTemporarily();
                 currentWeekType = week;
                 document.getElementById('btn-m1').classList.toggle('active', week === 'm1');
                 document.getElementById('btn-m2').classList.toggle('active', week === 'm2');
@@ -2324,11 +2327,11 @@
                         let tp = jamRaw.split('-');
                         let jamStart = (tp[0] || "").trim();
                         let jamEnd = (tp[1] || "").trim();
-                        colMapel.innerHTML += `<div class="item-box" style="position: relative;"><button class="btn-delete-row" onclick="deleteRow(${index})">×</button><input class="input-edit" id="edit-mapel-${index}" value="${item[0]}"></div>`;
+                        colMapel.innerHTML += `<div class="item-box" style="position: relative;"><button class="btn-delete-row" onclick="deleteRow(${index})">×</button><input class="input-edit" id="edit-mapel-${index}" placeholder="Mapel Baru" value="${item[0]}"></div>`;
                         colJam.innerHTML += `<div class="item-box">
                 <input type="time" class="input-edit" id="edit-jam-start-${index}" value="${jamStart}"> 
                 <span style="font-size:10px">s/d</span> 
-                <input type="time" class="input-edit" id="edit-jam-end-${index}" value="${jamEnd}">
+                <input type="time" class="input-edit" id="edit-jam-end-${index}" value="${jamEnd}" onchange="syncNextStart(${index})">
             </div>`;
                         colRuang.innerHTML += `<div class="item-box"><input class="input-edit" id="edit-ruang-${index}" value="${item[2]}"></div>`;
                     } else {
@@ -2339,6 +2342,14 @@
                     }
                 });
                 if (!isEditMode) checkHighlight();
+            }
+
+            function syncNextStart(index) {
+                const endInput = document.getElementById(`edit-jam-end-${index}`);
+                const nextStartInput = document.getElementById(`edit-jam-start-${index + 1}`);
+                if (endInput && nextStartInput && endInput.value) {
+                    nextStartInput.value = endInput.value;
+                }
             }
 
             function saveTemporarily() {
@@ -2358,12 +2369,26 @@
                 jadwalData[currentWeekType][dayName] = tempJadwal;
             }
 
+            function addOneHour(time) {
+                let [h, m] = time.split(':').map(Number);
+                h = (h + 1) % 24;
+                return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+            }
+
             function addRow() {
                 const days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
                 const dayName = days[currentViewDate.getDay()];
                 saveTemporarily();
                 if (!jadwalData[currentWeekType][dayName]) jadwalData[currentWeekType][dayName] = [];
-                jadwalData[currentWeekType][dayName].push(["Mapel Baru", "07:00-08:00", "(-)"]);
+                const rows = jadwalData[currentWeekType][dayName];
+                let startTime = "07:00";
+                if (rows.length > 0) {
+                    const lastJam = rows[rows.length - 1][1].replace(/\./g, ':');
+                    const lastEnd = (lastJam.split('-')[1] || "").trim();
+                    if (lastEnd) startTime = lastEnd;
+                }
+                const endTime = addOneHour(startTime);
+                jadwalData[currentWeekType][dayName].push(["", `${startTime}-${endTime}`, "(-)"]);
                 renderSchedule();
             }
 
