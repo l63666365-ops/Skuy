@@ -1,5 +1,5 @@
 // SkuyJadwal Service Worker v10 - update background offline page jadi gradient
-const CACHE_VERSION = 'skuy-v28';
+const CACHE_VERSION = 'skuy-v29';
 const CACHE_NAME = CACHE_VERSION;
 const FONT_CACHE = 'skuy-fonts-v1';
 
@@ -20,7 +20,7 @@ body{
   background-color:var(--cbg);
   background-image:var(--bg-pattern), var(--bg-blobs), var(--bg-gradient);
   background-attachment:fixed, fixed, fixed;
-  background-size:250px 250px, cover, cover;
+  background-size:225px 225px, cover, cover;
   background-repeat:repeat, no-repeat, no-repeat;
   background-position:0 0, center, center;
   color:var(--c1);
