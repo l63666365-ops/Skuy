@@ -1789,10 +1789,12 @@
                     style="cursor:pointer; background:var(--white)">TKJ 2</button>
             </div>
 
-            <button onclick="logout()"
-                style="background-color: var(--white); color: var(--color-2); border: 2px solid var(--color-2); border-radius: 10px; padding: 12px 20px; font-size: 13px; font-weight: 800; text-transform: uppercase; cursor: pointer; width: 100%; box-shadow: 0 5px 0 var(--color-2); margin-top: 20px;">
-                Keluar
-            </button>
+            <div style="margin-top: 5px; padding: 0 10px 30px 10px; width: 100%;">
+                <button onclick="logout()"
+                    style="background-color: var(--white); color: var(--color-2); border: 2px solid var(--color-2); border-radius: 10px; padding: 12px 20px; font-size: 13px; font-weight: 800; text-transform: uppercase; cursor: pointer; width: 100%; box-shadow: 0 5px 0 var(--color-2);">
+                    Keluar
+                </button>
+            </div>
         </div>
 
         <div id="mainScheduleContent"
@@ -2959,6 +2961,11 @@
                 if (role === 'admin') {
                     const pomoIcon = document.querySelector('.pomo-icon');
                     if (pomoIcon) pomoIcon.style.display = 'none';
+
+                    // Notif icon disembunyikan buat admin, jadi toggle tema geser naik
+                    // menempati posisi icon notif biasanya
+                    const themeToggleBtn = document.getElementById('themeToggleBtn');
+                    if (themeToggleBtn) themeToggleBtn.style.top = '14px';
 
                     const btnKeluar = document.getElementById('btnKeluar'); // ← TAMBAH
                     if (btnKeluar) btnKeluar.style.display = 'none';        // ← TAMBAH
