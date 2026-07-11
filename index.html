@@ -227,6 +227,7 @@
             transform-origin: center center;
             user-select: none;
             -webkit-user-drag: none;
+            touch-action: none;
         }
 
         .modal-overlay.show .modal-content {
@@ -3104,6 +3105,10 @@
             let translateX = 0, translateY = 0;
             let lastTouchEnd = 0;
             let startPinchDist = 0;
+            let startPinchMidX = 0, startPinchMidY = 0;
+            let startPinchScale = 1;
+            let startPinchTranslateX = 0, startPinchTranslateY = 0;
+            let lastTouchCount = 0;
 
             function updateModalContent() {
                 const imgFull = document.getElementById('imgFull');
@@ -3183,6 +3188,7 @@
                 });
 
                 imgFull.addEventListener('touchstart', (e) => {
+                    lastTouchCount = e.touches.length;
                     if (e.touches.length === 1) {
                         if (imgScale > 1) {
                             isDragging = true;
@@ -3195,10 +3201,40 @@
                             e.touches[0].clientX - e.touches[1].clientX,
                             e.touches[0].clientY - e.touches[1].clientY
                         );
+                        startPinchMidX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+                        startPinchMidY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+                        startPinchScale = imgScale;
+                        startPinchTranslateX = translateX;
+                        startPinchTranslateY = translateY;
                     }
                 });
 
                 imgFull.addEventListener('touchmove', (e) => {
+                    // Kalau jumlah jari yang nempel berubah di tengah gesture (misal dari 2 jari
+                    // jadi tinggal 1, atau nambah jadi 2), reset dulu titik acuannya di frame ini
+                    // biar gambarnya gak "lompat" pas transisi, baru gerakan dihitung mulai frame berikutnya.
+                    if (e.touches.length !== lastTouchCount) {
+                        lastTouchCount = e.touches.length;
+                        if (e.touches.length === 1 && imgScale > 1) {
+                            isDragging = true;
+                            startX = e.touches[0].clientX - translateX;
+                            startY = e.touches[0].clientY - translateY;
+                        } else if (e.touches.length === 2) {
+                            isDragging = false;
+                            startPinchDist = Math.hypot(
+                                e.touches[0].clientX - e.touches[1].clientX,
+                                e.touches[0].clientY - e.touches[1].clientY
+                            );
+                            startPinchMidX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+                            startPinchMidY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+                            startPinchScale = imgScale;
+                            startPinchTranslateX = translateX;
+                            startPinchTranslateY = translateY;
+                        }
+                        e.preventDefault();
+                        return;
+                    }
+
                     if (isDragging && e.touches.length === 1 && imgScale > 1) {
                         e.preventDefault();
                         translateX = e.touches[0].clientX - startX;
@@ -3210,15 +3246,29 @@
                             e.touches[0].clientX - e.touches[1].clientX,
                             e.touches[0].clientY - e.touches[1].clientY
                         );
-                        const factor = currentDist / startPinchDist;
-                        imgScale = Math.min(Math.max(1, imgScale * factor), 5);
-                        startPinchDist = currentDist;
+                        const currentMidX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+                        const currentMidY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+                        // Jarak 2 jari berubah -> zoom. Titik tengah 2 jari bergeser -> geser gambar.
+                        // Dua-duanya jalan bareng, jadi geser pake 2 jari udah otomatis kepakai di sini,
+                        // gak cuma pas nyubit doang.
+                        imgScale = Math.min(Math.max(1, startPinchScale * (currentDist / startPinchDist)), 5);
+                        translateX = startPinchTranslateX + (currentMidX - startPinchMidX);
+                        translateY = startPinchTranslateY + (currentMidY - startPinchMidY);
                         applyTransform();
                     }
                 });
 
-                imgFull.addEventListener('touchend', () => {
-                    isDragging = false;
+                imgFull.addEventListener('touchend', (e) => {
+                    lastTouchCount = e.touches.length;
+                    if (e.touches.length === 1 && imgScale > 1) {
+                        // Abis lepas salah satu jari (dari 2 jari jadi 1), lanjut geser mulus
+                        // pake jari yang masih nempel, gak perlu angkat semua dulu.
+                        isDragging = true;
+                        startX = e.touches[0].clientX - translateX;
+                        startY = e.touches[0].clientY - translateY;
+                    } else {
+                        isDragging = false;
+                    }
                 });
 
                 imgFull.addEventListener('mousedown', (e) => {
