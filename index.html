@@ -386,23 +386,6 @@
             color: var(--color-1);
         }
 
-        @keyframes popIn {
-            0% {
-                opacity: 0;
-                transform: translateY(-6px) scale(0.85);
-            }
-
-            60% {
-                opacity: 1;
-                transform: translateY(2px) scale(1.05);
-            }
-
-            100% {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-        }
-
         .btn-today-link {
             background: var(--color-2);
             color: var(--accent-light);
@@ -419,7 +402,7 @@
             cursor: pointer;
             box-shadow: 0 4px 12px rgba(5, 38, 89, 0.35);
             transition: transform 0.15s ease, box-shadow 0.15s ease;
-            animation: popIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+            animation: slideSwap 0.7s cubic-bezier(0.22, 1, 0.36, 1);
         }
 
         .btn-today-link svg {
