@@ -1367,7 +1367,7 @@
             height: 42px;
             max-height: 130px;
             overflow-y: auto;
-            transition: border-color 0.3s, height 0.15s ease;
+            transition: border-color 0.3s, height 0.22s cubic-bezier(0.22, 1, 0.36, 1);
         }
 
         #taskInput:focus {
@@ -2002,14 +2002,43 @@
             })();
 
             // Auto-resize kotak input tugas ala WhatsApp: ukuran normal kayak biasa,
-            // baru nambah tinggi ke bawah pas tombol Enter ditekan (bikin baris baru).
+            // baru nambah tinggi ke bawah secara mulus pas tombol Enter ditekan.
             (function initTaskInputAutosize() {
                 const el = document.getElementById('taskInput');
                 if (!el) return;
-                const grow = () => {
-                    el.style.height = 'auto';
-                    el.style.height = Math.max(el.scrollHeight, 42) + 'px';
+
+                // Elemen bayangan (gak keliatan di layar) buat ngukur tinggi konten.
+                // Textarea aslinya gak pernah disentuh ke 'auto', jadi transisi CSS
+                // height-nya beneran jalan mulus dari ukuran lama ke ukuran baru.
+                const mirror = document.createElement('div');
+                mirror.style.position = 'absolute';
+                mirror.style.visibility = 'hidden';
+                mirror.style.pointerEvents = 'none';
+                mirror.style.top = '0';
+                mirror.style.left = '-9999px';
+                mirror.style.whiteSpace = 'pre-wrap';
+                mirror.style.wordBreak = 'break-word';
+                document.body.appendChild(mirror);
+
+                const syncMirrorStyle = () => {
+                    const cs = getComputedStyle(el);
+                    mirror.style.width = cs.width;
+                    mirror.style.boxSizing = cs.boxSizing;
+                    mirror.style.padding = cs.padding;
+                    mirror.style.border = cs.border;
+                    mirror.style.font = cs.font;
+                    mirror.style.lineHeight = cs.lineHeight;
                 };
+
+                const grow = () => {
+                    syncMirrorStyle();
+                    mirror.textContent = el.value + '\u200b';
+                    const target = Math.min(Math.max(mirror.scrollHeight, 42), 130);
+                    el.style.height = target + 'px';
+                };
+
+                syncMirrorStyle();
+
                 el.addEventListener('keydown', (e) => {
                     if (e.key === 'Enter') {
                         // Kasih waktu browser nyisipin baris barunya dulu,
@@ -2023,6 +2052,7 @@
                         grow();
                     }
                 });
+                window.addEventListener('resize', syncMirrorStyle);
             })();
 
             function bukaKamera(event) {
