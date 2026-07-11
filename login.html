@@ -359,13 +359,14 @@ body {
         <button class="btn-login" id="loginBtn" onclick="handleLogin()">Akses Jadwal</button>
 
         <div class="footer-text">
-            &copy; 2026 SkuyJadwal. All rights reserved.
+            &copy; <span id="footerYear">2026</span> SkuyJadwal. All rights reserved.
         </div>
     </div>
 </div>
 
 <script>
 window.onload = function() {
+    document.getElementById('footerYear').textContent = new Date().getFullYear();
     if (localStorage.getItem('isLoggedIn') === 'true') {
         window.location.href = './index.html';
     }
