@@ -1,5 +1,5 @@
 // SkuyJadwal Service Worker v10 - update background offline page jadi gradient
-const CACHE_VERSION = 'skuy-v29';
+const CACHE_VERSION = 'skuy-v30';
 const CACHE_NAME = CACHE_VERSION;
 const FONT_CACHE = 'skuy-fonts-v1';
 
@@ -175,7 +175,7 @@ function toggleTheme() {
     <div class="sched-list-inner" id="schedInner"></div>
   </div>
 
-  <div class="footer-note">&copy; 2026 SkuyJadwal &middot; SMK Negeri 2 Sragen</div>
+  <div class="footer-note">&copy; ${new Date().getFullYear()} SkuyJadwal &middot; SMK Negeri 2 Sragen</div>
 </div>
 
 <script>
