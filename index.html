@@ -2377,9 +2377,14 @@
 
             function isViewingToday() {
                 const now = new Date();
-                return currentViewDate.getFullYear() === now.getFullYear() &&
+                const sameDate = currentViewDate.getFullYear() === now.getFullYear() &&
                     currentViewDate.getMonth() === now.getMonth() &&
                     currentViewDate.getDate() === now.getDate();
+                if (!sameDate) return false;
+                let ref = new Date(now);
+                if (ref.getHours() >= 18) ref.setDate(ref.getDate() + 1);
+                const autoWeek = (getWeekNumber(ref) % 2 === 0) ? "m2" : "m1";
+                return currentWeekType === autoWeek;
             }
 
             function updateTodayButtonVisibility() {
@@ -2392,6 +2397,7 @@
                 if (isViewingToday()) return;
                 if (isEditMode) saveTemporarily();
                 currentViewDate = new Date();
+                setAutoWeek();
                 renderSchedule();
                 updateTodayButtonVisibility();
             }
@@ -2417,6 +2423,7 @@
                 document.getElementById('btn-m1').classList.toggle('active', week === 'm1');
                 document.getElementById('btn-m2').classList.toggle('active', week === 'm2');
                 renderSchedule();
+                updateTodayButtonVisibility();
             }
 
             function toggleEditMode() {
