@@ -2574,6 +2574,14 @@
 
                 document.addEventListener('touchstart', (e) => {
                     if (refreshing) return;
+                    // Jangan mulai gesture pull-to-refresh kalau sentuhan pertama ada di dalam
+                    // modal preview (foto/dokumen) atau di elemen video/audio. Biar zoom, geser,
+                    // pinch, atau scrub media gak ke-anggap "tarik buat refresh" & bikin halaman
+                    // reload sendiri pas lagi dilihat.
+                    if (e.target.closest('.modal-overlay, video, audio')) {
+                        pulling = false;
+                        return;
+                    }
                     // boleh mulai narik dari mana aja di layar, asal halamannya lagi di posisi paling atas
                     if (window.scrollY <= 0) {
                         startY = e.touches[0].clientY;
