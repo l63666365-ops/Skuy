@@ -2935,18 +2935,23 @@
                 const jamMenit = taskDate.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }).replace('.', ':');
                 const formatLengkap = `Dicatat: ${tglBlnThn} • ${jamMenit}`;
 
-                // Hitung keterangan relatif
-                const selisihMs = Date.now() - (t.timestamp || 0);
+                // Hitung keterangan relatif (selisih hari berbasis tanggal kalender, bukan kelipatan 24 jam)
+                const sekarang = new Date();
+                const selisihMs = sekarang.getTime() - (t.timestamp || 0);
                 const selisihMenit = Math.floor(selisihMs / 60000);
                 const selisihJam = Math.floor(selisihMs / 3600000);
-                const selisihHari = Math.floor(selisihMs / 86400000);
+                const awalHariIni = new Date(sekarang.getFullYear(), sekarang.getMonth(), sekarang.getDate());
+                const awalHariTugas = new Date(taskDate.getFullYear(), taskDate.getMonth(), taskDate.getDate());
+                const selisihHari = Math.round((awalHariIni.getTime() - awalHariTugas.getTime()) / 86400000);
                 const selisihMinggu = Math.floor(selisihHari / 7);
                 const selisihBulan = Math.floor(selisihHari / 30);
                 const selisihTahun = Math.floor(selisihHari / 365);
                 let waktuRelatif;
-                if (selisihMenit < 1) waktuRelatif = "baru saja";
-                else if (selisihMenit < 60) waktuRelatif = `${selisihMenit} menit yang lalu`;
-                else if (selisihJam < 24) waktuRelatif = `${selisihJam} jam yang lalu`;
+                if (selisihHari <= 0) {
+                    if (selisihMenit < 1) waktuRelatif = "baru saja";
+                    else if (selisihMenit < 60) waktuRelatif = `${selisihMenit} menit yang lalu`;
+                    else waktuRelatif = `${selisihJam} jam yang lalu`;
+                }
                 else if (selisihHari === 1) waktuRelatif = "kemarin";
                 else if (selisihHari < 7) waktuRelatif = `${selisihHari} hari yang lalu`;
                 else if (selisihBulan < 1) waktuRelatif = `${selisihMinggu} minggu yang lalu`;
