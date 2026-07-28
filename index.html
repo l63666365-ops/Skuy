@@ -1811,8 +1811,16 @@
                 <b id="docTitle"
                     style="font-size: 14px; color: var(--color-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Preview
                     Dokumen</b>
-                <button onclick="closeDocPreview()"
-                    style="background: #dc3545; color: white; border: none; padding: 5px 12px; border-radius: 8px; cursor: pointer; font-weight: bold;">Tutup</button>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <a id="docOpenNewTab" href="#" target="_blank" rel="noopener"
+                        style="background: #5483b3; color: white; border: none; padding: 5px 12px; border-radius: 8px; cursor: pointer; font-weight: bold; text-decoration: none; font-size: 13px; white-space: nowrap;">Buka
+                        Tab Baru</a>
+                    <button onclick="closeDocPreview()"
+                        style="background: #dc3545; color: white; border: none; padding: 5px 12px; border-radius: 8px; cursor: pointer; font-weight: bold;">Tutup</button>
+                </div>
+            </div>
+            <div id="docLoadHint" style="display:none; padding: 8px 10px; font-size: 12px; color: var(--color-3); text-align:center;">
+                Kalau dokumen gak muncul di bawah, klik "Buka Tab Baru" di atas ya.
             </div>
             <iframe id="docFrame" src="" style="width: 100%; flex-grow: 1; border: none; border-radius: 10px;"></iframe>
         </div>
@@ -3080,6 +3088,8 @@
                 const modal = document.getElementById('docModal');
                 const frame = document.getElementById('docFrame');
                 const titleEl = document.getElementById('docTitle');
+                const openNewTab = document.getElementById('docOpenNewTab');
+                const loadHint = document.getElementById('docLoadHint');
                 let cleanUrl = url.replace(/\/fl_attachment/g, "").replace(/fl_attachment/g, "");
                 const cacheBreaker = (cleanUrl.includes('?') ? '&' : '?') + 't=' + Date.now();
                 const finalUrl = cleanUrl + cacheBreaker;
@@ -3087,8 +3097,10 @@
                 const isExcel = /\.(xlsx|xls)$/i.test(cleanUrl.split('?')[0]);
                 const isWordOrPpt = /\.(docx|doc|pptx|ppt)$/i.test(cleanUrl.split('?')[0]);
                 titleEl.innerText = title || "Preview Dokumen";
+                openNewTab.href = cleanUrl;
                 modal.style.display = 'flex';
                 frame.src = "";
+                loadHint.style.display = 'none';
                 setTimeout(() => {
                     modal.classList.add('show');
                 }, 10);
@@ -3096,6 +3108,11 @@
                     frame.src = "https://view.officeapps.live.com/op/embed.aspx?src=" + encodeURIComponent(finalUrl);
                 } else if (isPdf || isWordOrPpt) {
                     frame.src = "https://docs.google.com/viewer?url=" + encodeURIComponent(finalUrl) + "&embedded=true";
+                    // Viewer eksternal kadang gagal ambil file (mis. file diblokir server penyimpanan)
+                    // dan cuma nampilin halaman kosong tanpa error yang kelihatan, makanya kasih hint manual.
+                    setTimeout(() => {
+                        if (modal.style.display === 'flex') loadHint.style.display = 'block';
+                    }, 3000);
                 } else {
                     frame.src = finalUrl;
                 }
@@ -3150,6 +3167,7 @@
                 showUploadAlert();
                 try {
                     let uploadedFiles = [];
+                    let failedFiles = [];
                     for (let item of selectedImagesData) {
                         const formData = new FormData();
                         formData.append('file', item.fileObj);
@@ -3166,7 +3184,16 @@
                                 type: item.type || "application/octet-stream",
                                 name: item.name
                             });
+                        } else {
+                            console.error("Upload gagal untuk", item.name, data);
+                            failedFiles.push(`${item.name}: ${(data && data.error && data.error.message) || "gagal upload"}`);
                         }
+                    }
+                    if (failedFiles.length > 0) {
+                        closeUploadAlert();
+                        showAlert("Ada File Gagal Upload", failedFiles.join("\n"));
+                        if (uploadedFiles.length === 0 && input.value.trim() === "") return;
+                        showUploadAlert();
                     }
                     const newTask = {
                         text: input.value,
