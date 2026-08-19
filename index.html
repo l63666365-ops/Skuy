@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport"
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Jadwal Sekolah Pro</title>
+    <title>Skuy Jadwal</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap');
 
@@ -42,17 +41,16 @@
         }
 
         [data-theme="dark"] {
-            --bg-color: #0a1128;
-            --white: #101c30;
-            --color-1: #e9eff7;
-            --color-2: #3f7ab8;
-            --color-5: #16233a;
-            --bg-gradient: linear-gradient(135deg, #0a1128 0%, #10193a 50%, #16233a 100%);
+            --bg-color: #101114;
+            --white: #1d1e23;
+            --color-1: #f4f5f7;
+            --color-2: #4a90d9;
+            --color-5: #14355c;
+            --bg-gradient: linear-gradient(160deg, #101114 0%, #17181c 100%);
             --bg-blobs:
-                radial-gradient(circle at 80% 20%, rgba(63, 122, 184, 0.18) 0%, transparent 40%),
-                radial-gradient(circle at 20% 60%, rgba(22, 35, 58, 0.75) 0%, transparent 50%),
-                radial-gradient(circle at 70% 80%, rgba(16, 28, 48, 0.6) 0%, transparent 45%);
-            --bg-pattern: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='320' viewBox='0 0 320 320'%3E%3Cdefs%3E%3Csymbol id='ic-book' viewBox='0 0 90 70'%3E%3Crect x='8' y='9' width='74' height='52' rx='4'/%3E%3Cpath d='M45,9 L45,61'/%3E%3Cpath d='M17,22 L36,22'/%3E%3Cpath d='M17,32 L34,32'/%3E%3Cpath d='M17,42 L32,42'/%3E%3Cpath d='M54,22 L73,22'/%3E%3Cpath d='M56,32 L73,32'/%3E%3Cpath d='M58,42 L73,42'/%3E%3C/symbol%3E%3Csymbol id='ic-pencil' viewBox='0 0 40 100'%3E%3Crect x='15' y='26' width='10' height='58'/%3E%3Cpath d='M15,26 L20,8 L25,26 Z'/%3E%3Cpath d='M14,84 L26,84'/%3E%3Crect x='14' y='84' width='12' height='11' rx='2'/%3E%3C/symbol%3E%3Csymbol id='ic-cap' viewBox='0 0 100 70'%3E%3Cpath d='M6,26 L50,10 L94,26 L50,42 Z'/%3E%3Cpath d='M27,29 Q27,52 50,56 Q73,52 73,29'/%3E%3Cpath d='M84,23 L91,52'/%3E%3Ccircle cx='91' cy='57' r='4'/%3E%3C/symbol%3E%3Csymbol id='ic-clock' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='56' r='34'/%3E%3Cpath d='M50,56 L50,36'/%3E%3Cpath d='M50,56 L66,62'/%3E%3Cpath d='M28,24 L16,10'/%3E%3Ccircle cx='15' cy='8' r='5'/%3E%3Cpath d='M72,24 L84,10'/%3E%3Ccircle cx='85' cy='8' r='5'/%3E%3Cpath d='M38,90 L34,98'/%3E%3Cpath d='M62,90 L66,98'/%3E%3C/symbol%3E%3Csymbol id='ic-ruler' viewBox='0 0 100 40'%3E%3Crect x='4' y='12' width='92' height='18' rx='2'/%3E%3Cpath d='M14,12 L14,20'/%3E%3Cpath d='M24,12 L24,17'/%3E%3Cpath d='M34,12 L34,20'/%3E%3Cpath d='M44,12 L44,17'/%3E%3Cpath d='M54,12 L54,20'/%3E%3Cpath d='M64,12 L64,17'/%3E%3Cpath d='M74,12 L74,20'/%3E%3Cpath d='M84,12 L84,17'/%3E%3C/symbol%3E%3C/defs%3E%3Cg fill='none' stroke='%238fb4e8' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cuse href='%23ic-clock' x='167.3' y='13.5' width='37' height='37' opacity='0.29' transform='rotate(11 185.8 32.0)'/%3E%3Cuse href='%23ic-pencil' x='262.0' y='247.3' width='39' height='39' opacity='0.18' transform='rotate(-20 281.5 266.8)'/%3E%3Cuse href='%23ic-book' x='194.0' y='107.3' width='43' height='43' opacity='0.41' transform='rotate(14 215.5 128.8)'/%3E%3Cuse href='%23ic-ruler' x='1.5' y='35.7' width='39' height='39' opacity='0.29' transform='rotate(23 21.0 55.2)'/%3E%3Cuse href='%23ic-ruler' x='321.5' y='35.7' width='39' height='39' opacity='0.29' transform='rotate(23 341.0 55.2)'/%3E%3Cuse href='%23ic-cap' x='194.2' y='240.4' width='43' height='43' opacity='0.41' transform='rotate(-19 215.7 261.9)'/%3E%3Cuse href='%23ic-book' x='92.3' y='180.3' width='42' height='42' opacity='0.41' transform='rotate(24 113.3 201.3)'/%3E%3Cuse href='%23ic-cap' x='200.5' y='181.9' width='39' height='39' opacity='0.34' transform='rotate(12 220.0 201.4)'/%3E%3Cuse href='%23ic-pencil' x='275.6' y='160.2' width='36' height='36' opacity='0.34' transform='rotate(-21 293.6 178.2)'/%3E%3Cuse href='%23ic-ruler' x='271.7' y='97.0' width='40' height='40' opacity='0.41' transform='rotate(8 291.7 117.0)'/%3E%3Cuse href='%23ic-clock' x='20.2' y='110.1' width='37' height='37' opacity='0.29' transform='rotate(-15 38.7 128.6)'/%3E%3Cuse href='%23ic-ruler' x='82.4' y='21.2' width='36' height='36' opacity='0.18' transform='rotate(20 100.4 39.2)'/%3E%3Cuse href='%23ic-book' x='6.8' y='266.0' width='43' height='43' opacity='0.34' transform='rotate(-17 28.3 287.5)'/%3E%3Cuse href='%23ic-book' x='326.8' y='266.0' width='43' height='43' opacity='0.34' transform='rotate(-17 348.3 287.5)'/%3E%3Cuse href='%23ic-clock' x='122.3' y='243.2' width='38' height='38' opacity='0.29' transform='rotate(-9 141.3 262.2)'/%3E%3Cuse href='%23ic-pencil' x='248.0' y='36.1' width='38' height='38' opacity='0.23' transform='rotate(-14 267.0 55.1)'/%3E%3Cuse href='%23ic-cap' x='79.2' y='121.0' width='39' height='39' opacity='0.41' transform='rotate(18 98.7 140.5)'/%3E%3Cuse href='%23ic-clock' x='22.9' y='195.8' width='43' height='43' opacity='0.34' transform='rotate(15 44.4 217.3)'/%3E%3C/g%3E%3C/svg%3E");
+                radial-gradient(circle at 85% 0%, rgba(74, 144, 217, 0.10) 0%, transparent 45%),
+                radial-gradient(circle at 0% 100%, rgba(20, 53, 92, 0.25) 0%, transparent 55%);
+            --bg-pattern: none;
         }
 
         [data-theme="dark"] .btn-delete-task {
@@ -65,7 +63,7 @@
             background-color: #2a1416;
             color: #ff6b6b;
             border-color: #ff6b6b;
-            box-shadow: 0 6px 0 #ff6b6b;
+            box-shadow: 0 4px 0 #ff6b6b, 0 6px 20px rgba(255,107,107,0.20);
         }
 
         [data-theme="dark"] .file-box {
@@ -78,10 +76,7 @@
         }
 
         [data-theme="dark"] #clock,
-        [data-theme="dark"] #full-date,
-        [data-theme="dark"] .status-now,
-        [data-theme="dark"] .grid-header,
-        [data-theme="dark"] .btn-week {
+        [data-theme="dark"] .grid-header {
             color: var(--color-1);
         }
 
@@ -290,6 +285,15 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
+            padding-bottom: 160px;
+        }
+
+        [data-theme="dark"] .container {
+            background: rgba(29, 30, 35, 0.55);
+            border-radius: 26px;
+            padding: 18px 14px 90px;
+            box-shadow: 0 22px 55px rgba(0, 0, 0, 0.45);
+            gap: 16px;
         }
 
         .glass-card {
@@ -303,22 +307,59 @@
             box-shadow: 0 4px 15px rgba(5, 38, 89, 0.05);
         }
 
-        .header-strip {
-            border-top: 8px solid var(--color-2);
-            position: relative;
-            background: var(--white);
+        .glass-card.header-strip {
+            border: none;
+            border-radius: 0;
+            padding: 15px 15px 0 15px;
+            box-shadow: none;
+            background: transparent;
+            text-align: left;
+        }
+
+        [data-theme="dark"] .glass-card.header-strip {
+            background: transparent;
+            box-shadow: none;
+        }
+
+        .section-divider {
+            border: none;
+            border-top: 1px solid var(--color-5);
+            margin: 4px 0 6px;
+            width: 100%;
+        }
+
+        [data-theme="dark"] .section-divider {
+            border-top-color: rgba(255,255,255,0.10);
+        }
+
+        .header-top-row {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .header-kelas {
+            font-size: 19px;
+            font-weight: 800;
+            color: var(--color-1);
+            letter-spacing: -0.2px;
+            margin: 0;
+            padding: 0;
+            line-height: 1.2;
         }
 
         #clock {
-            font-size: 42px;
+            font-size: 22px;
             font-variant-numeric: tabular-nums;
             font-weight: 800;
-            letter-spacing: -2px;
-            color: var(--color-2);
+            letter-spacing: -0.5px;
+            color: var(--color-1);
             cursor: pointer;
             transition: transform 0.2s;
             position: relative;
             z-index: 5;
+            flex: none;
         }
 
         #clock:active {
@@ -329,7 +370,8 @@
             font-size: 13px;
             font-weight: 600;
             color: var(--color-3);
-            margin-bottom: 8px;
+            margin: 2px 0 0 0;
+            padding: 0;
         }
 
         #quote-popup {
@@ -360,16 +402,59 @@
 
         .status-container {
             font-size: 12px;
-            background: var(--white);
-            padding: 9px;
-            border-radius: 12px;
-            margin-top: 8px;
-            border: 1px solid var(--color-4);
+            background: var(--color-5);
+            padding: 13px 15px 13px 0;
+            border-radius: 16px;
+            margin-top: 14px;
+            border: none;
+            text-align: left;
+            width: calc(100% + 30px);
+            margin-left: -15px;
+            box-sizing: border-box;
+        }
+
+        .status-inner {
+            padding-left: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .status-text {
+            flex: 1;
+        }
+
+        .status-label {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.2px;
+            color: var(--color-3);
+            margin-bottom: 4px;
+        }
+
+        .status-dots {
+            display: inline;
+            letter-spacing: 1px;
+        }
+
+        .status-dots span {
+            animation: dot-blink 1.4s infinite;
+            opacity: 0;
+        }
+
+        .status-dots span:nth-child(1) { animation-delay: 0s; }
+        .status-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .status-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes dot-blink {
+            0%, 80%, 100% { opacity: 0; }
+            40% { opacity: 1; }
         }
 
         .status-now {
             color: var(--color-2);
             font-weight: 800;
+            font-size: 15px;
             margin-bottom: 3px;
         }
 
@@ -377,6 +462,43 @@
             color: var(--color-3);
             font-weight: 600;
             font-size: 11px;
+        }
+
+        /* Progress arc */
+        .status-arc {
+            flex: none;
+            width: 48px;
+            height: 48px;
+        }
+
+        .arc-bg {
+            fill: none;
+            stroke: var(--color-4);
+            stroke-width: 3.5;
+        }
+
+        .arc-fill {
+            fill: none;
+            stroke: var(--color-2);
+            stroke-width: 3.5;
+            stroke-linecap: round;
+            /* 2 x π x 17 (r="17" di elemen circle-nya) = keliling ASLI, dibulatkan 2 desimal.
+               Harus sama persis dengan ARC_CIRC di JS (updateStatus) biar gak ada selisih. */
+            stroke-dasharray: 106.81;
+            stroke-dashoffset: 106.81;
+            transform: rotate(-90deg);
+            transform-origin: 20px 20px;
+            /* Transition-nya sengaja DIATUR LEWAT JS (bukan di sini), soalnya cuma boleh
+               nyala 1x pas render pertama (sapuan awal) — update rutin tiap detik setelah
+               itu harus snap instan. Lihat setArcDown() di updateStatus(). */
+        }
+
+        .arc-label {
+            font-size: 8px;
+            font-weight: 800;
+            fill: var(--color-2);
+            text-anchor: middle;
+            dominant-baseline: middle;
         }
 
         .nav-day {
@@ -449,14 +571,16 @@
             display: flex;
             gap: 10px;
             justify-content: center;
+            width: 100%;
         }
 
         .btn-week {
+            flex: 1;
             background: var(--white);
-            border: 1px solid var(--color-4);
+            border: 1.5px solid var(--color-4);
             color: var(--color-3);
-            padding: 6px 18px;
-            border-radius: 20px;
+            padding: 11px 12px;
+            border-radius: 14px;
             font-size: 13px;
             font-weight: 700;
             cursor: pointer;
@@ -643,6 +767,14 @@
             color: var(--color-3);
         }
 
+        .task-section-label {
+            font-size: 11px;
+            font-weight: 800;
+            color: var(--color-3);
+            letter-spacing: 0.5px;
+            margin: 18px 0 8px;
+        }
+
         .task-check {
             display: none;
             width: 18px;
@@ -720,8 +852,8 @@
             background-color: var(--white);
             color: var(--color-2);
             border: 2px solid var(--color-2);
-            border-radius: 10px;
-            padding: 12px 20px;
+            border-radius: 14px;
+            padding: 13px 20px;
             font-size: 13px;
             font-weight: 800;
             text-transform: uppercase;
@@ -731,12 +863,15 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
-            position: relative;
+            position: fixed;
+            bottom: 86px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 20px);
+            max-width: 430px;
+            z-index: 99;
             transition: all 0.1s ease;
-            box-shadow: 0 5px 0 var(--color-2);
-            margin-bottom: 1px;
-            width: 100%;
-            animation: fadeInUp 0.8s ease backwards;
+            box-shadow: 0 4px 0 var(--color-2), 0 6px 20px rgba(5,38,89,0.15);
         }
 
         #btn-edit-mode:active {
@@ -1332,32 +1467,47 @@
             }
         }
 
-        .glass-card,
-        .nav-day,
-        .week-toggle,
-        .schedule-grid,
-        .task-section {
+        /* Ada 2 macam elemen animasi di sini:
+
+           1) Elemen yang ADA DI DALAM salah satu tab (.app-screen) — misal week-toggle
+              & kartu jadwal punya tab Jadwal, task-section punya tab Tugas, glass-card
+              punya tab Profil. Ini digembok pakai class .screen-shown yang nempel di
+              tab (.app-screen) masing-masing, ditambahin via showScreen() abis tab itu
+              KE-BUKA PERTAMA KALINYA. Jadi tiap tab dapet jatah animasi 1x pas pertama
+              kali dibuka (Jadwal pas awal web/refresh, Tugas & Profil pas pertama kali
+              di-tap) — abis itu gak animasi lagi walau bolak-balik pindah tab.
+
+           2) Header di paling atas (jam & status pelajaran) posisinya di LUAR ketiga
+              tab, selalu nempel gak peduli lagi di tab mana — jadi cukup digembok pakai
+              body.has-loaded (sekali doang pas web pertama dimuat/refresh). */
+        .app-screen:not(.screen-shown) .glass-card,
+        .app-screen:not(.screen-shown) .schedule-grid,
+        .app-screen:not(.screen-shown) .task-section {
+            animation: fadeInUp 0.35s ease backwards;
+        }
+
+        .app-screen:not(.screen-shown) .glass-card {
+            animation-delay: 0s;
+        }
+
+        .app-screen:not(.screen-shown) .week-toggle {
+            animation: fadeInUp 0.35s ease backwards;
+            animation-delay: 0.15s;
+        }
+
+        .app-screen:not(.screen-shown) .schedule-grid {
+            animation-delay: 0.15s;
+        }
+
+        .app-screen:not(.screen-shown) .task-section {
+            animation-delay: 0s;
+        }
+
+        /* Header utama (jam & status pelajaran) — di luar tab, animasi 1x pas load/refresh */
+        body:not(.has-loaded) #mainScheduleContent > .glass-card.header-strip,
+        body:not(.has-loaded) #adminSelector .glass-card {
             animation: fadeInUp 0.8s ease backwards;
-        }
-
-        .glass-card {
             animation-delay: 0.1s;
-        }
-
-        .nav-day {
-            animation-delay: 0.2s;
-        }
-
-        .week-toggle {
-            animation-delay: 0.3s;
-        }
-
-        .schedule-grid {
-            animation-delay: 0.4s;
-        }
-
-        .task-section {
-            animation-delay: 0.5s;
         }
 
         #btn-edit-mode {
@@ -1768,11 +1918,472 @@
             animation: bellSettle 0.8s ease-in-out;
             transform-origin: top center;
         }
+
+        /* ===== Redesain: navigasi bawah, chip hari, kartu jadwal ===== */
+        .app-screen {
+            display: none;
+        }
+
+        .app-screen.active {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 100%;
+            align-items: center;
+        }
+
+        /* Tombol Keluar dikunci posisinya deket bottom-nav */
+        #btnKeluarWrap {
+            position: fixed !important;
+            left: 50% !important;
+            bottom: 96px !important;
+            transform: translateX(-50%) !important;
+            width: calc(100% - 20px) !important;
+            max-width: 410px !important;
+            margin-top: 0 !important;
+            z-index: 90;
+        }
+
+        .bottom-nav {
+            display: flex;
+            position: fixed;
+            bottom: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 20px);
+            max-width: 430px;
+            background: var(--white);
+            border-radius: 20px;
+            padding: 6px;
+            box-shadow:
+                0 8px 32px rgba(5, 38, 89, 0.18),
+                0 2px 8px rgba(5, 38, 89, 0.10);
+            z-index: 100;
+        }
+
+        .bottom-nav-btn {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            background: none;
+            border: none;
+            border-radius: 10px;
+            padding: 8px 0 6px;
+            color: var(--color-3);
+            cursor: pointer;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 0.3px;
+            transition: color 0.2s ease, background 0.2s ease;
+        }
+
+        .bottom-nav-btn svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .bottom-nav-btn.active {
+            color: var(--color-2);
+            background: var(--color-5);
+        }
+
+        .day-chip-row {
+            display: flex;
+            gap: 6px;
+            width: 100%;
+            overflow-x: auto;
+            padding-bottom: 2px;
+        }
+
+        .day-chip {
+            flex: none;
+            padding: 7px 13px;
+            font-size: 11px;
+            font-weight: 800;
+            border-radius: 20px;
+            border: 1px solid var(--color-5);
+            background: var(--white);
+            color: var(--color-3);
+            cursor: pointer;
+        }
+
+        .day-chip.active {
+            background: var(--color-2);
+            color: var(--white);
+            border-color: var(--color-2);
+        }
+
+        .schedule-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .schedule-card {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            padding: 14px;
+            border-radius: 14px;
+            border: 1.5px solid var(--color-5);
+            background: var(--white);
+            position: relative;
+        }
+
+        .schedule-card .sc-time {
+            width: 58px;
+            flex: none;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--color-3);
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .schedule-card .sc-mapel {
+            font-size: 15px;
+            font-weight: 800;
+            color: var(--color-1);
+            margin: 0;
+        }
+
+        .schedule-card .sc-ruang {
+            font-size: 12px;
+            color: var(--color-3);
+            margin: 6px 0 0;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .sc-ruang-icon {
+            flex: none;
+            width: 11px;
+            height: 11px;
+            opacity: 0.7;
+        }
+
+        .schedule-card.highlight {
+            background: #1a3f6f !important;
+            border-color: #4a90d9 !important;
+            border-left: 4px solid #4a90d9 !important;
+            box-shadow:
+                0 0 0 2px rgba(74, 144, 217, 0.25),
+                0 6px 24px rgba(26, 63, 111, 0.45) !important;
+            animation: card-pulse 2.5s ease-in-out infinite !important;
+            transform: translateY(-1px);
+        }
+
+        @keyframes card-pulse {
+            0%, 100% { box-shadow: 0 0 0 2px rgba(74, 144, 217, 0.25), 0 6px 24px rgba(26, 63, 111, 0.45); }
+            50%       { box-shadow: 0 0 0 4px rgba(74, 144, 217, 0.45), 0 8px 32px rgba(26, 63, 111, 0.60); }
+        }
+
+        .schedule-card.highlight .sc-time,
+        .schedule-card.highlight .sc-ruang,
+        .schedule-card.highlight .sc-mapel {
+            color: #d4eaff !important;
+        }
+
+        .schedule-card.highlight .sc-mapel {
+            color: #ffffff !important;
+        }
+
+        /* Badge penanda ada tugas buat mapel ini (hari ini/besok, sesuai jam skrg) —
+           ditaro di pojok kanan atas kartu, chip outline biar gak norak/sempit
+           nempel di teks mapel yang pendek (KK3, Agm, dst). */
+        .schedule-card.has-task {
+            cursor: pointer;
+        }
+
+        .schedule-card.has-task > div:last-child {
+            padding-right: 62px;
+        }
+
+        /* Efek "border beam" ala MagicUI, di-tune sesuai config: size 100,
+           borderThickness 3, beamBorderRadius 100 (ujung pill), colorFrom/To
+           solid emas, glowIntensity kuat. Kecepatan geraknya (LOOP_MS) dan
+           lama tampilnya sekarang GAK dipatok sama — animasinya digasin
+           cepet (0.7s) terus cuma dikasih jatah 1x keliling penuh (karena
+           ada 2 beam seberangan, 1 keliling itu = 2 sapuan cahaya), abis itu
+           langsung ilang, gak dipaksa nunggu sampe durasi tertentu. Kalau
+           mau lebih/kurang sapuan, cukup ganti angka `iterations` di
+           attachTaskBeam (1 keliling = 2 sapuan berkat 2 beam-nya). CATATAN:
+           versi lama pakai satu balok kaku yang
+           digeser lewat offset-path — kalau balok itu dipanjangin dia jadi
+           "patah" pas nikung di pojokan kecil (radius 10px), soalnya cuma
+           bisa muter sebagai satu bentuk utuh, gak bisa nekuk. Makanya di
+           bawah ini diganti total: beam-nya digambar LANGSUNG di atas jalur
+           SVG rounded-rect (stroke-dasharray/stroke-dashoffset — persis
+           teknik arc-fill di status jadwal), jadi otomatis ngikutin
+           lengkungan pojok semulus apapun, biar beam-nya tetep boleh
+           panjang. Elemen SVG-nya sendiri di-generate & di-attach lewat JS
+           (lihat attachTaskBeam), soalnya ukurannya perlu ngukur dimensi
+           kartu tugas yang sebenarnya biar pojokannya presisi. */
+        .task-beam-overlay {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 5;
+            overflow: visible;
+        }
+
+        .task-beam-overlay rect {
+            fill: none;
+            stroke: #FFD700;
+            stroke-linecap: round;
+            filter: drop-shadow(0 0 3px rgba(255, 215, 0, 0.9)) drop-shadow(0 0 10px rgba(255, 215, 0, 0.65));
+        }
+
+        .sc-task-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 10px;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 0.2px;
+            color: #412402;
+            background: #FAC775;
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 2px 8px rgba(5, 38, 89, 0.25);
+            text-transform: uppercase;
+            font-size: 9px;
+            white-space: nowrap;
+        }
+
+        .sc-task-badge svg {
+            width: 12px;
+            height: 12px;
+            flex: none;
+        }
+
+        .schedule-card.highlight .sc-task-badge {
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+        }
+
+        /* ===== Maskot (dipakai di header & state kosong) ===== */
+        .mascot-bot {
+            position: relative;
+            animation: mascotBob 2.8s ease-in-out infinite;
+            transform-origin: bottom center;
+        }
+
+        .mascot-bot svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        @keyframes mascotBob {
+            0%, 100% { transform: translateY(0) rotate(-3deg); }
+            50% { transform: translateY(-6px) rotate(3deg); }
+        }
+
+        .mascot-bot .eye {
+            animation: mascotBlink 4.4s ease-in-out infinite;
+            transform-origin: center;
+        }
+
+        .mascot-bot .eye.right {
+            animation-delay: .15s;
+        }
+
+        @keyframes mascotBlink {
+            0%, 90%, 100% { transform: scaleY(1); }
+            93%, 96% { transform: scaleY(.1); }
+        }
+
+        .mascot-bot .mouth-happy {
+            opacity: 0;
+            transition: opacity .3s;
+        }
+
+        .mascot-bot.happy .mouth-sad {
+            opacity: 0;
+        }
+
+        .mascot-bot.happy .mouth-happy {
+            opacity: 1;
+        }
+
+        .mascot-bot .ant-tip {
+            fill: var(--color-4);
+            transition: fill .3s;
+        }
+
+        .mascot-bot.happy .ant-tip {
+            fill: #28a745;
+        }
+
+        .mascot-mini {
+            position: absolute;
+            top: 10px;
+            right: 12px;
+            width: 42px;
+            height: 42px;
+            z-index: 2;
+        }
+
+        .mascot-wrap-lg {
+            position: relative;
+            width: 108px;
+            height: 116px;
+            margin: 4px auto 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mascot-glow-lg {
+            position: absolute;
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: var(--color-5);
+            animation: mascotGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes mascotGlow {
+            0%, 100% { transform: scale(1); opacity: .5; }
+            50% { transform: scale(1.1); opacity: .75; }
+        }
+
+        .mascot-shadow-lg {
+            position: absolute;
+            bottom: 4px;
+            width: 48px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(5, 38, 89, .14);
+            animation: mascotShadow 2.6s ease-in-out infinite;
+        }
+
+        @keyframes mascotShadow {
+            0%, 100% { transform: scaleX(1); opacity: .4; }
+            50% { transform: scaleX(.8); opacity: .2; }
+        }
+
+        .mascot-wrap-lg .mascot-bot {
+            position: relative;
+            z-index: 2;
+            width: 82px;
+            height: 98px;
+        }
+
+        .mascot-caption {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--color-3);
+            text-align: center;
+            margin: 0;
+        }
+
+        .mascot-empty {
+            width: 100%;
+            padding: 18px 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+        }
+
+        /* ===== Page load animation ===== */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to   { opacity: 1; }
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Status jadwal & chip hari dianimasikan lewat JS (runPageLoadAnimation),
+           bukan lewat CSS @keyframes seperti .glass-card/.week-toggle — makanya
+           butuh state tersembunyi dari awal di sini, supaya elemen ini gak sempat
+           kelihatan penuh dulu sebelum JS jalan (mencegah "kedip"/flash pas refresh). */
+        #status-live,
+        #day-chip-row {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        [data-theme="dark"] .status-now {
+            color: var(--color-1);
+        }
+
+        [data-theme="dark"] .day-chip {
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(255, 255, 255, 0.14);
+            color: #9a9ba3;
+        }
+
+        [data-theme="dark"] .day-chip.active {
+            background: var(--color-5);
+            border-color: var(--color-2);
+            color: var(--color-4);
+        }
+
+        [data-theme="dark"] .btn-week {
+            border-color: rgba(255, 255, 255, 0.14);
+        }
+
+        [data-theme="dark"] .btn-week.active {
+            background: var(--color-5);
+            color: var(--color-4);
+            border-color: var(--color-2);
+        }
+
+        [data-theme="dark"] .schedule-card {
+            border-color: rgba(255, 255, 255, 0.10);
+        }
+
+        [data-theme="dark"] .schedule-card.highlight {
+            background: #0f2a4a !important;
+            border-color: #4a90d9 !important;
+            border-left: 4px solid #4a90d9 !important;
+            box-shadow:
+                0 0 0 2px rgba(74, 144, 217, 0.30),
+                0 6px 28px rgba(10, 30, 60, 0.70) !important;
+            animation: card-pulse 2.5s ease-in-out infinite !important;
+        }
+
+        [data-theme="dark"] .schedule-card.highlight .sc-time,
+        [data-theme="dark"] .schedule-card.highlight .sc-ruang,
+        [data-theme="dark"] .schedule-card.highlight .sc-mapel {
+            color: #c8e0f8 !important;
+        }
+
+        [data-theme="dark"] .schedule-card.highlight .sc-mapel {
+            color: #ffffff !important;
+        }
+
+        [data-theme="dark"] .bottom-nav {
+            background: #1d1e23;
+            border: 1px solid rgba(255, 255, 255, 0.10);
+            box-shadow:
+                0 8px 32px rgba(0, 0, 0, 0.45),
+                0 2px 8px rgba(0, 0, 0, 0.30);
+            border-radius: 20px;
+            padding: 6px;
+        }
+
+        [data-theme="dark"] .bottom-nav-btn.active {
+            background: rgba(74, 144, 217, 0.15);
+            color: var(--color-2);
+        }
     </style>
     <script>
         (function () {
             var saved = localStorage.getItem('skuyTheme');
-            var theme = saved || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            var theme = saved || 'light';
             document.documentElement.setAttribute('data-theme', theme);
         })();
         function toggleTheme() {
@@ -1780,6 +2391,43 @@
             var next = current === 'dark' ? 'light' : 'dark';
             document.documentElement.setAttribute('data-theme', next);
             localStorage.setItem('skuyTheme', next);
+            updateProfilThemeUI();
+            var savedBg = localStorage.getItem('savedBg');
+            if (savedBg && typeof applySavedBg === 'function') applySavedBg(savedBg);
+        }
+
+        function updateProfilThemeUI() {
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const label = document.getElementById('profil-theme-label');
+            const toggle = document.getElementById('profil-theme-toggle');
+            const knob = document.getElementById('profil-theme-knob');
+            const icon = document.getElementById('profil-theme-icon');
+            if (label) label.textContent = isDark ? 'Mode Gelap' : 'Mode Terang';
+            if (toggle) toggle.style.background = isDark ? '#4a90d9' : 'var(--color-4)';
+            if (knob) knob.style.left = isDark ? '21px' : '3px';
+            if (icon) {
+                icon.innerHTML = isDark
+                    ? '<path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/>'
+                    : '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>';
+            }
+        }
+
+        function updateProfilNotifUI() {
+            const isOn = localStorage.getItem('notifEnabled') !== 'false';
+            const label = document.getElementById('profil-notif-label');
+            const toggle = document.getElementById('profil-notif-toggle');
+            const knob = document.getElementById('profil-notif-knob');
+            if (label) label.textContent = isOn ? 'Notifikasi Aktif' : 'Notifikasi Mati';
+            if (toggle) toggle.style.background = isOn ? '#4a90d9' : 'var(--color-4)';
+            if (knob) knob.style.left = isOn ? '21px' : '3px';
+        }
+
+        function updateProfilBgUI() {
+            const hasBg = !!localStorage.getItem('savedBg');
+            const sub = document.getElementById('profil-bg-sub');
+            const resetBtn = document.getElementById('profil-bg-reset');
+            if (sub) sub.textContent = hasBg ? 'Background kustom aktif' : 'Pakai foto dari galeri';
+            if (resetBtn) resetBtn.style.display = hasBg ? 'flex' : 'none';
         }
     </script>
 </head>
@@ -1792,10 +2440,6 @@
             <path d="M21 3v6h-6"></path>
         </svg>
     </div>
-    <button class="theme-toggle-btn" id="themeToggleBtn" onclick="toggleTheme()" aria-label="Ganti tema terang/gelap">
-        <svg class="icon-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg>
-        <svg class="icon-moon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"></path></svg>
-    </button>
     <div id="imageModal" class="modal-overlay">
         <div onclick="closeImage()" style="position:absolute; top:0; left:0; width:100%; height:100%; z-index:3050;">
         </div>
@@ -1885,21 +2529,6 @@
         <button class="success-btn" onclick="closeSuccessAlert()">OK, Siap!</button>
     </div>
 
-    <div class="pomo-icon" id="notif-btn" onclick="toggleNotif()" title="Toggle Notifikasi">
-        <svg id="notif-icon-on" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"
-            fill="currentColor">
-            <path
-                d="M7.58 4.08L6.15 2.65C3.75 4.48 2.17 7.3 2.03 10.5h2c.15-2.65 1.51-4.97 3.55-6.42zm12.39 6.42h2c-.15-3.2-1.73-6.02-4.12-7.85l-1.42 1.43c2.02 1.45 3.38 3.77 3.54 6.42zM18 11c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2v-5zm-6 11c.14 0 .27-.01.4-.03.65-.14 1.18-.58 1.44-1.17.1-.24.16-.5.16-.8h-4c0 1.1.9 2 2 2z" />
-        </svg>
-        <svg id="notif-icon-off" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"
-            fill="currentColor" style="display:none">
-            <path
-                d="M20 18.69L7.84 6.14 5.27 3.49 4 4.76l2.2 2.2A6.95 6.95 0 005 11v5l-2 2v1h13.73l2 2L20 19.69zM12 22c1.11 0 2-.89 2-2h-4c0 1.11.89 2 2 2zm6-7.32V11c0-3.08-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68c-.98.23-1.87.66-2.63 1.24L18 13.68z"
-                opacity="0.7" />
-            <line x1="3" y1="3" x2="21" y2="21" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" />
-        </svg>
-    </div>
-
     <div class="container">
         <div id="adminSelector" style="display: none; flex-direction: column; gap: 15px;">
             <div class="glass-card header-strip">
@@ -1966,131 +2595,219 @@
             </div>
 
             <div class="glass-card header-strip" style="width: 100%; margin-top: 0;">
-                <div id="clock" onclick="showMotivation()">00.00.00</div>
                 <div id="quote-popup"></div>
-                <div id="full-date">Memuat...</div>
+                <div class="header-top-row">
+                    <div style="margin:0;padding:0;">
+                        <div class="header-kelas" id="header-kelas">-</div>
+                        <div id="full-date">Memuat...</div>
+                    </div>
+                    <div id="clock" onclick="showMotivation()">00:00</div>
+                </div>
                 <div class="status-container" id="status-live">
-                    <div class="status-now" id="stat-now">Mencari pelajaran...</div>
-                    <div class="status-next" id="stat-next"></div>
-                </div>
-            </div>
-
-            <div class="nav-day" style="width: 100%;">
-                <button class="btn-nav" onclick="changeDay(-1)">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="11 17 6 12 11 7"></polyline>
-                        <polyline points="18 17 13 12 18 7"></polyline>
-                    </svg>
-                </button>
-                <div class="glass-card current-day-box" id="display-day">Hari Ini</div>
-                <button class="btn-nav" onclick="changeDay(1)">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="13 17 18 12 13 7"></polyline>
-                        <polyline points="6 17 11 12 6 7"></polyline>
-                    </svg>
-                </button>
-            </div>
-
-            <button class="btn-today-link" id="btn-today" onclick="goToToday()" title="Kembali ke hari ini"
-                style="display:none;">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                    stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M8 2v4"></path>
-                    <path d="M16 2v4"></path>
-                    <rect width="18" height="18" x="3" y="4" rx="2"></rect>
-                    <path d="M3 10h18"></path>
-                    <path d="m9 16 2 2 4-4"></path>
-                </svg>
-                <span>Kembali ke Hari Ini</span>
-            </button>
-
-            <div class="week-toggle">
-                <button id="btn-m1" class="btn-week active" onclick="setWeek('m1')">Minggu 1</button>
-                <button id="btn-m2" class="btn-week" onclick="setWeek('m2')">Minggu 2</button>
-            </div>
-
-            <div class="schedule-grid" id="main-grid" style="width: 100%;">
-                <div class="grid-header">Mapel</div>
-                <div class="grid-header">Jam</div>
-                <div class="grid-header">Ruang</div>
-                <div class="grid-column" id="col-mapel"></div>
-                <div class="grid-column" id="col-jam"></div>
-                <div class="grid-column" id="col-ruang"></div>
-            </div>
-
-            <div id="edit-controls"
-                style="display:none; flex-direction: column; align-items: center; gap: 10px; margin-top: 35px; width: 100%;">
-                <button onclick="addRow()"
-                    style="background:var(--color-2); color:var(--color-5); border:none; padding:10px 22px; border-radius:10px; font-weight:bold; cursor:pointer; font-size: 13px; width: auto;">+
-                    TAMBAH MAPEL</button>
-                <div style="display: flex; gap: 20px; width: 100%; justify-content: center;">
-                    <button id="btn-save-jadwal-top" class="btn-save-small" onclick="saveJadwal()">SIMPAN</button>
-                    <button class="btn-cancel-small" onclick="toggleEditMode()">BATAL</button>
-                </div>
-            </div>
-
-            <div class="task-section" style="width: 100%;">
-                <p id="daftarTugasLabel" style="font-size: 13px; font-weight: bold; margin-bottom: 5px; color: var(--color-2);">DAFTAR TUGAS:
-                </p>
-                <div class="task-input-container">
-                    <textarea id="taskInput" placeholder="Ketik tugas di sini..."></textarea>
-                    <button type="button" class="btn-add" onclick="bukaKamera(event)">
-
-                        <svg xmlns="http://w3.org" width="24" height="24" viewBox="0 0 100 100" fill="none"
-                            stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
-                            <!-- Badan Utama Kamera -->
-                            <path
-                                d="M12,28 C12,22 17,22 21,22 L32,22 C36,22 38,18 42,14 L58,14 C62,18 64,22 68,22 L79,22 C83,22 88,22 88,28 L88,72 C88,78 83,78 79,78 L21,78 C17,78 12,78 12,72 Z" />
-
-                            <!-- Tombol Shutter di Kiri Atas -->
-                            <path d="M20,15 L28,15" />
-
-                            <!-- Jendela Bidik (Viewfinder) -->
-                            <rect x="20" y="30" width="12" height="8" rx="2" fill="currentColor" stroke="none" />
-
-                            <!-- Lensa Luar -->
-                            <circle cx="50" cy="53" r="21" />
-
-                            <!-- Lensa Dalam (Titik Tengah) -->
-                            <circle cx="50" cy="53" r="4" fill="currentColor" stroke="none" />
+                    <div class="status-inner">
+                        <svg class="status-arc" id="status-arc" viewBox="0 0 40 40">
+                            <circle class="arc-bg" cx="20" cy="20" r="17"/>
+                            <circle class="arc-fill" id="arc-fill" cx="20" cy="20" r="17"/>
+                            <text class="arc-label" id="arc-text" x="20" y="20">--</text>
                         </svg>
+                        <div class="status-text">
+                            <div class="status-label" id="stat-label">Mencari jadwal…</div>
+                            <div class="status-now" id="stat-now">Mencari pelajaran...</div>
+                            <div class="status-next" id="stat-next"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-
-                    </button>
-                    <button type="button" class="btn-add" onclick="addTask()">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                            <line x1="12" y1="5" x2="12" y2="19"></line>
-                            <line x1="5" y1="12" x2="19" y2="12"></line>
-                        </svg>
-                    </button>
+            <div id="screen-jadwal" class="app-screen active">
+                <div class="day-chip-row" id="day-chip-row">
+                    <button class="day-chip" data-dow="1" onclick="goToDayOfWeek(1)">Sen</button>
+                    <button class="day-chip" data-dow="2" onclick="goToDayOfWeek(2)">Sel</button>
+                    <button class="day-chip" data-dow="3" onclick="goToDayOfWeek(3)">Rab</button>
+                    <button class="day-chip" data-dow="4" onclick="goToDayOfWeek(4)">Kam</button>
+                    <button class="day-chip" data-dow="5" onclick="goToDayOfWeek(5)">Jum</button>
+                    <button class="day-chip" data-dow="6" onclick="goToDayOfWeek(6)">Sab</button>
+                    <button class="day-chip" data-dow="0" onclick="goToDayOfWeek(0)">Min</button>
                 </div>
 
-                <div id="imagePreviewContainer"
-                    style="display:none; margin-top:10px; text-align:left; flex-wrap: wrap; gap: 5px;"></div>
-                <ul class="task-list" id="taskList"></ul>
+                <div class="week-toggle">
+                    <button id="btn-m1" class="btn-week active" onclick="setWeek('m1')">Minggu 1</button>
+                    <button id="btn-m2" class="btn-week" onclick="setWeek('m2')">Minggu 2</button>
+                </div>
+
+                <div class="schedule-cards" id="scheduleCards" style="width: 100%;"></div>
+
+                <div class="schedule-grid" id="main-grid" style="width: 100%; display: none;">
+                    <div class="grid-header">Mapel</div>
+                    <div class="grid-header">Jam</div>
+                    <div class="grid-header">Ruang</div>
+                    <div class="grid-column" id="col-mapel"></div>
+                    <div class="grid-column" id="col-jam"></div>
+                    <div class="grid-column" id="col-ruang"></div>
+                </div>
+
+                <div id="edit-controls"
+                    style="display:none; flex-direction: column; align-items: center; gap: 10px; margin-top: 15px; width: 100%;">
+                    <button onclick="addRow()"
+                        style="background:var(--color-2); color:var(--color-5); border:none; padding:10px 22px; border-radius:10px; font-weight:bold; cursor:pointer; font-size: 13px; width: auto;">+
+                        TAMBAH MAPEL</button>
+                    <div style="display: flex; gap: 20px; width: 100%; justify-content: center;">
+                        <button id="btn-save-jadwal-top" class="btn-save-small" onclick="saveJadwal()">SIMPAN</button>
+                        <button class="btn-cancel-small" onclick="toggleEditMode()">BATAL</button>
+                    </div>
+                </div>
+
+                <div class="bg-control" style="width: 100%;">
+                    <button id="btn-edit-mode" onclick="toggleEditMode()" style="display:none;"><svg width="15" height="15" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"
+                            stroke-linejoin="round" style="vertical-align:-2px; margin-right:5px;">
+                            <path d="M12 20h9" />
+                            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z" />
+                        </svg>EDIT JADWAL HARIAN</button>
+                    <button id="btn-save-jadwal" class="btn-nav btn-save" style="display:none;"
+                        onclick="saveJadwal()">SIMPAN PERUBAHAN</button>
+                </div>
             </div>
 
-            <div class="bg-control" style="width: 100%;">
-                <button id="btn-edit-mode" onclick="toggleEditMode()"><svg width="15" height="15" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"
-                        stroke-linejoin="round" style="vertical-align:-2px; margin-right:5px;">
-                        <path d="M12 20h9" />
-                        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z" />
-                    </svg>EDIT JADWAL HARIAN</button>
-                <button id="btn-save-jadwal" class="btn-nav btn-save" style="display:none;"
-                    onclick="saveJadwal()">SIMPAN PERUBAHAN</button>
+            <div id="screen-tugas" class="app-screen">
+                <div class="task-section" style="width: 100%;">
+                    <p id="daftarTugasLabel" style="font-size: 13px; font-weight: bold; margin-bottom: 5px; color: var(--color-2);">DAFTAR TUGAS:
+                    </p>
+                    <div class="task-input-container">
+                        <textarea id="taskInput" placeholder="Ketik tugas di sini..."></textarea>
+                        <button type="button" class="btn-add" onclick="bukaKamera(event)">
+
+                            <svg xmlns="http://w3.org" width="24" height="24" viewBox="0 0 100 100" fill="none"
+                                stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
+                                <!-- Badan Utama Kamera -->
+                                <path
+                                    d="M12,28 C12,22 17,22 21,22 L32,22 C36,22 38,18 42,14 L58,14 C62,18 64,22 68,22 L79,22 C83,22 88,22 88,28 L88,72 C88,78 83,78 79,78 L21,78 C17,78 12,78 12,72 Z" />
+
+                                <!-- Tombol Shutter di Kiri Atas -->
+                                <path d="M20,15 L28,15" />
+
+                                <!-- Jendela Bidik (Viewfinder) -->
+                                <rect x="20" y="30" width="12" height="8" rx="2" fill="currentColor" stroke="none" />
+
+                                <!-- Lensa Luar -->
+                                <circle cx="50" cy="53" r="21" />
+
+                                <!-- Lensa Dalam (Titik Tengah) -->
+                                <circle cx="50" cy="53" r="4" fill="currentColor" stroke="none" />
+                            </svg>
+
+
+                        </button>
+                        <button type="button" class="btn-add" onclick="addTask()">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <div id="imagePreviewContainer"
+                        style="display:none; margin-top:10px; text-align:left; flex-wrap: wrap; gap: 5px;"></div>
+                    <div id="taskStateBanner"></div>
+                    <ul class="task-list" id="taskList"></ul>
+                </div>
             </div>
 
-            <div style="margin-top: 5px; padding: 0 10px 30px 10px; width: 100%;">
-                <button id="btnKeluar" onclick="logout()"
-                    style="background-color: var(--white); color: var(--color-2); border: 2px solid var(--color-2); border-radius: 10px; padding: 12px 20px; font-size: 13px; font-weight: 800; text-transform: uppercase; cursor: pointer; width: 100%; box-shadow: 0 5px 0 var(--color-2);">
-                    Keluar
+            <div id="screen-profil" class="app-screen">
+                <div class="glass-card header-strip" style="width: 100%; margin-top: 0; align-items: flex-start; text-align: left; padding: 20px;">
+                    <p style="font-size: 11px; color: var(--color-3); font-weight: 800; margin: 0; letter-spacing: 0.5px;">KELAS</p>
+                    <p id="profilKelas" style="font-size: 22px; font-weight: 800; color: var(--color-2); margin: 4px 0 0;">-</p>
+                    <p id="profilRole" style="font-size: 12px; color: var(--color-3); margin: 6px 0 0;">-</p>
+                </div>
+
+                <!-- PENGATURAN -->
+                <div style="width:100%; display:flex; flex-direction:column; gap:10px;">
+                    <p style="font-size:11px; font-weight:800; color:var(--color-3); letter-spacing:0.5px; margin:4px 0 0;">PENGATURAN</p>
+
+                    <!-- Toggle Tema -->
+                    <div onclick="toggleTheme()" style="display:flex; align-items:center; justify-content:space-between; background:var(--white); border:1.5px solid var(--color-5); border-radius:14px; padding:14px 16px; cursor:pointer;">
+                        <div style="display:flex; align-items:center; gap:12px;">
+                            <svg id="profil-theme-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--color-2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>
+                            </svg>
+                            <div>
+                                <p id="profil-theme-label" style="font-size:13px; font-weight:700; color:var(--color-1); margin:0;">Mode Terang</p>
+                                <p style="font-size:11px; color:var(--color-3); margin:2px 0 0;">Ketuk untuk mengganti tampilan</p>
+                            </div>
+                        </div>
+                        <div id="profil-theme-toggle" style="width:42px; height:24px; border-radius:12px; background:var(--color-4); position:relative; transition:background 0.2s;">
+                            <div id="profil-theme-knob" style="width:18px; height:18px; border-radius:50%; background:#fff; position:absolute; top:3px; left:3px; transition:left 0.2s;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Toggle Notifikasi -->
+                    <div onclick="toggleNotif(); updateProfilNotifUI()" style="display:flex; align-items:center; justify-content:space-between; background:var(--white); border:1.5px solid var(--color-5); border-radius:14px; padding:14px 16px; cursor:pointer;">
+                        <div style="display:flex; align-items:center; gap:12px;">
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--color-2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                            </svg>
+                            <div>
+                                <p id="profil-notif-label" style="font-size:13px; font-weight:700; color:var(--color-1); margin:0;">Notifikasi</p>
+                                <p style="font-size:11px; color:var(--color-3); margin:2px 0 0;">Pengingat jadwal pelajaran</p>
+                            </div>
+                        </div>
+                        <div id="profil-notif-toggle" style="width:42px; height:24px; border-radius:12px; background:var(--color-4); position:relative; transition:background 0.2s;">
+                            <div id="profil-notif-knob" style="width:18px; height:18px; border-radius:50%; background:#fff; position:absolute; top:3px; left:3px; transition:left 0.2s;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Ganti Background -->
+                    <div style="background:var(--white); border:1.5px solid var(--color-5); border-radius:14px; overflow:hidden;">
+                        <div onclick="document.getElementById('bgFileInput').click()" style="display:flex; align-items:center; justify-content:space-between; padding:14px 16px; cursor:pointer;">
+                            <div style="display:flex; align-items:center; gap:12px;">
+                                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--color-2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/>
+                                </svg>
+                                <div>
+                                    <p style="font-size:13px; font-weight:700; color:var(--color-1); margin:0;">Ganti Background</p>
+                                    <p id="profil-bg-sub" style="font-size:11px; color:var(--color-3); margin:2px 0 0;">Pakai foto dari galeri</p>
+                                </div>
+                            </div>
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--color-3)" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M9 18l6-6-6-6"/>
+                            </svg>
+                        </div>
+
+                        <!-- Reset Background: nempel di bawah row di atas, cuma keliatan kalau lagi pakai background kustom -->
+                        <button id="profil-bg-reset" onclick="resetBg()" type="button"
+                            style="display:none; align-items:center; justify-content:center; gap:6px; background:transparent; border:none; border-top:1px solid var(--color-5); color:var(--color-3); padding:8px 16px; font-size:10.5px; font-weight:700; cursor:pointer; width:100%;">
+                            <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 3v6h6"/>
+                            </svg>
+                            Kembalikan ke Background Bawaan
+                        </button>
+                    </div>
+                    <input type="file" id="bgFileInput" accept="image/*" style="display:none;" onchange="changeBg(this)">
+                </div>
+
+                <div id="btnKeluarWrap" style="width: 100%; margin-top: 24px;">
+                    <button id="btnKeluar" onclick="logout()"
+                        style="background-color: var(--white); color: var(--color-2); border: 2px solid var(--color-2); border-radius: 10px; padding: 12px 20px; font-size: 13px; font-weight: 800; text-transform: uppercase; cursor: pointer; width: 100%; box-shadow: 0 5px 0 var(--color-2);">
+                        Keluar
+                    </button>
+                </div>
+            </div>
+
+            <div class="bottom-nav">
+                <button class="bottom-nav-btn active" id="nav-jadwal" onclick="showScreen('jadwal')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+                    Jadwal
+                </button>
+                <button class="bottom-nav-btn" id="nav-tugas" onclick="showScreen('tugas')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                    Tugas
+                </button>
+                <button class="bottom-nav-btn" id="nav-profil" onclick="showScreen('profil')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>
+                    Profil
                 </button>
             </div>
-
 
         </div>
 
@@ -2100,6 +2817,39 @@
                 return text.replace(urlPattern, '<a href="$1" target="_blank" style="color: #5483b3; text-decoration: underline;">$1</a>');
             }
 
+            function mascotSvg() {
+                return `<svg viewBox="0 -14 120 154" xmlns="http://www.w3.org/2000/svg">
+                    <line x1="60" y1="44" x2="60" y2="26" stroke="var(--color-3)" stroke-width="4" stroke-linecap="round"/>
+                    <circle class="ant-tip" cx="60" cy="22" r="6"/>
+                    <rect x="20" y="40" width="80" height="80" rx="28" fill="var(--color-2)"/>
+                    <rect x="32" y="56" width="56" height="46" rx="18" fill="var(--color-5)"/>
+                    <circle class="eye left" cx="48" cy="78" r="5" fill="var(--color-1)"/>
+                    <circle class="eye right" cx="72" cy="78" r="5" fill="var(--color-1)"/>
+                    <path class="mouth-sad" d="M50,95 Q60,89 70,95" stroke="var(--color-1)" stroke-width="3" fill="none" stroke-linecap="round"/>
+                    <path class="mouth-happy" d="M50,90 Q60,99 70,90" stroke="var(--color-1)" stroke-width="3" fill="none" stroke-linecap="round"/>
+                </svg>`;
+            }
+
+            function mascotEmptyBlockHtml(caption, happy) {
+                return `<div class="mascot-empty">
+                    <div class="mascot-wrap-lg">
+                        <div class="mascot-glow-lg"></div>
+                        <div class="mascot-shadow-lg"></div>
+                        <div class="mascot-bot${happy ? ' happy' : ''}">${mascotSvg()}</div>
+                    </div>
+                    <p class="mascot-caption">${caption}</p>
+                </div>`;
+            }
+
+            function setMascotMood(happy) {
+                document.getElementById('mascotMini')?.classList.toggle('happy', happy);
+            }
+
+            (function initMascotMini() {
+                const el = document.getElementById('mascotMini');
+                if (el) el.innerHTML = mascotSvg();
+            })();
+
             const firebaseTugasURL = "https://jadwal-19962-default-rtdb.asia-southeast1.firebasedatabase.app/tugas_cloud";
 
             // Auth check — dijalankan segera, sebelum DOM lain dibutuhkan
@@ -2108,6 +2858,73 @@
                     window.location.replace('login.html');
                 }
             })();
+
+            // Buffer waktu (ms) sebelum sebuah tab dikunci dari animasi entrance-nya
+            // (dipakai bareng di showScreen() & DOMContentLoaded, biar konsisten).
+            const SCREEN_ANIM_LOCK_MS = 1400;
+
+            // Batas "kesegaran" tab terakhir yang lagi dibuka user. Kalau user refresh
+            // dalam rentang ini, tab terakhirnya (misal Tugas) dipulihkan lagi. Kalau
+            // udah lewat dari ini (ditinggal lama / JS session lama), balik ke Jadwal.
+            const TAB_MEMORY_MAX_AGE_MS = 30 * 60 * 1000; // 30 menit
+
+            // ===== Navigasi bawah (Jadwal / Tugas / Profil) =====
+            function showScreen(name) {
+                document.querySelectorAll('.app-screen').forEach(el => el.classList.remove('active'));
+                const target = document.getElementById('screen-' + name);
+                if (target) {
+                    target.classList.add('active');
+                    // Tab ini baru pertama kali dibuka → kasih jatah animasi 1x, abis itu kunci.
+                    if (!target.classList.contains('screen-shown')) {
+                        // Khusus Jadwal: kalau sebelumnya renderSchedule() sempat jalan pas
+                        // tab ini masih ketutup display:none (misal user di-restore ke tab
+                        // lain pas awal), kartu jadwalnya "kelar" animasi tanpa keliatan sama
+                        // sekali. Makanya diulang di sini, pas beneran pertama kali muncul.
+                        if (name === 'jadwal') {
+                            const cardsWrap = document.getElementById('scheduleCards');
+                            if (cardsWrap) animateScheduleCards(cardsWrap);
+                        }
+                        setTimeout(() => target.classList.add('screen-shown'), SCREEN_ANIM_LOCK_MS);
+                    }
+                }
+                document.querySelectorAll('.bottom-nav-btn').forEach(btn => btn.classList.remove('active'));
+                const navBtn = document.getElementById('nav-' + name);
+                if (navBtn) navBtn.classList.add('active');
+                // Simpan tab yang lagi aktif + waktunya, dipakai buat restore pas refresh
+                localStorage.setItem('lastActiveScreen', name);
+                localStorage.setItem('lastActiveScreenTime', String(Date.now()));
+                if (name === 'profil') {
+                    const kelas = localStorage.getItem('userKelas') || '-';
+                    const role = localStorage.getItem('role');
+                    const roleLabel = role === 'admin' ? 'Admin' : role === 'sekretaris' ? 'Sekretaris kelas' : 'Siswa';
+                    const elKelas = document.getElementById('profilKelas');
+                    const elRole = document.getElementById('profilRole');
+                    if (elKelas) elKelas.innerText = kelas;
+                    if (elRole) elRole.innerText = roleLabel;
+                    updateProfilThemeUI();
+                    updateProfilNotifUI();
+                    updateProfilBgUI();
+                }
+            }
+
+            // Update ulang timestamp "terakhir aktif" pas halaman mau disembunyikan
+            // (ke-refresh, pindah app, atau ditutup) — biar refresh abis diem lama di
+            // satu tab tetap keitung "baru aja", bukan ikut waktu terakhir dia GANTI tab.
+            document.addEventListener('visibilitychange', function () {
+                if (document.visibilityState === 'hidden') {
+                    const activeScreen = document.querySelector('.app-screen.active');
+                    if (activeScreen) {
+                        localStorage.setItem('lastActiveScreen', activeScreen.id.replace('screen-', ''));
+                        localStorage.setItem('lastActiveScreenTime', String(Date.now()));
+                    }
+                }
+            });
+
+            // Chip hari (Sen–Min): pindah currentViewDate ke hari itu dengan geser dari tanggal yang lagi dilihat
+            function goToDayOfWeek(dow) {
+                const offset = dow - currentViewDate.getDay();
+                changeDay(offset);
+            }
 
             // Auto-resize kotak input tugas ala WhatsApp: ukuran normal kayak biasa,
             // baru nambah tinggi ke bawah secara mulus pas tombol Enter ditekan.
@@ -2350,7 +3167,9 @@
                         if (cols[2] && cols[2] !== "") mH = cols[2];
                         let kelasSheet = mK.toString().replace(/\s/g, "").toUpperCase();
                         if (kelasSheet === userKelasLogin) {
-                            let mapel = cols[3], jam = cols[4], ruang = cols[5];
+                        let mapel = (cols[3] || '').toString().trim();
+                            let jam = (cols[4] || '').toString().trim();
+                            let ruang = (cols[5] || '').toString().trim();
                             if (mapel && jam) {
                                 let week = (mM.toString() == "2") ? "m2" : "m1";
                                 if (!newJadwal[week][mH]) newJadwal[week][mH] = [];
@@ -2358,10 +3177,19 @@
                             }
                         }
                     });
+                    // Cuma render ulang (dan animasi ulang) kalau datanya BENERAN beda dari
+                    // yang lagi tampil (dari cache). Kalau sama aja, skip — biar kartu jadwal
+                    // gak keanimasi 2x tiap refresh, DAN biar transisi arc-nya (yang lagi
+                    // "nyapu" ke posisi asli pas awal load) gak ke-restart di tengah jalan
+                    // gara-gara dipanggil ulang dgn nilai yg sama persis (bikin keliatan
+                    // "macet"/ragu sebentar).
+                    const jadwalBerubah = JSON.stringify(newJadwal) !== JSON.stringify(jadwalData);
                     jadwalData = newJadwal;
                     localStorage.setItem('savedJadwal', JSON.stringify(jadwalData));
-                    renderSchedule();
-                    updateStatus();
+                    if (jadwalBerubah) {
+                        renderSchedule();
+                        updateStatus();
+                    }
                     // (SW sync dihapus - notif sudah dipanggil langsung dari updateStatus())
                 } catch (err) {
                     console.log("Error:", err);
@@ -2387,13 +3215,14 @@
                 document.getElementById('btn-m2').classList.toggle('active', currentWeekType === 'm2');
             }
 
+            
+
             function updateTime() {
                 const now = new Date();
                 const h = String(now.getHours()).padStart(2, '0');
                 const m = String(now.getMinutes()).padStart(2, '0');
-                const s = String(now.getSeconds()).padStart(2, '0');
-                document.getElementById('clock').innerText = `${h} : ${m} : ${s}`;
-                document.getElementById('full-date').innerText = now.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+                document.getElementById('clock').innerText = `${h}:${m}`;
+                document.getElementById('full-date').innerText = now.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long' });
                 let virtualDate = new Date(now);
                 if (now.getHours() >= 18) {
                     virtualDate.setDate(virtualDate.getDate() + 1);
@@ -2406,20 +3235,28 @@
                     renderSchedule();
                     updateTodayButtonVisibility();
                 }
-                updateStatus();
+                // Status & arc update tiap detik
+                updateStatus(now);
                 if (!isEditMode) checkHighlight();
             }
 
             // Clock interval dijalankan dari window.onload agar urutan inisialisasi benar
             let _clockInterval = null;
 
-            function updateStatus() {
-                const now = new Date();
+            // Arc cuma boleh "nyapu" (pakai transition) SEKALI doang pas render pertama.
+            // Update-update berikutnya (tiap detik dari interval) harus snap instan, biar
+            // gak numpuk/interupsi transisi yang lagi jalan (itu yang bikin keliatan
+            // "tersendat" soalnya durasi transition 1.2s > interval update 1s).
+            let arcSweepDone = false;
+
+            function updateStatus(now) {
+                now = now || new Date();
                 const currentTimeMs = now.getTime();
                 const currentTimeMin = now.getHours() * 60 + now.getMinutes();
                 const jamGantiHari = 18 * 60;
                 const days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
                 const todayName = days[now.getDay()];
+                const statLabel = document.getElementById('stat-label');
                 const statNow = document.getElementById('stat-now');
                 const statNext = document.getElementById('stat-next');
 
@@ -2432,21 +3269,113 @@
                 // Libur cuma kalau Sabtu/Minggu DAN memang belum ada mapel yang diisi buat hari itu
                 const isLiburRelevan = (namaHariRelevan === "Sabtu" || namaHariRelevan === "Minggu") && listMapel.length === 0;
 
+                const arcEl2 = document.getElementById('status-arc');
+                // Keliling asli lingkaran (r=17) — dipakai sebagai patokan presisi
+                // buat stroke-dasharray/stroke-dashoffset arc-nya (lihat setArcDown).
+                const CIRC2 = 2 * Math.PI * 17;
+
+                function getNextSchoolDay() {
+                    let target = new Date(now);
+                    // Maju sampai ketemu hari sekolah (Senin-Jumat)
+                    do {
+                        target.setDate(target.getDate() + 1);
+                    } while (target.getDay() === 0 || target.getDay() === 6);
+                    return target;
+                }
+
+                function getFirstLessonTime(targetDate) {
+                    const dayName = days[targetDate.getDay()];
+                    const autoWeekTarget = (getWeekNumber(targetDate) % 2 === 0) ? "m2" : "m1";
+                    const lessons = jadwalData[autoWeekTarget][dayName] || [];
+                    let earliestMin = null;
+                    for (let l of lessons) {
+                        if (!l[0] || !l[0].trim()) continue;
+                        const timeStr = (l[1] || '').replace(/\./g, ':').replace(/\s/g, '');
+                        const parts = timeStr.split('-');
+                        if (!parts[0]) continue;
+                        const hm = parts[0].split(':').map(Number);
+                        if (hm.length < 2) continue;
+                        const minVal = hm[0] * 60 + hm[1];
+                        if (earliestMin === null || minVal < earliestMin) earliestMin = minVal;
+                    }
+                    // Fallback ke 07:00 kalau data kosong
+                    if (earliestMin === null) earliestMin = 7 * 60;
+                    const result = new Date(targetDate);
+                    result.setHours(Math.floor(earliestMin / 60), earliestMin % 60, 0, 0);
+                    return result;
+                }
+
+                // Dulu di-hardcode 113 (perkiraan kasar) — sekarang pakai CIRC2, keliling
+                // ASLI lingkarannya (2×π×17 ≈ 106.81), biar presisi 100% sampe detik
+                // terakhir, gak ada "zona mati" pas ring hampir kosong.
+                const ARC_CIRC = CIRC2;
+
+                function setArcDown(sisa, total, labelStr) {
+                    const arcF = document.getElementById('arc-fill');
+                    const arcT = document.getElementById('arc-text');
+                    const arcS = document.getElementById('status-arc');
+                    if (!arcF) return;
+                    const progress = total > 0 ? Math.max(0, Math.min(1, sisa / total)) : 0;
+                    const offset = parseFloat((ARC_CIRC * (1 - progress)).toFixed(4));
+                    if (!arcSweepDone) {
+                        // Render pertama: kasih transisi biar keliatan "nyapu" masuk ke posisi.
+                        arcF.style.transition = 'stroke-dashoffset 1.1s ease-out';
+                        arcSweepDone = true;
+                        setTimeout(() => { arcF.style.transition = 'none'; }, 1150);
+                    } else {
+                        // Update rutin (tiap detik) — snap langsung, TANPA transisi. Kalau
+                        // masih pake transition di sini, tiap detik bakal numpuk/motong
+                        // transisi yang lain lagi jalan (durasi 1.1s > interval 1s), makanya
+                        // keliatan tersendat. Toh perubahan per-detiknya kecil banget,
+                        // instan pun tetep keliatan mulus di mata.
+                        arcF.style.transition = 'none';
+                    }
+                    arcF.style.strokeDasharray = String(ARC_CIRC);
+                    arcF.style.strokeDashoffset = String(offset);
+                    if (arcT) arcT.textContent = labelStr;
+                    if (arcS) arcS.style.display = '';
+                }
+
+                function setArcLibur(startLibur, targetDate) {
+                    const sisaMs = targetDate.getTime() - now.getTime();
+                    const totalMs = targetDate.getTime() - startLibur.getTime();
+                    const jamSisa = Math.ceil(sisaMs / (1000 * 60 * 60));
+                    setArcDown(sisaMs, totalMs, `${jamSisa}j`);
+                }
+
+                // Titik mulai libur = Sabtu jam 00:00 minggu ini
+                function getStartLibur() {
+                    const d = new Date(now);
+                    // Mundur ke Sabtu
+                    while (d.getDay() !== 6) d.setDate(d.getDate() - 1);
+                    d.setHours(0, 0, 0, 0);
+                    return d;
+                }
+
                 if (currentTimeMin >= jamGantiHari) {
                     if (isLiburRelevan) {
-                        statNow.innerText = "Libur Akhir Pekan ✨";
+                        statLabel.innerText = "Libur akhir pekan";
+                        statNow.innerText = "Selamat beristirahat ✨";
                         statNext.innerText = "";
+                        setMascotMood(true);
+                        setArcLibur(getStartLibur(), getFirstLessonTime(getNextSchoolDay()));
                         tampilkanNotif("Libur Akhir Pekan ✨", "");
                     } else {
-                        statNow.innerHTML = `<b>Persiapan Besok: ${namaHariRelevan}</b>`;
+                        statLabel.innerText = "Persiapan besok";
+                        statNow.innerText = namaHariRelevan;
                         statNext.innerText = "Tugas sudah diurutkan sesuai jadwal besok";
+                        setMascotMood(true);
+                        if (arcEl2) arcEl2.style.display = 'none';
                         tampilkanNotif(`Persiapan Besok: ${namaHariRelevan}`, "Tugas sudah diurutkan sesuai jadwal besok");
                     }
                     return;
                 }
                 if (isLiburRelevan) {
-                    statNow.innerText = "Libur Akhir Pekan ✨";
+                    statLabel.innerText = "Libur akhir pekan";
+                    statNow.innerText = "Selamat beristirahat ✨";
                     statNext.innerText = "";
+                    setMascotMood(true);
+                    setArcLibur(getStartLibur(), getFirstLessonTime(getNextSchoolDay()));
                     tampilkanNotif("Libur Akhir Pekan ✨", "");
                     return;
                 }
@@ -2456,15 +3385,15 @@
                     let targetDate = new Date();
                     targetDate.setHours(targetHour, targetMin, 0, 0);
                     let diffMs = targetDate.getTime() - currentTimeMs;
-                    let totalSecs = Math.max(0, Math.floor(diffMs / 1000));
+                    if (diffMs <= 0) return '0 detik';
+                    let totalSecs = Math.ceil(diffMs / 1000);
                     let h = Math.floor(totalSecs / 3600);
-                    let m = Math.floor((totalSecs % 3600) / 60);
-                    let s = totalSecs % 60;
-                    let hasil = [];
-                    if (h > 0) hasil.push(h + " jam");
-                    if (m > 0) hasil.push(m + " menit");
-                    if (s > 0 || hasil.length === 0) hasil.push(s + " detik");
-                    return hasil.join(" ");
+                    let m = Math.ceil((totalSecs % 3600) / 60);
+                    if (m === 60) { h += 1; m = 0; }
+                    if (h > 0 && m > 0) return `${h} jam ${m} menit`;
+                    if (h > 0) return `${h} jam`;
+                    if (m > 0) return `${m} menit`;
+                    return `${Math.ceil(diffMs / 1000)} detik`;
                 };
                 for (let i = 0; i < listMapel.length; i++) {
                     let timeStr = listMapel[i][1].replace(/\./g, ':').replace(/\s/g, '');
@@ -2475,7 +3404,7 @@
                     const startTimeInMin = start[0] * 60 + start[1];
                     const endTimeInMin = end[0] * 60 + end[1];
                     if (currentTimeMin >= startTimeInMin && currentTimeMin < endTimeInMin) {
-                        ongoing = { name: listMapel[i][0], countdown: getCountdown(end[0], end[1]) };
+                        ongoing = { name: listMapel[i][0], countdown: getCountdown(end[0], end[1]), startMin: startTimeInMin, endMin: endTimeInMin };
                         next = listMapel[i + 1] ? { name: listMapel[i + 1][0] } : null;
                         break;
                     } else if (currentTimeMin < startTimeInMin) {
@@ -2483,19 +3412,68 @@
                         break;
                     }
                 }
+                function hideArc() {
+                    const arcS = document.getElementById('status-arc');
+                    if (arcS) arcS.style.display = 'none';
+                }
+
                 if (ongoing) {
-                    statNow.innerHTML = `Sekarang: <b>${ongoing.name}</b> (berakhir ${ongoing.countdown})`;
+                    statLabel.innerHTML = `Sedang berlangsung<span class="status-dots"><span>.</span><span>.</span><span>.</span></span>`;
+                    statNow.innerText = `${ongoing.name}, sisa ${ongoing.countdown}`;
                     statNext.innerText = next ? `Selanjutnya: ${next.name}` : "Selanjutnya: Jam Pulang 🎉";
-                    // Notif tanpa countdown — hanya nama mapel + info selanjutnya
+                    setMascotMood(false);
+                    const totalMin = ongoing.endMin - ongoing.startMin;
+                    const sisaMin = ongoing.endMin - currentTimeMin;
+                    // Sisa waktu aktual pakai ms biar presisi — sama persis dgn getCountdown
+                    const endDate = new Date();
+                    endDate.setHours(Math.floor(ongoing.endMin / 60), ongoing.endMin % 60, 0, 0);
+                    const sisaSecs = Math.max(0, Math.ceil((endDate.getTime() - currentTimeMs) / 1000));
+                    const totalSecs = totalMin * 60;
+                    const arcH = Math.floor(sisaSecs / 3600);
+                    const arcM = Math.ceil((sisaSecs % 3600) / 60);
+                    const arcMfixed = arcM === 60 ? 0 : arcM;
+                    const arcHfixed = arcM === 60 ? arcH + 1 : arcH;
+                    const label = arcHfixed > 0 && arcMfixed > 0 ? `${arcHfixed}j ${arcMfixed}m`
+                                : arcHfixed > 0 ? `${arcHfixed}j`
+                                : arcMfixed > 0 ? `${arcMfixed}m`
+                                : `${sisaSecs}d`;
+                    setArcDown(sisaSecs, totalSecs, label);
                     tampilkanNotif(`Sekarang: ${ongoing.name}`, next ? `Selanjutnya: ${next.name}` : "Selanjutnya: Jam Pulang 🎉");
                 } else if (next) {
-                    statNow.innerHTML = `<b>Istirahat</b>`;
-                    statNext.innerHTML = `Selanjutnya: <b>${next.name}</b> (mulai ${next.countdown} lagi)`;
-                    // Notif tanpa countdown
+                    statLabel.innerText = "Istirahat";
+                    statNow.innerText = `${next.name} mulai ${next.countdown} lagi`;
+                    statNext.innerText = "";
+                    setMascotMood(true);
+                    // Arc mundur: sisa waktu sampai pelajaran berikutnya
+                    const nextTimeStr = listMapel.find(l => l[0] === next.name)?.[1]?.replace(/\./g,':').replace(/\s/g,'') || '';
+                    const nextParts = nextTimeStr.split('-');
+                    if (nextParts[0]) {
+                        const hm = nextParts[0].split(':').map(Number);
+                        const nextStartMin = hm[0]*60 + hm[1];
+                        // Cari jam selesai mapel sebelumnya sebagai start istirahat
+                        let prevEndMin = currentTimeMin;
+                        for (let i = 0; i < listMapel.length; i++) {
+                            const tr = (listMapel[i][1]||'').replace(/\./g,':').replace(/\s/g,'').split('-');
+                            if (tr[1]) {
+                                const e = tr[1].split(':').map(Number);
+                                const eMin = e[0]*60+e[1];
+                                if (eMin <= currentTimeMin) prevEndMin = eMin;
+                            }
+                        }
+                        const sisaMin = nextStartMin - currentTimeMin;
+                        const totalMin = nextStartMin - prevEndMin;
+                        const label = sisaMin >= 60 ? `${Math.floor(sisaMin/60)}j ${sisaMin%60}m` : `${sisaMin}m`;
+                        setArcDown(sisaMin, totalMin, label);
+                    } else {
+                        hideArc();
+                    }
                     tampilkanNotif("Istirahat", `Selanjutnya: ${next.name}`);
                 } else {
-                    statNow.innerText = "Semua mapel hari ini selesai 🏆";
-                    statNext.innerText = "Waktunya istirahat";
+                    statLabel.innerText = "Semua mapel selesai";
+                    statNow.innerText = "Waktunya istirahat 🏆";
+                    statNext.innerText = "";
+                    setMascotMood(true);
+                    hideArc();
                     tampilkanNotif("Semua mapel hari ini selesai 🏆", "Waktunya istirahat");
                 }
             }
@@ -2530,16 +3508,16 @@
             function changeDay(offset) {
                 const grid = document.getElementById('main-grid');
                 const dayDisplay = document.getElementById('display-day');
-                grid.classList.remove('animate-swap');
-                dayDisplay.classList.remove('animate-swap');
-                void grid.offsetWidth;
-                void dayDisplay.offsetWidth;
+                grid?.classList.remove('animate-swap');
+                dayDisplay?.classList.remove('animate-swap');
+                void grid?.offsetWidth;
+                void dayDisplay?.offsetWidth;
                 if (isEditMode) saveTemporarily();
                 currentViewDate.setDate(currentViewDate.getDate() + offset);
                 renderSchedule();
                 updateTodayButtonVisibility();
-                grid.classList.add('animate-swap');
-                dayDisplay.classList.add('animate-swap');
+                grid?.classList.add('animate-swap');
+                dayDisplay?.classList.add('animate-swap');
             }
 
             function setWeek(week) {
@@ -2642,17 +3620,30 @@
                 const days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
                 const dayName = days[currentViewDate.getDay()];
                 const isLibur = (dayName === "Sabtu" || dayName === "Minggu");
-                document.getElementById('display-day').innerText = currentViewDate.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long' });
+                document.getElementById('display-day')?.innerText && (document.getElementById('display-day').innerText = currentViewDate.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long' }));
+                document.querySelectorAll('.day-chip').forEach(chip => {
+                    chip.classList.toggle('active', Number(chip.dataset.dow) === currentViewDate.getDay());
+                });
                 const colMapel = document.getElementById('col-mapel');
                 const colJam = document.getElementById('col-jam');
                 const colRuang = document.getElementById('col-ruang');
+                const grid = document.getElementById('main-grid');
+                const cardsWrap = document.getElementById('scheduleCards');
                 colMapel.innerHTML = ""; colJam.innerHTML = ""; colRuang.innerHTML = "";
+                if (cardsWrap) cardsWrap.innerHTML = "";
+                // Grid lama (bisa diedit) cuma ditampilkan pas mode edit; sehari-hari yang tampil kartu baru
+                if (grid) grid.style.display = isEditMode ? 'grid' : 'none';
+                if (cardsWrap) cardsWrap.style.display = isEditMode ? 'none' : 'flex';
                 const hariIni = jadwalData[currentWeekType][dayName] || [];
                 if (isLibur && !isEditMode && hariIni.length === 0) {
                     colMapel.innerHTML = "<div class='item-box'>Libur</div>";
                     colJam.innerHTML = "<div class='item-box'>-</div>";
                     colRuang.innerHTML = "<div class='item-box'>-</div>";
+                    if (cardsWrap) cardsWrap.innerHTML = mascotEmptyBlockHtml("Libur, gak ada jadwal hari ini", true);
                     return;
+                }
+                if (!isEditMode && hariIni.length === 0 && cardsWrap) {
+                    cardsWrap.innerHTML = mascotEmptyBlockHtml("Belum ada jadwal buat hari ini", false);
                 }
                 hariIni.forEach((item, index) => {
                     if (isEditMode) {
@@ -2672,9 +3663,61 @@
                         let jamCantik = item[1].replace(/\./g, '&thinsp;:&thinsp;').replace('-', ' — ');
                         colJam.innerHTML += `<div class="item-box" id="jam-${index}" style="font-size: 12px; letter-spacing: -0.2px;">${jamCantik}</div>`;
                         colRuang.innerHTML += `<div class="item-box" id="ruang-${index}">${item[2]}</div>`;
+                        if (cardsWrap) {
+                            // Skip kartu kosong (nama mapel tidak ada)
+                            if (!item[0] || !item[0].trim()) return;
+                            const jamParts = item[1].replace(/\./g, ':').split('-');
+                            const jamMulai = (jamParts[0] || '').trim();
+                            const jamSelesai = (jamParts[1] || '').trim();
+                            // Pakai data-index supaya checkHighlight bisa match berdasarkan index asli
+                            cardsWrap.innerHTML += `<div class="schedule-card" id="card-${index}" data-index="${index}">
+                    <p class="sc-time">${jamMulai}<br>${jamSelesai}</p>
+                    <div>
+                        <p class="sc-mapel">${item[0]}</p>
+                        <p class="sc-ruang"><svg class="sc-ruang-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>${item[2] || '-'}</p>
+                    </div>
+                </div>`;
+                        }
                     }
                 });
                 if (!isEditMode) checkHighlight();
+                if (!isEditMode) updateJadwalTugasBadges();
+                // soalnya cardsWrap ini sering di-render ULANG setelah fetch data terbaru
+                // dari server (lihat fetchJadwalDariSheet) — kalau animasinya cuma di-trigger
+                // sekali pas awal, kartu hasil render ulang itu gak kebagian animasi sama
+                // sekali (makanya kemarin kartu jadwal keliatan gak ada animasinya).
+                if (!isEditMode && cardsWrap) animateScheduleCards(cardsWrap);
+            }
+
+            // Helper animasi fade+slide bareng, dipakai buat status, chip hari, & kartu jadwal
+            function animEl(el, delay, dur = 220) {
+                if (!el) return;
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(10px)';
+                el.style.transition = 'none';
+                setTimeout(() => {
+                    el.style.transition = `opacity ${dur}ms ease, transform ${dur}ms ease`;
+                    el.style.opacity = '1';
+                    el.style.transform = 'translateY(0)';
+                }, delay);
+            }
+
+            function animateScheduleCards(wrap) {
+                const cards = wrap.querySelectorAll('.schedule-card');
+                let t = 0;
+                cards.forEach(card => { animEl(card, t); t += 70; });
+            }
+
+            function runPageLoadAnimation() {
+                // Catatan: .glass-card (header) & .week-toggle SUDAH dianimasikan lewat CSS
+                // (@keyframes fadeInUp, delay 0.1s & 0.15s — lihat bagian <style>). Sengaja
+                // TIDAK disentuh lagi di sini, karena kalau JS ikut mengubah opacity/transform
+                // elemen yang sama, animasi CSS-nya jadi tabrakan/dobel dan keliatan "kedip"
+                // pas halaman direfresh. Elemen di bawah ini melanjutkan alur yang sama biar
+                // jadi satu rangkaian yang mengalir dari atas ke bawah. Kartu jadwal udah
+                // dianimasikan sendiri lewat animateScheduleCards() di dalam renderSchedule().
+                animEl(document.getElementById('status-live'), 150);   // nyambung abis header
+                animEl(document.getElementById('day-chip-row'), 200);  // bareng week-toggle (0.15s)
             }
 
             function syncNextStart(index) {
@@ -2780,23 +3823,27 @@
                 if (currentViewDate.toDateString() !== now.toDateString()) return;
                 const days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
                 const schedule = jadwalData[currentWeekType][days[now.getDay()]] || [];
+                // Reset semua highlight dulu
+                document.querySelectorAll('.schedule-card').forEach(el => el.classList.remove('highlight'));
                 schedule.forEach((item, index) => {
-                    const timeStr = item[1].replace(/\./g, ':');
+                    // Skip entry kosong
+                    if (!item[0] || !item[0].trim()) return;
+                    if (!item[1]) return;
+                    const timeStr = item[1].replace(/\./g, ':').replace(/\s/g, '');
                     const tr = timeStr.split('-');
                     if (tr.length === 2) {
                         const s = tr[0].split(':').map(Number);
                         const e = tr[1].split(':').map(Number);
+                        if (s.length < 2 || e.length < 2) return;
                         const startTime = s[0] * 60 + s[1];
                         const endTime = e[0] * 60 + e[1];
-                        if (ct >= startTime && ct < endTime) {
-                            document.getElementById(`mapel-${index}`)?.classList.add('highlight');
-                            document.getElementById(`jam-${index}`)?.classList.add('highlight');
-                            document.getElementById(`ruang-${index}`)?.classList.add('highlight');
-                        } else {
-                            document.getElementById(`mapel-${index}`)?.classList.remove('highlight');
-                            document.getElementById(`jam-${index}`)?.classList.remove('highlight');
-                            document.getElementById(`ruang-${index}`)?.classList.remove('highlight');
-                        }
+                        const isNow = (ct >= startTime && ct < endTime);
+                        document.getElementById(`mapel-${index}`)?.classList.toggle('highlight', isNow);
+                        document.getElementById(`jam-${index}`)?.classList.toggle('highlight', isNow);
+                        document.getElementById(`ruang-${index}`)?.classList.toggle('highlight', isNow);
+                        // Cari kartu pakai data-index biar match meski ada entry kosong yang di-skip
+                        const card = document.querySelector(`.schedule-card[data-index="${index}"]`);
+                        if (card) card.classList.toggle('highlight', isNow);
                     }
                 });
             }
@@ -2850,6 +3897,8 @@
             }
             let localTasksCache = [];
             let cloudTasksCache = {};
+            let activeTasksCache = [];
+            let doneTasksCache = [];
 
             async function loadTasks() {
                 const list = document.getElementById('taskList');
@@ -2918,8 +3967,189 @@
                     return (b.timestamp || 0) - (a.timestamp || 0);
                 });
 
+                // Tugas hari-ini/besok & yang belum selesai selalu di atas (gak dipaginasi).
+                // Sisanya (udah dicentang & bukan tugas hari-ini) digeser ke section
+                // "TUGAS SELESAI" yang dipaginasi lewat renderTaskList().
+                activeTasksCache = combinedTasks.filter(t => t._isBesok || !t.done);
+                doneTasksCache = combinedTasks.filter(t => !t._isBesok && t.done);
+
+                const banner = document.getElementById('taskStateBanner');
+                if (banner) {
+                    if (combinedTasks.length === 0) {
+                        banner.innerHTML = mascotEmptyBlockHtml("Belum ada tugas, santai dulu~", true);
+                    } else if (combinedTasks.every(t => t.done)) {
+                        banner.innerHTML = `<p style="text-align:center; font-size:12px; font-weight:800; color: var(--color-2); margin: 4px 0 12px;">Mantap, semua tugas hari ini kelar 🎉</p>`;
+                    } else {
+                        banner.innerHTML = "";
+                    }
+                }
+                renderTaskList(role, isBesokMode);
+                updateJadwalTugasBadges();
+            }
+
+            // Nempelin badge "Ada tugas" di kartu jadwal (hari ini/besok, sesuai jam skrg)
+            // kalau ada tugas AKTIF (belum dicentang) yang nama mapelnya cocok.
+            function updateJadwalTugasBadges() {
+                const cardsWrap = document.getElementById('scheduleCards');
+                if (!cardsWrap) return;
+                document.querySelectorAll('.sc-task-badge').forEach(b => b.remove());
+                document.querySelectorAll('.schedule-card.has-task').forEach(c => c.classList.remove('has-task'));
+
+                if (typeof currentViewDate === 'undefined') return;
+                const days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+                const dayName = days[currentViewDate.getDay()];
+
+                const sekarang = new Date();
+                let targetHariIdx = sekarang.getDay();
+                if (sekarang.getHours() >= 18) targetHariIdx = (targetHariIdx + 1) % 7;
+                const namaHariTarget = days[targetHariIdx];
+                // Badge cuma relevan buat hari yang lagi "aktif" (hari ini/besok sesuai jam skrg),
+                // biar gak salah kaprah nyocokin ke hari lain yang mapelnya kebetulan sama nama.
+                if (dayName !== namaHariTarget) return;
+
+                const tugasAktif = (activeTasksCache || []).concat(doneTasksCache || []);
+                if (tugasAktif.length === 0) return;
+
+                document.querySelectorAll('#scheduleCards .schedule-card').forEach(card => {
+                    const mapelEl = card.querySelector('.sc-mapel');
+                    if (!mapelEl) return;
+                    const mapel = mapelEl.textContent.toLowerCase().trim();
+                    if (!mapel) return;
+                    const mapelEscaped = mapel.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                    const regex = new RegExp("\\b" + mapelEscaped + "\\b", "i");
+                    const cocokTasks = tugasAktif.filter(t => {
+                        const teks = (t.text || "").toLowerCase();
+                        return regex.test(teks) || teks.includes(mapel + ":");
+                    });
+                    if (cocokTasks.length > 0) {
+                        card.classList.add('has-task');
+                        card.dataset.taskIds = cocokTasks.map(t => t.id).join(',');
+                        card.insertAdjacentHTML('beforeend', '<span class="sc-task-badge"><svg viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" clip-rule="evenodd" d="M17.1218 1.87023C15.7573 0.505682 13.4779 0.76575 12.4558 2.40261L9.61062 6.95916C9.61033 6.95965 9.60913 6.96167 9.6038 6.96549C9.59728 6.97016 9.58336 6.97822 9.56001 6.9848C9.50899 6.99916 9.44234 6.99805 9.38281 6.97599C8.41173 6.61599 6.74483 6.22052 5.01389 6.87251C4.08132 7.22378 3.61596 8.03222 3.56525 8.85243C3.51687 9.63502 3.83293 10.4395 4.41425 11.0208L7.94975 14.5563L1.26973 21.2363C0.879206 21.6269 0.879206 22.26 1.26973 22.6506C1.66025 23.0411 2.29342 23.0411 2.68394 22.6506L9.36397 15.9705L12.8995 19.5061C13.4808 20.0874 14.2853 20.4035 15.0679 20.3551C15.8881 20.3044 16.6966 19.839 17.0478 18.9065C17.6998 17.1755 17.3043 15.5086 16.9444 14.5375C16.9223 14.478 16.9212 14.4114 16.9355 14.3603C16.9421 14.337 16.9502 14.3231 16.9549 14.3165C16.9587 14.3112 16.9606 14.31 16.9611 14.3098L21.5177 11.4645C23.1546 10.4424 23.4147 8.16307 22.0501 6.79853L17.1218 1.87023ZM14.1523 3.46191C14.493 2.91629 15.2528 2.8296 15.7076 3.28445L20.6359 8.21274C21.0907 8.66759 21.0041 9.42737 20.4584 9.76806L15.9019 12.6133C14.9572 13.2032 14.7469 14.3637 15.0691 15.2327C15.3549 16.0037 15.5829 17.1217 15.1762 18.2015C15.1484 18.2752 15.1175 18.3018 15.0985 18.3149C15.0743 18.3316 15.0266 18.3538 14.9445 18.3589C14.767 18.3699 14.5135 18.2916 14.3137 18.0919L5.82846 9.6066C5.62872 9.40686 5.55046 9.15333 5.56144 8.97583C5.56651 8.8937 5.58877 8.84605 5.60548 8.82181C5.61855 8.80285 5.64516 8.7719 5.71886 8.74414C6.79869 8.33741 7.91661 8.56545 8.68762 8.85128C9.55668 9.17345 10.7171 8.96318 11.3071 8.01845L14.1523 3.46191Z"/></svg>Tugas</span>');
+                    }
+                });
+            }
+
+            // Deteksi "double-tap/klik" manual (bukan andelin event dblclick bawaan browser).
+            // Dipasang SEKALI di pembungkus kartu (event delegation) — jadi gak dobel-dobel
+            // kepasang tiap kali badge di-refresh, dan gak salah kedeteksi jadi 1 tap = jalan.
+            let _lastTapCard = null;
+            let _lastTapTime = 0;
+            (function setupTapDelegation() {
+                const cardsWrap = document.getElementById('scheduleCards');
+                if (!cardsWrap) return;
+                cardsWrap.addEventListener('click', (e) => {
+                    const card = e.target.closest('.schedule-card.has-task');
+                    if (!card) return;
+                    const now = Date.now();
+                    if (_lastTapCard === card && (now - _lastTapTime) < 350) {
+                        _lastTapCard = null;
+                        _lastTapTime = 0;
+                        bukaTugasDariJadwal(card.dataset.taskIds);
+                    } else {
+                        _lastTapCard = card;
+                        _lastTapTime = now;
+                    }
+                });
+            })();
+
+            // Diklik 2x di kartu jadwal yang ada badge Tugas → lompat ke tab Tugas,
+            // scroll ke tugas yang cocok, terus dikasih efek kedip highlight biar keliatan.
+            function bukaTugasDariJadwal(taskIdsStr) {
+                if (!taskIdsStr) return;
+                const ids = taskIdsStr.split(',').filter(Boolean);
+                showScreen('tugas');
+                requestAnimationFrame(() => {
+                    setTimeout(() => {
+                        const targets = ids.map(id => document.getElementById('task-' + id)).filter(Boolean);
+                        if (targets.length === 0) return;
+                        targets[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        targets.forEach(el => attachTaskBeam(el));
+                    }, 80);
+                });
+            }
+
+            // Nempelin border-beam (SVG stroke yang jalan ngelilingin kartu tugas) —
+            // ngukur dimensi kartu SAAT dipanggil (bukan di-hardcode), jadi lengkungan
+            // pojoknya presisi walau tinggi tiap kartu tugas beda-beda (gambar/lampiran
+            // bikin kartu lebih tinggi). Beam boleh dibikin panjang di sini karena SVG
+            // stroke ngikutin kurva jalurnya sendiri, gak akan "patah" di pojokan kayak
+            // pendekatan lama.
+            function attachTaskBeam(el) {
+                const old = el.querySelector('.task-beam-overlay');
+                if (old) old.remove();
+
+                const w = el.clientWidth;
+                const h = el.clientHeight;
+                if (w === 0 || h === 0) return;
+
+                const r = 10;  // samain sama border-radius .task-item
+                const sw = 3;  // samain sama border-thickness beam sebelumnya
+                const rectW = w - sw;
+                const rectH = h - sw;
+                // Keliling rounded-rect: 2 sisi lurus dikurangi bagian yang "dimakan"
+                // pojokan (8r), ditambah 4 seperempat lingkaran (jadi 1 lingkaran penuh 2πr)
+                const perimeter = 2 * (rectW + rectH) - 8 * r + 2 * Math.PI * r;
+                const beamLen = Math.min(110, perimeter * 0.22); // dipanjangin biar lebih kelihatan
+
+                const svgNS = "http://www.w3.org/2000/svg";
+                const svg = document.createElementNS(svgNS, "svg");
+                svg.classList.add('task-beam-overlay');
+                svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+                svg.setAttribute('width', w);
+                svg.setAttribute('height', h);
+
+                const rect = document.createElementNS(svgNS, "rect");
+                rect.setAttribute('x', sw / 2);
+                rect.setAttribute('y', sw / 2);
+                rect.setAttribute('width', rectW);
+                rect.setAttribute('height', rectH);
+                rect.setAttribute('rx', r);
+                rect.setAttribute('ry', r);
+                rect.setAttribute('stroke-width', sw);
+                // Dasharray-nya punya 2 segmen "nyala" (bukan cuma 1), masing-masing
+                // dipisah gap sepanjang setengah keliling kartu — jadi kelihatan kayak
+                // 2 beam yang jalan bareng, salah satunya selalu persis di sisi
+                // seberangnya yang lain. Cukup 1 animasi buat gerakin dua-duanya.
+                const gap = perimeter / 2 - beamLen;
+                rect.setAttribute('stroke-dasharray', `${beamLen} ${gap} ${beamLen} ${gap}`);
+
+                svg.appendChild(rect);
+                el.appendChild(svg);
+
+                const LOOP_MS = 1000; // kecepatan geraknya — dipelanin dikit dari 0.7s
+                const anim = rect.animate(
+                    [{ strokeDashoffset: perimeter }, { strokeDashoffset: 0 }],
+                    { duration: LOOP_MS, iterations: 1, easing: 'linear' } // cuma 1x keliling = 2 beam = 2 sapuan, terus berhenti
+                );
+
+                setTimeout(() => {
+                    anim.cancel();
+                    svg.remove();
+                }, LOOP_MS);
+            }
+
+            // Render ulang taskList dari cache (activeTasksCache & doneTasksCache).
+            // Dipanggil loadTasks() abis fetch.
+            function renderTaskList(role, isBesokMode) {
+                const list = document.getElementById('taskList');
+                if (!list) return;
                 list.innerHTML = "";
-                combinedTasks.forEach(t => {
+
+                activeTasksCache.forEach(t => {
+                    const canDelete = t.isCloud ? (role === 'sekretaris' || role === 'admin') : true;
+                    if (typeof renderTaskItem === 'function') {
+                        renderTaskItem(t.id, t, t.isCloud, canDelete, t._isBesok, isBesokMode);
+                    }
+                });
+
+                if (doneTasksCache.length === 0) return;
+
+                const labelLi = document.createElement('li');
+                labelLi.style.listStyle = 'none';
+                labelLi.innerHTML = `<p class="task-section-label">TUGAS SELESAI (${doneTasksCache.length})</p>`;
+                list.appendChild(labelLi);
+
+                doneTasksCache.forEach(t => {
                     const canDelete = t.isCloud ? (role === 'sekretaris' || role === 'admin') : true;
                     if (typeof renderTaskItem === 'function') {
                         renderTaskItem(t.id, t, t.isCloud, canDelete, t._isBesok, isBesokMode);
@@ -2931,6 +4161,7 @@
                 const list = document.getElementById('taskList');
                 if (!list) return;
                 const li = document.createElement('li');
+                li.id = `task-${id}`;
                 const badgeClass = isTugasBesok ? (isBesokMode ? 'task-besok' : 'task-hariini') : '';
                 li.className = `task-item ${t.done ? 'done' : ''} ${badgeClass}`;
                 li.style.cssText = "flex-direction: column; align-items: flex-start; position: relative; padding-bottom: 15px;";
@@ -3316,41 +4547,48 @@
                 }, 300);
             }
 
+            // Overlay disesuaikan tema aktif biar background custom gak kekontrasan
+            // pas mode gelap (dulu overlay-nya putih melulu, kepentok di dark mode).
+            function bgOverlayColor() {
+                const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+                return isDark ? 'rgba(16,17,20,0.78)' : 'rgba(255,255,255,0.85)';
+            }
+
+            function applySavedBg(dataUrl) {
+                const overlay = bgOverlayColor();
+                document.body.style.backgroundImage = `linear-gradient(${overlay}, ${overlay}), url('${dataUrl}')`;
+            }
+
             function changeBg(input) {
                 if (input.files && input.files[0]) {
                     const reader = new FileReader();
-                    reader.onload = (e) => { document.body.style.backgroundImage = `linear-gradient(rgba(255,255,255,0.9), rgba(255,255,255,0.9)), url('${e.target.result}')`; localStorage.setItem('savedBg', e.target.result); };
+                    reader.onload = (e) => {
+                        localStorage.setItem('savedBg', e.target.result);
+                        applySavedBg(e.target.result);
+                        updateProfilBgUI();
+                    };
                     reader.readAsDataURL(input.files[0]);
+                    input.value = ''; // biar milih file yang sama lagi tetap ke-trigger
                 }
             }
 
-            window.onload = function () {
+            // Balikin background ke setelan bawaan (pola/gradient default aplikasi)
+            function resetBg() {
+                localStorage.removeItem('savedBg');
+                document.body.style.backgroundImage = '';
+                updateProfilBgUI();
+            }
+
+            document.addEventListener('DOMContentLoaded', function () {
                 const role = localStorage.getItem('role');
                 const userKelas = localStorage.getItem('userKelas');
                 const adminSelector = document.getElementById('adminSelector');
                 const mainContent = document.getElementById('mainScheduleContent');
                 const btnEdit = document.getElementById('btn-edit-mode');
                 const btnBack = document.getElementById('btnBackToAdmin');
-                // Sync ikon notif sesuai state tersimpan
-                (function syncNotifIcon() {
-                    const iconOn = document.getElementById('notif-icon-on');
-                    const iconOff = document.getElementById('notif-icon-off');
-                    if (notifEnabled) {
-                        iconOn.style.display = '';
-                        iconOff.style.display = 'none';
-                    } else {
-                        iconOn.style.display = 'none';
-                        iconOff.style.display = '';
-                    }
-                })();
                 if (role === 'admin') {
                     const pomoIcon = document.querySelector('.pomo-icon');
                     if (pomoIcon) pomoIcon.style.display = 'none';
-
-                    // Notif icon disembunyikan buat admin, jadi toggle tema geser naik
-                    // menempati posisi icon notif biasanya
-                    const themeToggleBtn = document.getElementById('themeToggleBtn');
-                    if (themeToggleBtn) themeToggleBtn.style.top = '14px';
 
                     const btnKeluar = document.getElementById('btnKeluar'); // ← TAMBAH
                     if (btnKeluar) btnKeluar.style.display = 'none';        // ← TAMBAH
@@ -3381,7 +4619,19 @@
                     mainContent.style.display = 'flex';
                 }
                 const savedBg = localStorage.getItem('savedBg');
-                if (savedBg) document.body.style.backgroundImage = `linear-gradient(rgba(255,255,255,0.9), rgba(255,255,255,0.9)), url('${savedBg}')`;
+                if (savedBg) applySavedBg(savedBg);
+
+                // Pulihkan tab terakhir (Jadwal/Tugas/Profil) KALAU user baru aja
+                // refresh/balik dalam waktu deket. Kalau udah lama ditinggal, tetap
+                // default ke Jadwal (yang emang udah aktif dari HTML-nya).
+                if (mainContent.style.display !== 'none') {
+                    const savedScreen = localStorage.getItem('lastActiveScreen');
+                    const savedTime = parseInt(localStorage.getItem('lastActiveScreenTime') || '0', 10);
+                    const masihSegar = savedScreen && (Date.now() - savedTime) < TAB_MEMORY_MAX_AGE_MS;
+                    if (masihSegar && savedScreen !== 'jadwal') {
+                        showScreen(savedScreen);
+                    }
+                }
 
                 // jadwalData sudah di-init dari savedJadwal saat halaman load,
                 // tapi coba parse ulang di sini untuk jaga-jaga
@@ -3391,23 +4641,48 @@
                 } catch (e) {
                     jadwalData = { m1: {}, m2: {} };
                 }
+                // Isi nama kelas di header
+                const headerKelasEl = document.getElementById('header-kelas');
+                if (headerKelasEl) {
+                    const viewingKelas = sessionStorage.getItem('adminViewingKelas') || userKelas;
+                    if (viewingKelas) headerKelasEl.innerText = viewingKelas;
+                }
                 // Urutan inisialisasi yang benar:
                 // 1. Set minggu otomatis dulu
                 setAutoWeek();
                 // 2. Render jadwal dari cache lokal
                 renderSchedule();
-                // 3. Load tugas
+                // 3. Jalankan animasi berurutan
+                runPageLoadAnimation();
+                // 4. Load tugas
                 loadTasks();
-                // 4. Start clock (updateTime memanggil updateStatus & checkHighlight setiap detik)
+                // 5. Start clock
                 updateTime();
                 _clockInterval = setInterval(updateTime, 1000);
-                // 5. Fetch jadwal terbaru dari server (async, update di background)
+                // 6. Fetch jadwal terbaru dari server
                 fetchJadwalDariSheet();
-            };
+                // 7. Kunci animasi entrance biar cuma jalan sekali pas load/refresh ini —
+                //    abis buffer ini, pindah balik ke tab Jadwal gak bakal animasi ulang lagi
+                //    (Tugas & Profil masing-masing dapet jatah animasi sendiri pas pertama
+                //    kali di-tap, lihat showScreen()).
+                setTimeout(() => {
+                    document.body.classList.add('has-loaded');
+                    const jadwalScreen = document.getElementById('screen-jadwal');
+                    // Cek dulu Jadwal emang lagi keliatan — kalau user di-restore ke tab
+                    // lain (misal Tugas), Jadwal belum pernah keliatan sama sekali, jadi
+                    // jangan dikunci dulu; biarin dia tetap dapet jatah animasi pas nanti
+                    // beneran pertama kali dibuka.
+                    if (jadwalScreen && jadwalScreen.classList.contains('active')) {
+                        jadwalScreen.classList.add('screen-shown');
+                    }
+                }, SCREEN_ANIM_LOCK_MS);
+            });
 
             function adminLihatJadwal(kelas) {
                 localStorage.setItem('userKelas', kelas);
                 sessionStorage.setItem('adminViewingKelas', kelas);
+                const headerKelasEl = document.getElementById('header-kelas');
+                if (headerKelasEl) headerKelasEl.innerText = kelas;
                 const mainContent = document.getElementById('mainScheduleContent');
                 const adminSelector = document.getElementById('adminSelector');
                 adminSelector.style.display = 'none';
@@ -3416,7 +4691,7 @@
                 fetchJadwalDariSheet().then(() => {
                     setTimeout(() => {
                         const targets = [
-                            '.glass-card', '.nav-day', '.week-toggle',
+                            '.glass-card', '.week-toggle',
                             '.schedule-grid', '.task-section', '#btn-edit-mode'
                         ];
                         targets.forEach((selector) => {
@@ -3665,54 +4940,20 @@
 
             function toggleNotif() {
                 notifEnabled = !notifEnabled;
-
-                // Animasi sesuai kondisi ON/OFF
-                if (notifEnabled) {
-                    // ON: lonceng berdering lembut
-                    const iconOn = document.getElementById('notif-icon-on');
-                    iconOn.classList.remove('bell-ring');
-                    void iconOn.offsetWidth;
-                    iconOn.classList.add('bell-ring');
-                    iconOn.addEventListener('animationend', () => {
-                        iconOn.classList.remove('bell-ring');
-                    }, { once: true });
-                } else {
-                    // OFF: lonceng ayun pelan lalu diam
-                    const iconOff = document.getElementById('notif-icon-off');
-                    iconOff.classList.remove('bell-settle');
-                    void iconOff.offsetWidth;
-                    iconOff.classList.add('bell-settle');
-                    iconOff.addEventListener('animationend', () => {
-                        iconOff.classList.remove('bell-settle');
-                    }, { once: true });
-                }
-
                 localStorage.setItem('notifEnabled', String(notifEnabled));
 
-                const iconOn = document.getElementById('notif-icon-on');
-                const iconOff = document.getElementById('notif-icon-off');
-
                 if (notifEnabled) {
-                    iconOn.style.display = '';
-                    iconOff.style.display = 'none';
                     mulaiNotif();
-                    lastNotifMapel = ''; // paksa kirim notif baru setelah dinyalakan
+                    lastNotifMapel = '';
                 } else {
-                    iconOn.style.display = 'none';
-                    iconOff.style.display = '';
-
-                    // Tutup via referensi langsung (kalau ada)
                     if (lastNotifRef) {
                         try { lastNotifRef.close(); } catch (e) { }
                         lastNotifRef = null;
                     }
-
-                    // Kirim pesan ke SW buat nutup notif dari sisinya (paling reliable di Android)
                     if ('serviceWorker' in navigator) {
                         if (navigator.serviceWorker.controller) {
                             navigator.serviceWorker.controller.postMessage({ type: 'CLOSE_ALL_NOTIF' });
                         }
-                        // Fallback: tutup langsung dari halaman
                         navigator.serviceWorker.ready.then(reg => {
                             reg.getNotifications().then(list => list.forEach(n => n.close()));
                         }).catch(() => { });
