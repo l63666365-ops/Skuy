@@ -2480,6 +2480,19 @@
                     'devicePixelRatio: ' + window.devicePixelRatio,
                     'bottom-nav.bottom (dari getBoundingClientRect): ' + (navRect ? Math.round(navRect.bottom) : 'n/a'),
                     'bottom-nav computed bottom offset: ' + (nav ? getComputedStyle(nav).bottom : 'n/a'),
+                    'bottom-nav computed position: ' + (nav ? getComputedStyle(nav).position : 'n/a'),
+                    'bottom-nav.offsetParent (null = normal/bener, ada isinya = ketemu biang keroknya): ' + (nav ? (nav.offsetParent ? (nav.offsetParent.id || nav.offsetParent.className || nav.offsetParent.tagName) : 'null') : 'n/a'),
+                    (function () {
+                        if (!nav) return 'ancestor chain: n/a';
+                        var chain = [];
+                        var elx = nav.parentElement;
+                        while (elx && elx !== document.body) {
+                            var cs = getComputedStyle(elx);
+                            chain.push((elx.id || elx.className || elx.tagName) + ' [transform=' + cs.transform + ' filter=' + cs.filter + ' willChange=' + cs.willChange + ' contain=' + cs.contain + ' position=' + cs.position + ']');
+                            elx = elx.parentElement;
+                        }
+                        return 'ancestor chain (body->nav):\n  ' + chain.reverse().join('\n  ');
+                    })(),
                     '--vh var: ' + getComputedStyle(document.documentElement).getPropertyValue('--vh'),
                     'user-agent: ' + navigator.userAgent
                 ];
