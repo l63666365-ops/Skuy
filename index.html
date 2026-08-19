@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport"
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Skuy Jadwal</title>
+    <title>Jadwal Sekolah Pro</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap');
 
@@ -112,11 +113,17 @@
             background-position: 0 0, center, center;
             color: var(--color-1);
             min-height: 100vh;
+            /* Fallback buat browser/WebView yang salah ukur 100vh (biasa kejadian
+               kalau ada toolbar/keyboard virtual) — --vh dihitung ulang lewat JS
+               dari window.innerHeight yang sebenernya (lihat script di <head>). */
+            min-height: calc(var(--vh, 1vh) * 100);
+            /* Browser modern yang support dvh: paling akurat, otomatis nyesuain
+               kalau toolbar browser muncul/ilang. */
+            min-height: 100dvh;
             display: flex;
             justify-content: center;
             padding: 16px 10px;
             transition: background-color 0.4s ease, color 0.4s ease, background-image 0.4s ease;
-            zoom: 0.91;
         }
 
         .theme-toggle-btn {
@@ -2385,6 +2392,24 @@
             var saved = localStorage.getItem('skuyTheme');
             var theme = saved || 'light';
             document.documentElement.setAttribute('data-theme', theme);
+        })();
+        // Hitung tinggi layar yang BENERAN (bukan cuma percaya 100vh CSS, yang suka
+        // salah ukur di sebagian browser/WebView Android) dan simpen ke --vh, dipakai
+        // sebagai fallback di CSS body (lihat min-height: calc(var(--vh,1vh)*100)).
+        // Dijalanin seawal mungkin di <head> biar udah kepasang sebelum halaman
+        // sempet ke-render, dan di-update lagi tiap resize/orientasi berubah/keyboard
+        // virtual muncul-ilang (pake visualViewport kalau tersedia, lebih akurat).
+        (function () {
+            function setAppVh() {
+                var h = (window.visualViewport && window.visualViewport.height) || window.innerHeight;
+                document.documentElement.style.setProperty('--vh', (h * 0.01) + 'px');
+            }
+            setAppVh();
+            window.addEventListener('resize', setAppVh);
+            window.addEventListener('orientationchange', setAppVh);
+            if (window.visualViewport) {
+                window.visualViewport.addEventListener('resize', setAppVh);
+            }
         })();
         function toggleTheme() {
             var current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
