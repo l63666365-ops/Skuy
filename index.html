@@ -871,7 +871,7 @@
             justify-content: center;
             gap: 8px;
             position: fixed;
-            bottom: 86px;
+            bottom: calc(86px + env(safe-area-inset-bottom, 0px));
             left: 50%;
             transform: translateX(-50%);
             width: calc(100% - 20px);
@@ -1943,7 +1943,7 @@
         #btnKeluarWrap {
             position: fixed !important;
             left: 50% !important;
-            bottom: 96px !important;
+            bottom: calc(96px + env(safe-area-inset-bottom, 0px)) !important;
             transform: translateX(-50%) !important;
             width: calc(100% - 20px) !important;
             max-width: 410px !important;
@@ -1954,7 +1954,7 @@
         .bottom-nav {
             display: flex;
             position: fixed;
-            bottom: 16px;
+            bottom: calc(16px + env(safe-area-inset-bottom, 0px));
             left: 50%;
             transform: translateX(-50%);
             width: calc(100% - 20px);
@@ -2458,52 +2458,6 @@
 </head>
 
 <body>
-    <!-- ═══ PANEL DEBUG SEMENTARA — buat nyari akar masalah nav numpuk.
-         Tinggal SS panel ini abis kebuka, terus kirim ke Claude. Nanti abis
-         ketemu solusinya, div ini (dan script di bawahnya) tinggal dihapus. ═══ -->
-    <div id="debugVh" style="position:fixed; top:0; left:0; right:0; z-index:99999; background:rgba(0,0,0,0.85); color:#0f0; font-family:monospace; font-size:11px; line-height:1.5; padding:8px 10px; white-space:pre-wrap;"></div>
-    <script>
-        (function () {
-            function reportDebugVh() {
-                var el = document.getElementById('debugVh');
-                if (!el) return;
-                var nav = document.querySelector('.bottom-nav');
-                var navRect = nav ? nav.getBoundingClientRect() : null;
-                var lines = [
-                    'innerHeight: ' + window.innerHeight,
-                    'innerWidth: ' + window.innerWidth,
-                    'visualViewport.height: ' + (window.visualViewport ? Math.round(window.visualViewport.height) : 'n/a'),
-                    'visualViewport.offsetTop: ' + (window.visualViewport ? Math.round(window.visualViewport.offsetTop) : 'n/a'),
-                    'documentElement.clientHeight: ' + document.documentElement.clientHeight,
-                    'body.scrollHeight: ' + document.body.scrollHeight,
-                    'screen.height: ' + (window.screen ? window.screen.height : 'n/a'),
-                    'devicePixelRatio: ' + window.devicePixelRatio,
-                    'bottom-nav.bottom (dari getBoundingClientRect): ' + (navRect ? Math.round(navRect.bottom) : 'n/a'),
-                    'bottom-nav computed bottom offset: ' + (nav ? getComputedStyle(nav).bottom : 'n/a'),
-                    'bottom-nav computed position: ' + (nav ? getComputedStyle(nav).position : 'n/a'),
-                    'bottom-nav.offsetParent (null = normal/bener, ada isinya = ketemu biang keroknya): ' + (nav ? (nav.offsetParent ? (nav.offsetParent.id || nav.offsetParent.className || nav.offsetParent.tagName) : 'null') : 'n/a'),
-                    (function () {
-                        if (!nav) return 'ancestor chain: n/a';
-                        var chain = [];
-                        var elx = nav.parentElement;
-                        while (elx && elx !== document.body) {
-                            var cs = getComputedStyle(elx);
-                            chain.push((elx.id || elx.className || elx.tagName) + ' [transform=' + cs.transform + ' filter=' + cs.filter + ' willChange=' + cs.willChange + ' contain=' + cs.contain + ' position=' + cs.position + ']');
-                            elx = elx.parentElement;
-                        }
-                        return 'ancestor chain (body->nav):\n  ' + chain.reverse().join('\n  ');
-                    })(),
-                    '--vh var: ' + getComputedStyle(document.documentElement).getPropertyValue('--vh'),
-                    'user-agent: ' + navigator.userAgent
-                ];
-                el.textContent = lines.join('\n');
-            }
-            window.addEventListener('load', reportDebugVh);
-            window.addEventListener('resize', reportDebugVh);
-            setTimeout(reportDebugVh, 500);
-            setTimeout(reportDebugVh, 1500);
-        })();
-    </script>
     <div id="pull-refresh-indicator">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"
             stroke-linejoin="round">
