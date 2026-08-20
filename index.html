@@ -293,6 +293,10 @@
             flex-direction: column;
             gap: 10px;
             padding-bottom: 160px;
+            /* Nyusutin tampilan biar gak sumpek, aman dipasang di sini (beda sama
+               body dulu) soalnya bottom-nav/tombol fixed udah dipindah keluar dari
+               .container, jadi gak ada lagi elemen fixed yang bisa "nyangkut". */
+            zoom: 0.9;
         }
 
         [data-theme="dark"] .container {
