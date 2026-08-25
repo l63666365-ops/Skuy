@@ -1467,6 +1467,143 @@
             transform: scale(0.9);
         }
 
+        .btn-edit-task {
+            all: unset !important;
+            position: absolute !important;
+            top: 50% !important;
+            right: 45px !important;
+            transform: translateY(-50%) !important;
+            width: 24px !important;
+            height: 24px !important;
+            min-width: 24px !important;
+            min-height: 24px !important;
+            background-color: #ffffff !important;
+            border: 1.5px solid var(--color-3) !important;
+            color: var(--color-3) !important;
+            border-radius: 50% !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            cursor: pointer !important;
+            line-height: 1 !important;
+            padding: 0 !important;
+            z-index: 10 !important;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+        }
+
+        .btn-edit-task:active {
+            transform: translateY(-50%) scale(0.9) !important;
+        }
+
+        .edit-task-box {
+            text-align: left;
+            position: relative;
+            padding: 20px;
+            width: 90%;
+            max-width: 380px;
+            max-height: 85vh;
+            overflow-y: auto;
+            background: var(--white);
+            border-radius: 20px;
+            border: 1px solid var(--color-4);
+            box-shadow: 0 15px 30px rgba(5, 38, 89, 0.15);
+        }
+
+        .edit-task-box h3 {
+            color: var(--color-2);
+            font-size: 15px;
+            margin: 0 0 12px;
+            text-align: center;
+        }
+
+        .edit-task-box label {
+            font-size: 12px;
+            font-weight: bold;
+            color: var(--color-3);
+            display: block;
+            margin: 12px 0 5px;
+        }
+
+        .edit-task-box textarea {
+            width: 100%;
+            min-height: 70px;
+            border-radius: 10px;
+            border: 1px solid var(--color-4);
+            padding: 10px;
+            font-size: 13px;
+            font-family: inherit;
+            resize: vertical;
+            color: var(--color-1);
+            background: transparent;
+            box-sizing: border-box;
+        }
+
+        .edit-task-box input[type="datetime-local"] {
+            width: 100%;
+            border-radius: 10px;
+            border: 1px solid var(--color-4);
+            padding: 8px 10px;
+            font-size: 13px;
+            color: var(--color-1);
+            background: transparent;
+            box-sizing: border-box;
+        }
+
+        .edit-file-chip {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            background: rgba(84, 131, 179, 0.08);
+            border: 1px solid var(--color-4);
+            border-radius: 8px;
+            padding: 6px 10px;
+            margin-bottom: 6px;
+            font-size: 12px;
+            color: var(--color-1);
+        }
+
+        .edit-file-chip span {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .edit-file-chip button {
+            all: unset;
+            color: #d32f2f;
+            font-weight: bold;
+            cursor: pointer;
+            padding: 0 4px;
+            flex-shrink: 0;
+        }
+
+        .edit-task-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+        .edit-task-actions button {
+            flex: 1;
+            border: none;
+            border-radius: 12px;
+            padding: 11px;
+            font-weight: bold;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .btn-edit-cancel {
+            background: rgba(0, 0, 0, 0.06);
+            color: var(--color-2);
+        }
+
+        .btn-edit-save {
+            background: var(--color-2);
+            color: var(--accent-light);
+        }
+
         @keyframes fadeInUp {
             from {
                 opacity: 0;
@@ -2499,6 +2636,33 @@
                 Kalau dokumen gak muncul di bawah, klik "Buka Tab Baru" di atas ya.
             </div>
             <iframe id="docFrame" src="" style="width: 100%; flex-grow: 1; border: none; border-radius: 10px;"></iframe>
+        </div>
+    </div>
+
+    <div id="editTaskModal" class="modal-overlay" style="z-index: 4200;">
+        <div class="edit-task-box">
+            <h3>Edit Tugas</h3>
+
+            <label for="editTaskText">Isi Tugas</label>
+            <textarea id="editTaskText" placeholder="Ketik tugas di sini..."></textarea>
+
+            <label>File Lampiran</label>
+            <div id="editExistingFiles"></div>
+            <div id="editNewFilesPreview" style="display:flex; flex-direction:column; gap:6px; margin-bottom:6px;"></div>
+            <button type="button" class="btn-edit-cancel"
+                style="width:100%; border-radius:10px; padding:9px; font-size:12px; font-weight:bold; cursor:pointer; border:1px dashed var(--color-4); background:transparent; color: var(--color-3);"
+                onclick="document.getElementById('editTaskFileInput').click()">+ Tambah File</button>
+            <input type="file" id="editTaskFileInput" style="display:none"
+                accept="image/*,audio/*,video/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.rtf,.zip,.rar,.7z,.mp3,.mp4,.m4a,.mkv,.wav,.mov"
+                multiple onchange="previewEditFiles(this)">
+
+            <label for="editTaskTimestamp">Dicatat Kapan</label>
+            <input type="datetime-local" id="editTaskTimestamp">
+
+            <div class="edit-task-actions">
+                <button type="button" class="btn-edit-cancel" onclick="closeEditTaskModal()">Batal</button>
+                <button type="button" class="btn-edit-save" onclick="saveEditTask()">Simpan</button>
+            </div>
         </div>
     </div>
 
@@ -4250,6 +4414,7 @@
                 li.style.cssText = "flex-direction: column; align-items: flex-start; position: relative; padding-bottom: 15px;";
                 const toggleFunc = isCloud ? `toggleTaskCloud('${id}', ${t.done}, event)` : `toggleTaskLocal('${id}', event)`;
                 const deleteFunc = isCloud ? `deleteTaskCloud('${id}', event)` : `deleteTaskLocal('${id}', event)`;
+                const editFunc = `openEditTask('${id}', ${isCloud})`;
                 const rawText = t.text || "";
                 const processedText = (typeof linkify === 'function') ? linkify(rawText) : rawText;
                 const taskDate = t.timestamp ? new Date(t.timestamp) : new Date();
@@ -4300,6 +4465,12 @@
             <span class="task-date" style="display: block; margin-bottom: 0;">${formatLengkap}</span>
 <span class="task-date" style="opacity: 0.6; font-style: italic; display: block; margin-top: 1px;">(${waktuRelatif})</span>
         </div>
+        ${canDelete ? `<button class="btn-edit-task" onclick="${editFunc}" title="Edit tugas">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 20h9"></path>
+                <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+            </svg>
+        </button>` : ''}
         ${canDelete ? `<button class="btn-delete-task" onclick="${deleteFunc}">×</button>` : ''}
     </div>
     ${typeof renderFilesHtml === 'function' ? renderFilesHtml(t, isCloud, id) : ''} 
@@ -4628,6 +4799,158 @@
                     window.lastTasksData = "";
                     loadTasks();
                 }, 300);
+            }
+
+            // ===== EDIT TUGAS (teks, file lampiran, & waktu "Dicatat") =====
+            let editingTaskId = null;
+            let editingTaskIsCloud = false;
+            let editKeptImages = [];   // file lama yang masih dipertahankan
+            let editNewImages = [];    // file baru yang mau ditambahkan (belum diupload)
+
+            function openEditTask(id, isCloud) {
+                const allTasks = (activeTasksCache || []).concat(doneTasksCache || []);
+                const source = allTasks.find(t => t.id == id && t.isCloud === isCloud);
+                if (!source) return;
+
+                editingTaskId = id;
+                editingTaskIsCloud = isCloud;
+                editKeptImages = (source.images || []).slice();
+                editNewImages = [];
+
+                document.getElementById('editTaskText').value = source.text || "";
+
+                const ts = source.timestamp ? new Date(source.timestamp) : new Date();
+                const pad = n => String(n).padStart(2, '0');
+                const localStr = `${ts.getFullYear()}-${pad(ts.getMonth() + 1)}-${pad(ts.getDate())}T${pad(ts.getHours())}:${pad(ts.getMinutes())}`;
+                document.getElementById('editTaskTimestamp').value = localStr;
+
+                renderEditExistingFiles();
+                document.getElementById('editNewFilesPreview').innerHTML = '';
+
+                const modal = document.getElementById('editTaskModal');
+                modal.style.display = 'flex';
+                setTimeout(() => modal.classList.add('show'), 10);
+            }
+
+            function renderEditExistingFiles() {
+                const wrap = document.getElementById('editExistingFiles');
+                if (editKeptImages.length === 0) {
+                    wrap.innerHTML = '<p style="font-size:12px; opacity:0.6; margin:0 0 6px;">Belum ada file</p>';
+                    return;
+                }
+                wrap.innerHTML = editKeptImages.map((fileObj, idx) => {
+                    const name = (typeof fileObj === 'object' && fileObj.name) ? fileObj.name : `Lampiran ${idx + 1}`;
+                    return `<div class="edit-file-chip">
+                <span>${name}</span>
+                <button type="button" onclick="removeEditExistingFile(${idx})">Hapus</button>
+            </div>`;
+                }).join('');
+            }
+
+            function removeEditExistingFile(idx) {
+                editKeptImages.splice(idx, 1);
+                renderEditExistingFiles();
+            }
+
+            function previewEditFiles(input) {
+                const files = Array.from(input.files || []);
+                files.forEach(file => {
+                    editNewImages.push({ fileObj: file, name: file.name, type: file.type });
+                });
+                input.value = "";
+                renderEditNewFiles();
+            }
+
+            function renderEditNewFiles() {
+                const wrap = document.getElementById('editNewFilesPreview');
+                wrap.innerHTML = editNewImages.map((item, idx) => `
+            <div class="edit-file-chip">
+                <span>🆕 ${item.name}</span>
+                <button type="button" onclick="removeEditNewFile(${idx})">Batal</button>
+            </div>
+        `).join('');
+            }
+
+            function removeEditNewFile(idx) {
+                editNewImages.splice(idx, 1);
+                renderEditNewFiles();
+            }
+
+            function closeEditTaskModal() {
+                const modal = document.getElementById('editTaskModal');
+                modal.classList.remove('show');
+                setTimeout(() => { modal.style.display = 'none'; }, 300);
+                editingTaskId = null;
+                editKeptImages = [];
+                editNewImages = [];
+            }
+
+            async function saveEditTask() {
+                const textVal = document.getElementById('editTaskText').value;
+                const tsVal = document.getElementById('editTaskTimestamp').value;
+                if (textVal.trim() === "" && editKeptImages.length === 0 && editNewImages.length === 0) {
+                    showAlert("Waduh", "Tugas gak boleh kosong ya");
+                    return;
+                }
+                const newTimestamp = tsVal ? new Date(tsVal).getTime() : Date.now();
+
+                showUploadAlert();
+                try {
+                    let uploadedFiles = [];
+                    let failedFiles = [];
+                    for (let item of editNewImages) {
+                        const formData = new FormData();
+                        formData.append('file', item.fileObj);
+                        formData.append('upload_preset', "Tugas_Sekolah");
+                        formData.append('resource_type', 'auto');
+                        const res = await fetch(`https://api.cloudinary.com/v1_1/dyn2s3eoj/upload`, {
+                            method: 'POST',
+                            body: formData
+                        });
+                        const data = await res.json();
+                        if (data.secure_url) {
+                            uploadedFiles.push({ data: data.secure_url, type: item.type || "application/octet-stream", name: item.name });
+                        } else {
+                            console.error("Upload gagal untuk", item.name, data);
+                            failedFiles.push(`${item.name}: ${(data && data.error && data.error.message) || "gagal upload"}`);
+                        }
+                    }
+                    if (failedFiles.length > 0) {
+                        closeUploadAlert();
+                        showAlert("Ada File Gagal Upload", failedFiles.join("\n"));
+                        showUploadAlert();
+                    }
+
+                    const finalImages = editKeptImages.concat(uploadedFiles);
+                    // Pakai PATCH (bukan PUT) biar field lain kayak "done" gak ikut ke-reset.
+                    const updatedTask = { text: textVal, images: finalImages, timestamp: newTimestamp };
+
+                    if (editingTaskIsCloud) {
+                        const userKelas = (localStorage.getItem("userKelas") || "UMUM").trim();
+                        await fetch(`${firebaseTugasURL}/${userKelas}/${editingTaskId}.json`, {
+                            method: 'PATCH',
+                            body: JSON.stringify(updatedTask)
+                        });
+                    } else {
+                        let tasks = JSON.parse(localStorage.getItem('mySchoolTasks')) || [];
+                        const actualIndex = (typeof editingTaskId === 'string' && editingTaskId.startsWith('local-'))
+                            ? parseInt(editingTaskId.replace('local-', ''), 10)
+                            : parseInt(editingTaskId, 10);
+                        if (tasks[actualIndex]) {
+                            tasks[actualIndex] = { ...tasks[actualIndex], ...updatedTask };
+                            localStorage.setItem('mySchoolTasks', JSON.stringify(tasks));
+                        }
+                    }
+
+                    window.lastTasksData = "";
+                    closeUploadAlert();
+                    closeEditTaskModal();
+                    loadTasks();
+                } catch (error) {
+                    console.error("Gagal edit tugas:", error);
+                    closeUploadAlert();
+                    showAlert("Waduh Error!", "Gagal simpan perubahan. Coba lagi ya.");
+                }
             }
 
             // Overlay disesuaikan tema aktif biar background custom gak kekontrasan
