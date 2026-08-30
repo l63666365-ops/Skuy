@@ -1605,17 +1605,11 @@
             color: var(--accent-light);
         }
 
-        /* Cuma titik kecil ini (pojok kanan bawah kartu) yang "diambil alih" JS buat
-           mulai mode geser. Sengaja invisible (gak ada ikon) dan posisinya absolute,
-           jadi gak makan jatah ruang di baris flex (checkbox & teks tetep normal,
-           gak ikut kedorong). Sisa kartu tetep scroll native penuh biar mulus. */
-        .drag-hotzone {
+        /* Kartu yang bisa digeser dikasih touch-action:none biar browser gak ikut
+           campur nanganin scroll/refresh gesture di situ -- semuanya kita handle
+           manual lewat JS (termasuk scroll manual + efek momentum pas dilepas). */
+        .task-item[data-draggable="true"] {
             touch-action: none;
-            position: absolute;
-            right: 6px;
-            bottom: 4px;
-            width: 34px;
-            height: 26px;
         }
 
         .task-item.dragging-task {
@@ -4524,8 +4518,7 @@
             <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
         </svg>
         <span style="font-size: 10px; font-weight: bold; margin-left: 5px;"></span>
-    </button>
-    ${canDrag ? `<span class="drag-hotzone"></span>` : ''}`;
+    </button>`;
                 list.appendChild(li);
                 document.getElementById(`btn-copy-${id}`).addEventListener('click', () => {
                     copyTaskFormat(rawText);
@@ -4999,31 +4992,41 @@
             }
 
             // ===== GESER URUTAN TUGAS (khusus sekretaris/admin, tugas biasa yang masih aktif) =====
-            // Kartunya sengaja dibiarin polos kayak biasa (gak ada ikon tambahan).
-            // Caranya: tahan (long-press) sebentar di titik kecil invisible di kiri
-            // kartu (deket checkbox), baru mode geser aktif.
+            // Kartunya sengaja dibiarin polos kayak biasa (gak ada ikon/titik tambahan).
+            // Caranya: tahan (long-press) sebentar di badan kartu, baru mode geser aktif.
             //
-            // Cuma titik kecil itu (.drag-hotzone) yang dikasih touch-action:none;
-            // sisa badan kartu (teks, gambar, dll) tetep scroll native penuh biar mulus.
-            // Dalam hotzone itu sendiri, kita handle manual lewat JS pakai state machine:
-            //   pending   -> baru nempel jari di hotzone, belum jelas niatnya apa
+            // Kartu draggable dikasih touch-action:none, jadi browser gak ikut campur
+            // nanganin gesture di situ (termasuk scroll & pull-to-refresh) -- semuanya
+            // kita handle manual lewat JS pakai state machine:
+            //   pending   -> baru nempel jari, belum jelas niatnya apa
             //   scrolling -> jari gerak duluan sebelum hold-nya kepenuhan -> scroll manual
+            //               (dikasih efek momentum pas dilepas biar gak berhenti mendadak)
             //   dragging  -> jari diem sampai long-press kepenuhan -> mode geser kartu
             const DRAG_LONG_PRESS_MS = 380;
             const DRAG_MOVE_CANCEL_PX = 8;
 
+            // Kalau ada momentum scroll yang masih jalan pas gesture baru dimulai, batalin dulu
+            let activeMomentumRaf = null;
+
             function initTaskDragReorder() {
                 const list = document.getElementById('taskList');
                 if (!list) return;
-                list.querySelectorAll('.task-item[data-draggable="true"] .drag-hotzone').forEach(zone => {
-                    zone.addEventListener('pointerdown', onCardPointerDown);
+                list.querySelectorAll('.task-item[data-draggable="true"]').forEach(li => {
+                    li.addEventListener('pointerdown', onCardPointerDown);
                 });
             }
 
             function onCardPointerDown(e) {
                 if (e.button !== undefined && e.button !== 0) return; // cuma klik kiri/touch utama
+                // Biar checkbox, tombol edit/hapus/salin, dan lampiran (gambar/link) tetap berfungsi normal
+                if (e.target.closest('button, a, .task-check-custom, [onclick]')) return;
 
-                const li = e.currentTarget.closest('.task-item');
+                if (activeMomentumRaf !== null) {
+                    cancelAnimationFrame(activeMomentumRaf);
+                    activeMomentumRaf = null;
+                }
+
+                const li = e.currentTarget;
                 const list = document.getElementById('taskList');
                 if (!li || !list) return;
 
@@ -5031,6 +5034,8 @@
                 const startClientX = e.clientX;
                 const startClientY = e.clientY;
                 let lastY = e.clientY;
+                let lastMoveTime = performance.now();
+                let velocityY = 0; // px per ms, dipakai buat momentum pas dilepas
                 let pressTimer = null;
                 let mode = 'pending'; // 'pending' | 'scrolling' | 'dragging'
                 let currentTY = 0;
@@ -5137,14 +5142,38 @@
                     }
 
                     if (mode === 'scrolling') {
+                        const now = performance.now();
+                        const dt = Math.max(now - lastMoveTime, 1);
                         const dy = ev.clientY - lastY;
                         lastY = ev.clientY;
+                        lastMoveTime = now;
+                        velocityY = dy / dt; // px per ms, buat efek momentum pas dilepas
                         queueScroll(-dy);
                         return;
                     }
 
                     // mode === 'dragging'
                     onDragMove(ev);
+                }
+
+                function startMomentumScroll() {
+                    let velocity = velocityY; // px per ms
+                    let lastTs = performance.now();
+                    function step(ts) {
+                        const dt = Math.min(ts - lastTs, 48);
+                        lastTs = ts;
+                        // Gesekan biar makin lama makin pelan terus berhenti, kayak scroll native
+                        velocity *= Math.pow(0.94, dt / 16);
+                        if (Math.abs(velocity) < 0.02) {
+                            activeMomentumRaf = null;
+                            return;
+                        }
+                        window.scrollBy(0, -velocity * dt);
+                        activeMomentumRaf = requestAnimationFrame(step);
+                    }
+                    if (Math.abs(velocity) > 0.05) {
+                        activeMomentumRaf = requestAnimationFrame(step);
+                    }
                 }
 
                 function onPointerUp(ev) {
@@ -5158,6 +5187,7 @@
                     document.removeEventListener('pointerup', onPointerUp);
                     document.removeEventListener('pointercancel', onPointerUp);
                     if (mode === 'dragging') finishDragMode();
+                    if (mode === 'scrolling') startMomentumScroll();
                 }
 
                 document.addEventListener('pointermove', onPointerMove);
