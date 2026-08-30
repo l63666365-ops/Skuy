@@ -14,7 +14,7 @@
             -webkit-text-size-adjust: 100% !important;
             -moz-text-size-adjust: 100% !important;
             text-size-adjust: 100% !important;
-            overscroll-behavior-y: contain;
+            overscroll-behavior-y: none;
         }
 
         * {
@@ -113,6 +113,7 @@
             background-position: 0 0, center, center;
             color: var(--color-1);
             min-height: 100vh;
+            overscroll-behavior-y: none;
             /* Fallback buat browser/WebView yang salah ukur 100vh (biasa kejadian
                kalau ada toolbar/keyboard virtual) — --vh dihitung ulang lewat JS
                dari window.innerHeight yang sebenernya (lihat script di <head>). */
@@ -5055,6 +5056,10 @@
                 li.classList.add('dragging-task');
                 li.style.position = 'relative';
                 li.style.zIndex = '50';
+                // .task-item punya "transition: all 0.4s" buat animasi lain (mis. hapus tugas).
+                // Kalau gak dimatiin dulu, tiap update translateY pas geser bakal ikut
+                // dianimasiin pelan sama transition itu -> kerasa nyangkut/lag ketinggalan jari.
+                li.style.transition = 'none';
 
                 let lastY = startY;
                 let currentTY = 0;
@@ -5112,6 +5117,7 @@
                     li.style.transform = '';
                     li.style.position = '';
                     li.style.zIndex = '';
+                    li.style.transition = '';
                     persistNewOrder();
                 }
 
