@@ -1605,15 +1605,17 @@
             color: var(--accent-light);
         }
 
-        /* Cuma titik kecil ini (kiri kartu, deket checkbox) yang "diambil alih" JS buat
-           mulai mode geser. Sengaja invisible (gak ada ikon), tapi cuma di titik ini
-           touch-action-nya none -- sisa kartu (teks, gambar, dst) tetep scroll native
-           penuh biar mulus kayak biasa, gak ke-degradasi jadi scroll manual JS. */
+        /* Cuma titik kecil ini (pojok kanan bawah kartu) yang "diambil alih" JS buat
+           mulai mode geser. Sengaja invisible (gak ada ikon) dan posisinya absolute,
+           jadi gak makan jatah ruang di baris flex (checkbox & teks tetep normal,
+           gak ikut kedorong). Sisa kartu tetep scroll native penuh biar mulus. */
         .drag-hotzone {
             touch-action: none;
-            width: 26px;
+            position: absolute;
+            right: 6px;
+            bottom: 4px;
+            width: 34px;
             height: 26px;
-            flex-shrink: 0;
         }
 
         .task-item.dragging-task {
@@ -4489,7 +4491,6 @@
 
                 li.innerHTML = `
     <div style="display:flex; width:100%; align-items:center; gap:10px;">
-        ${canDrag ? `<span class="drag-hotzone"></span>` : ''}
         <div class="task-check-custom" onclick="${toggleFunc}">
  ${t.done ?
                         `<svg viewBox="0 0 24 24" fill="none" width="20" height="20">
@@ -4523,7 +4524,8 @@
             <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
         </svg>
         <span style="font-size: 10px; font-weight: bold; margin-left: 5px;"></span>
-    </button>`;
+    </button>
+    ${canDrag ? `<span class="drag-hotzone"></span>` : ''}`;
                 list.appendChild(li);
                 document.getElementById(`btn-copy-${id}`).addEventListener('click', () => {
                     copyTaskFormat(rawText);
