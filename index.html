@@ -1605,8 +1605,15 @@
             color: var(--accent-light);
         }
 
-        .task-item[data-draggable="true"] {
+        /* Cuma titik kecil ini (kiri kartu, deket checkbox) yang "diambil alih" JS buat
+           mulai mode geser. Sengaja invisible (gak ada ikon), tapi cuma di titik ini
+           touch-action-nya none -- sisa kartu (teks, gambar, dst) tetep scroll native
+           penuh biar mulus kayak biasa, gak ke-degradasi jadi scroll manual JS. */
+        .drag-hotzone {
             touch-action: none;
+            width: 26px;
+            height: 26px;
+            flex-shrink: 0;
         }
 
         .task-item.dragging-task {
@@ -4482,6 +4489,7 @@
 
                 li.innerHTML = `
     <div style="display:flex; width:100%; align-items:center; gap:10px;">
+        ${canDrag ? `<span class="drag-hotzone"></span>` : ''}
         <div class="task-check-custom" onclick="${toggleFunc}">
  ${t.done ?
                         `<svg viewBox="0 0 24 24" fill="none" width="20" height="20">
@@ -4990,12 +4998,13 @@
 
             // ===== GESER URUTAN TUGAS (khusus sekretaris/admin, tugas biasa yang masih aktif) =====
             // Kartunya sengaja dibiarin polos kayak biasa (gak ada ikon tambahan).
-            // Caranya: tahan (long-press) sebentar di badan kartu, baru mode geser aktif.
+            // Caranya: tahan (long-press) sebentar di titik kecil invisible di kiri
+            // kartu (deket checkbox), baru mode geser aktif.
             //
-            // Kartu draggable dikasih touch-action:none, artinya browser DILARANG ngurusin
-            // gesture apapun di situ (termasuk scroll & pull-to-refresh) -- semuanya kita
-            // handle manual lewat JS pakai state machine:
-            //   pending   -> baru nempel jari, belum jelas niatnya apa
+            // Cuma titik kecil itu (.drag-hotzone) yang dikasih touch-action:none;
+            // sisa badan kartu (teks, gambar, dll) tetep scroll native penuh biar mulus.
+            // Dalam hotzone itu sendiri, kita handle manual lewat JS pakai state machine:
+            //   pending   -> baru nempel jari di hotzone, belum jelas niatnya apa
             //   scrolling -> jari gerak duluan sebelum hold-nya kepenuhan -> scroll manual
             //   dragging  -> jari diem sampai long-press kepenuhan -> mode geser kartu
             const DRAG_LONG_PRESS_MS = 380;
@@ -5004,17 +5013,15 @@
             function initTaskDragReorder() {
                 const list = document.getElementById('taskList');
                 if (!list) return;
-                list.querySelectorAll('.task-item[data-draggable="true"]').forEach(li => {
-                    li.addEventListener('pointerdown', onCardPointerDown);
+                list.querySelectorAll('.task-item[data-draggable="true"] .drag-hotzone').forEach(zone => {
+                    zone.addEventListener('pointerdown', onCardPointerDown);
                 });
             }
 
             function onCardPointerDown(e) {
                 if (e.button !== undefined && e.button !== 0) return; // cuma klik kiri/touch utama
-                // Biar checkbox, tombol edit/hapus/salin, dan lampiran (gambar/link) tetap berfungsi normal
-                if (e.target.closest('button, a, .task-check-custom, [onclick]')) return;
 
-                const li = e.currentTarget;
+                const li = e.currentTarget.closest('.task-item');
                 const list = document.getElementById('taskList');
                 if (!li || !list) return;
 
