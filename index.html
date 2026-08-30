@@ -1604,23 +1604,8 @@
             color: var(--accent-light);
         }
 
-        .drag-handle {
-            touch-action: none;
-            cursor: grab;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 20px;
-            height: 28px;
-            flex-shrink: 0;
-            color: var(--color-4);
-            user-select: none;
-            -webkit-user-select: none;
-        }
-
-        .drag-handle:active {
-            cursor: grabbing;
-            color: var(--color-2);
+        .task-item[data-draggable="true"] {
+            touch-action: pan-y;
         }
 
         .task-item.dragging-task {
@@ -4496,13 +4481,6 @@
 
                 li.innerHTML = `
     <div style="display:flex; width:100%; align-items:center; gap:10px;">
-        ${canDrag ? `<span class="drag-handle" title="Geser urutan">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                <circle cx="9" cy="6" r="1.7"/><circle cx="15" cy="6" r="1.7"/>
-                <circle cx="9" cy="12" r="1.7"/><circle cx="15" cy="12" r="1.7"/>
-                <circle cx="9" cy="18" r="1.7"/><circle cx="15" cy="18" r="1.7"/>
-            </svg>
-        </span>` : ''}
         <div class="task-check-custom" onclick="${toggleFunc}">
  ${t.done ?
                         `<svg viewBox="0 0 24 24" fill="none" width="20" height="20">
@@ -5010,33 +4988,75 @@
             }
 
             // ===== GESER URUTAN TUGAS (khusus sekretaris/admin, tugas biasa yang masih aktif) =====
-            // Pakai Pointer Events (bukan HTML5 drag-and-drop) biar konsisten jalan di mouse & touch/HP.
+            // Kartunya sengaja dibiarin polos kayak biasa (gak ada ikon tambahan).
+            // Caranya: tahan (long-press) sebentar di badan kartu, baru mode geser aktif.
+            // Ini biar scroll biasa & tap ke checkbox/tombol/lampiran tetap jalan normal.
+            const DRAG_LONG_PRESS_MS = 380;
+            const DRAG_MOVE_CANCEL_PX = 8;
+
             function initTaskDragReorder() {
                 const list = document.getElementById('taskList');
                 if (!list) return;
-                list.querySelectorAll('.drag-handle').forEach(handle => {
-                    // Hindari listener dobel kalau elemen lama kebetulan kepake lagi
-                    handle.replaceWith(handle.cloneNode(true));
-                });
-                list.querySelectorAll('.drag-handle').forEach(handle => {
-                    handle.addEventListener('pointerdown', onDragHandleDown);
+                list.querySelectorAll('.task-item[data-draggable="true"]').forEach(li => {
+                    li.addEventListener('pointerdown', onCardPointerDown);
                 });
             }
 
-            function onDragHandleDown(e) {
+            function onCardPointerDown(e) {
                 if (e.button !== undefined && e.button !== 0) return; // cuma klik kiri/touch utama
-                e.preventDefault();
-                const handle = e.currentTarget;
-                const li = handle.closest('.task-item');
+                // Biar checkbox, tombol edit/hapus/salin, dan lampiran (gambar/link) tetap berfungsi normal
+                if (e.target.closest('button, a, .task-check-custom, [onclick]')) return;
+
+                const li = e.currentTarget;
                 const list = document.getElementById('taskList');
                 if (!li || !list) return;
 
-                try { handle.setPointerCapture(e.pointerId); } catch (err) { }
+                const pointerId = e.pointerId;
+                let lastX = e.clientX;
+                let lastY = e.clientY;
+                let pressTimer = null;
+                let dragActive = false;
+
+                function cleanupPreDrag() {
+                    clearTimeout(pressTimer);
+                    document.removeEventListener('pointermove', onPreMove);
+                    document.removeEventListener('pointerup', onPreEnd);
+                    document.removeEventListener('pointercancel', onPreEnd);
+                }
+
+                function onPreMove(ev) {
+                    lastX = ev.clientX;
+                    lastY = ev.clientY;
+                    const dx = Math.abs(ev.clientX - e.clientX);
+                    const dy = Math.abs(ev.clientY - e.clientY);
+                    if (!dragActive && (dx > DRAG_MOVE_CANCEL_PX || dy > DRAG_MOVE_CANCEL_PX)) {
+                        // Gerakannya lebih ke niat scroll, batalin niat geser
+                        cleanupPreDrag();
+                    }
+                }
+
+                function onPreEnd() {
+                    cleanupPreDrag();
+                }
+
+                document.addEventListener('pointermove', onPreMove);
+                document.addEventListener('pointerup', onPreEnd);
+                document.addEventListener('pointercancel', onPreEnd);
+
+                pressTimer = setTimeout(() => {
+                    cleanupPreDrag();
+                    dragActive = true;
+                    beginCardDrag(li, list, pointerId, lastY);
+                }, DRAG_LONG_PRESS_MS);
+            }
+
+            function beginCardDrag(li, list, pointerId, startY) {
+                try { li.setPointerCapture(pointerId); } catch (err) { }
                 li.classList.add('dragging-task');
                 li.style.position = 'relative';
                 li.style.zIndex = '50';
 
-                let lastY = e.clientY;
+                let lastY = startY;
                 let currentTY = 0;
 
                 function getGroupItems() {
@@ -5044,6 +5064,8 @@
                 }
 
                 function onMove(ev) {
+                    if (ev.pointerId !== pointerId) return;
+                    ev.preventDefault();
                     const dy = ev.clientY - lastY;
                     currentTY += dy;
                     li.style.transform = `translateY(${currentTY}px)`;
@@ -5081,7 +5103,8 @@
                 }
 
                 function onUp(ev) {
-                    try { handle.releasePointerCapture(ev.pointerId); } catch (err) { }
+                    if (ev.pointerId !== pointerId) return;
+                    try { li.releasePointerCapture(pointerId); } catch (err) { }
                     document.removeEventListener('pointermove', onMove);
                     document.removeEventListener('pointerup', onUp);
                     document.removeEventListener('pointercancel', onUp);
