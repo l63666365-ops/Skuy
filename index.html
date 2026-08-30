@@ -5026,6 +5026,25 @@
                 let mode = 'pending'; // 'pending' | 'scrolling' | 'dragging'
                 let currentTY = 0;
 
+                // Buat mode 'scrolling': jangan panggil window.scrollBy tiap event pointermove
+                // (bisa nembak puluhan kali/detik -> bikin main-thread keteteran/lag).
+                // Tabung dulu jaraknya, baru dieksekusi sekali per frame lewat rAF.
+                let scrollDeltaAccum = 0;
+                let scrollRafId = null;
+
+                function flushScroll() {
+                    window.scrollBy(0, scrollDeltaAccum);
+                    scrollDeltaAccum = 0;
+                    scrollRafId = null;
+                }
+
+                function queueScroll(delta) {
+                    scrollDeltaAccum += delta;
+                    if (scrollRafId === null) {
+                        scrollRafId = requestAnimationFrame(flushScroll);
+                    }
+                }
+
                 function getGroupItems() {
                     return Array.from(list.querySelectorAll('.task-item[data-draggable="true"]'));
                 }
@@ -5111,7 +5130,7 @@
                     if (mode === 'scrolling') {
                         const dy = ev.clientY - lastY;
                         lastY = ev.clientY;
-                        window.scrollBy(0, -dy);
+                        queueScroll(-dy);
                         return;
                     }
 
@@ -5122,6 +5141,10 @@
                 function onPointerUp(ev) {
                     if (ev.pointerId !== pointerId) return;
                     clearTimeout(pressTimer);
+                    if (scrollRafId !== null) {
+                        cancelAnimationFrame(scrollRafId);
+                        scrollRafId = null;
+                    }
                     document.removeEventListener('pointermove', onPointerMove);
                     document.removeEventListener('pointerup', onPointerUp);
                     document.removeEventListener('pointercancel', onPointerUp);
