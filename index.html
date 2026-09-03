@@ -4940,33 +4940,48 @@
             }
 
             // ===== Helper UNDO HAPUS TUGAS (dipakai bareng sama tugas cloud & lokal) =====
-            function scheduleUndoableDelete(key, label, commitFn) {
-                // Kalau ada delete lain yang masih nunggu di-undo, langsung commit itu
-                // duluan sekarang juga -- cuma delete paling baru yang bisa di-undo.
-                if (pendingDeleteState) {
-                    clearTimeout(pendingDeleteState.timeoutId);
-                    pendingDeleteState.commitFn();
-                    pendingDeleteIds.delete(pendingDeleteState.key);
-                }
-
+            async function scheduleUndoableDelete(key, label, commitFn) {
+                // Tambahin dulu key yang baru SEBELUM ngurusin yang lama, biar gak ada
+                // celah waktu dimana tugas yang baru aja diklik hapus ini sempat kebaca
+                // "belum di-pending" pas ada loadTasks() lain kebetulan jalan bareng.
                 pendingDeleteIds.add(key);
+
+                // Kalau ada delete lain yang masih nunggu di-undo, itu langsung diproses
+                // (di-commit beneran) duluan -- cuma delete paling baru yang bisa di-undo.
+                const previous = pendingDeleteState;
                 pendingDeleteState = {
                     key,
                     commitFn,
                     timeoutId: setTimeout(() => finalizePendingDelete(key), 5000)
                 };
-
                 showUndoSnackbar(label);
+
+                if (previous) {
+                    clearTimeout(previous.timeoutId);
+                    try {
+                        await previous.commitFn();
+                    } catch (err) {
+                        console.error('Gagal commit hapus tugas sebelumnya', err);
+                    }
+                    // Baru dilepas dari daftar "pending" SETELAH beneran kehapus di server,
+                    // biar gak sempat kebaca "masih ada" pas ada refresh & bikin balik muncul.
+                    pendingDeleteIds.delete(previous.key);
+                }
             }
 
-            function finalizePendingDelete(key) {
+            async function finalizePendingDelete(key) {
                 if (!pendingDeleteState || pendingDeleteState.key !== key) return;
-                pendingDeleteState.commitFn();
-                pendingDeleteIds.delete(key);
+                const commitFn = pendingDeleteState.commitFn;
                 pendingDeleteState = null;
                 hideUndoSnackbar();
+                try {
+                    await commitFn(); // tunggu beneran kehapus dulu di server/localStorage...
+                } catch (err) {
+                    console.error('Gagal hapus tugas', err);
+                }
+                pendingDeleteIds.delete(key); // ...baru boleh dilepas dari daftar sembunyi
                 window.lastTasksData = "";
-                loadTasks();
+                loadTasks(); // refresh-nya sekarang dijamin gak ke-fetch data yang masih lama
             }
 
             function undoDeleteTask() {
