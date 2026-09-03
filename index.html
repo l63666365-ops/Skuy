@@ -2127,6 +2127,56 @@
             zoom: 0.93;
         }
 
+        .undo-snackbar {
+            position: fixed;
+            bottom: calc(112px + env(safe-area-inset-bottom, 0px));
+            left: 50%;
+            transform: translateX(-50%) translateY(16px);
+            width: calc(100% - 32px);
+            max-width: 380px;
+            background: #21262f;
+            color: #ffffff;
+            border-radius: 14px;
+            padding: 12px 8px 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.28);
+            z-index: 3500;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease, transform 0.25s ease;
+        }
+
+        .undo-snackbar.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+            pointer-events: auto;
+        }
+
+        .undo-snackbar .msg {
+            font-size: 12.5px;
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .undo-snackbar .undo-btn {
+            all: unset;
+            color: #7dd3fc;
+            font-weight: bold;
+            font-size: 13px;
+            cursor: pointer;
+            flex-shrink: 0;
+            padding: 6px 10px;
+        }
+
+        .undo-snackbar .undo-btn:active {
+            opacity: 0.6;
+        }
+
         .bottom-nav-btn {
             flex: 1;
             display: flex;
@@ -2679,6 +2729,11 @@
                 <button type="button" class="btn-edit-save" onclick="saveEditTask()">Simpan</button>
             </div>
         </div>
+    </div>
+
+    <div id="undoSnackbar" class="undo-snackbar">
+        <span class="msg" id="undoSnackbarMsg">Tugas dihapus</span>
+        <button type="button" class="undo-btn" onclick="undoDeleteTask()">Undo</button>
     </div>
 
     <input type="file" id="taskImageInput" style="display: none;"
@@ -4162,6 +4217,17 @@
             let activeTasksCache = [];
             let doneTasksCache = [];
 
+            // ===== UNDO HAPUS TUGAS =====
+            // Set berisi "kunci" tugas yang lagi masa tunggu undo (5 detik) -- selama
+            // masih di sini, tugasnya disembunyiin dari render walau datanya belum
+            // beneran kehapus dari Firebase/localStorage.
+            let pendingDeleteIds = new Set();
+            // Cuma 1 delete paling baru yang bisa di-undo lewat snackbar. Kalau ada
+            // delete baru masuk sebelum yang lama kelar 5 detik, yang lama langsung
+            // di-commit (beneran kehapus) duluan tanpa nunggu.
+            let pendingDeleteState = null; // { key, commitFn, timeoutId }
+            let undoSnackbarHideTimer = null;
+
             async function loadTasks() {
                 const list = document.getElementById('taskList');
                 if (!list) return;
@@ -4183,6 +4249,12 @@
                 });
                 localTasks.forEach((t, i) => {
                     combinedTasks.push({ id: `local-${i}`, ...t, isCloud: false });
+                });
+
+                // Sembunyiin dulu tugas yang lagi masa tunggu undo (belum beneran kehapus)
+                combinedTasks = combinedTasks.filter(t => {
+                    const key = t.isCloud ? t.id : `local-sig:${t.text}::${t.timestamp}`;
+                    return !pendingDeleteIds.has(key);
                 });
 
                 const days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
@@ -4812,13 +4884,24 @@
                 }, 400);
             }
 
-            async function deleteTaskCloud(id, event) {
-                const userKelas = (localStorage.getItem('userKelas') || 'UMUM').trim();
+            function deleteTaskCloud(id, event) {
                 const taskEl = event.target.closest('.task-item');
-                taskEl.style.opacity = '0';
-                taskEl.style.transform = 'translateX(20px)';
-                setTimeout(async () => {
-                    await fetch(`${firebaseTugasURL}/${userKelas}/${id}.json`, { method: 'DELETE' });
+                const label = (taskEl?.querySelector('.task-text')?.textContent || 'Tugas').trim();
+                if (taskEl) {
+                    taskEl.style.opacity = '0';
+                    taskEl.style.transform = 'translateX(20px)';
+                }
+
+                scheduleUndoableDelete(id, label, async () => {
+                    const userKelas = (localStorage.getItem('userKelas') || 'UMUM').trim();
+                    try {
+                        await fetch(`${firebaseTugasURL}/${userKelas}/${id}.json`, { method: 'DELETE' });
+                    } catch (err) {
+                        console.error('Gagal hapus tugas', err);
+                    }
+                });
+
+                setTimeout(() => {
                     window.lastTasksData = "";
                     loadTasks();
                 }, 300);
@@ -4826,17 +4909,91 @@
 
             function deleteTaskLocal(index, event) {
                 const actualIndex = typeof index === 'string' && index.startsWith('local-') ? parseInt(index.replace('local-', ''), 10) : parseInt(index, 10);
-                index = actualIndex;
                 const taskEl = event.target.closest('.task-item');
-                taskEl.style.opacity = '0';
-                taskEl.style.transform = 'translateX(20px)';
-                setTimeout(() => {
+                const label = (taskEl?.querySelector('.task-text')?.textContent || 'Tugas').trim();
+                if (taskEl) {
+                    taskEl.style.opacity = '0';
+                    taskEl.style.transform = 'translateX(20px)';
+                }
+
+                const tasksSnapshot = JSON.parse(localStorage.getItem('mySchoolTasks')) || [];
+                const targetTask = tasksSnapshot[actualIndex];
+                const sigKey = targetTask ? `local-sig:${targetTask.text}::${targetTask.timestamp}` : `local-${actualIndex}`;
+
+                scheduleUndoableDelete(sigKey, label, () => {
+                    if (!targetTask) return;
                     let tasks = JSON.parse(localStorage.getItem('mySchoolTasks')) || [];
-                    tasks.splice(index, 1);
-                    localStorage.setItem('mySchoolTasks', JSON.stringify(tasks));
+                    // Cocokkin berdasarkan isi tugas yang sama persis (bukan index), soalnya
+                    // posisinya bisa geser kalau ada tugas lain yang ke-add/kehapus duluan
+                    // selama masa tunggu 5 detik ini.
+                    const idxNow = tasks.findIndex(t => t.text === targetTask.text && t.timestamp === targetTask.timestamp);
+                    if (idxNow !== -1) {
+                        tasks.splice(idxNow, 1);
+                        localStorage.setItem('mySchoolTasks', JSON.stringify(tasks));
+                    }
+                });
+
+                setTimeout(() => {
                     window.lastTasksData = "";
                     loadTasks();
                 }, 300);
+            }
+
+            // ===== Helper UNDO HAPUS TUGAS (dipakai bareng sama tugas cloud & lokal) =====
+            function scheduleUndoableDelete(key, label, commitFn) {
+                // Kalau ada delete lain yang masih nunggu di-undo, langsung commit itu
+                // duluan sekarang juga -- cuma delete paling baru yang bisa di-undo.
+                if (pendingDeleteState) {
+                    clearTimeout(pendingDeleteState.timeoutId);
+                    pendingDeleteState.commitFn();
+                    pendingDeleteIds.delete(pendingDeleteState.key);
+                }
+
+                pendingDeleteIds.add(key);
+                pendingDeleteState = {
+                    key,
+                    commitFn,
+                    timeoutId: setTimeout(() => finalizePendingDelete(key), 5000)
+                };
+
+                showUndoSnackbar(label);
+            }
+
+            function finalizePendingDelete(key) {
+                if (!pendingDeleteState || pendingDeleteState.key !== key) return;
+                pendingDeleteState.commitFn();
+                pendingDeleteIds.delete(key);
+                pendingDeleteState = null;
+                hideUndoSnackbar();
+                window.lastTasksData = "";
+                loadTasks();
+            }
+
+            function undoDeleteTask() {
+                if (!pendingDeleteState) return;
+                clearTimeout(pendingDeleteState.timeoutId);
+                pendingDeleteIds.delete(pendingDeleteState.key);
+                pendingDeleteState = null;
+                hideUndoSnackbar();
+                window.lastTasksData = "";
+                loadTasks();
+            }
+
+            function showUndoSnackbar(label) {
+                const el = document.getElementById('undoSnackbar');
+                const msgEl = document.getElementById('undoSnackbarMsg');
+                if (!el || !msgEl) return;
+                const shortLabel = label.length > 36 ? label.slice(0, 36) + '…' : label;
+                msgEl.textContent = `Dihapus: ${shortLabel}`;
+                el.classList.add('show');
+                clearTimeout(undoSnackbarHideTimer);
+                undoSnackbarHideTimer = setTimeout(hideUndoSnackbar, 5000);
+            }
+
+            function hideUndoSnackbar() {
+                const el = document.getElementById('undoSnackbar');
+                if (el) el.classList.remove('show');
+                clearTimeout(undoSnackbarHideTimer);
             }
 
             // ===== EDIT TUGAS (teks, file lampiran, & waktu "Dicatat") =====
