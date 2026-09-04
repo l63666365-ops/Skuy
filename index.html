@@ -790,13 +790,6 @@
             color: var(--accent-light);
         }
 
-        .task-chip-divider {
-            flex-shrink: 0;
-            width: 1.5px;
-            background: var(--color-4);
-            margin: 2px 2px;
-        }
-
         .task-search-result-count {
             font-size: 11px;
             color: var(--color-3);
@@ -3084,8 +3077,6 @@
                             <button type="button" class="task-chip active" data-status="semua" onclick="setTaskStatusFilter('semua')">Semua</button>
                             <button type="button" class="task-chip" data-status="aktif" onclick="setTaskStatusFilter('aktif')">Belum selesai</button>
                             <button type="button" class="task-chip" data-status="selesai" onclick="setTaskStatusFilter('selesai')">Selesai</button>
-                            <span class="task-chip-divider"></span>
-                            <div id="taskMapelChips" style="display:contents;"></div>
                         </div>
                         <p class="task-search-result-count" id="taskSearchResultCount" style="display:none;"></p>
                     </div>
@@ -4345,7 +4336,6 @@
             // ===== SEARCH & FILTER TUGAS =====
             let taskSearchQuery = '';
             let taskStatusFilter = 'semua'; // 'semua' | 'aktif' | 'selesai'
-            let availableMapelList = [];
 
             // ===== UNDO HAPUS TUGAS =====
             // Set berisi "kunci" tugas yang lagi masa tunggu undo (5 detik) -- selama
@@ -4500,16 +4490,6 @@
                 // Simpan biar search/filter bisa render ulang tanpa fetch Firebase lagi
                 lastRenderRole = role;
                 lastRenderIsBesokMode = isBesokMode;
-
-                // Bangun daftar chip mapel otomatis dari prefix "Mapel:" di awal teks tugas
-                // (mis. "Mat:", "KK1:", "JW:") -- gak perlu di-maintain manual.
-                const mapelSet = new Set();
-                combinedTasks.forEach(t => {
-                    const mapel = extractMapelPrefix(t.text);
-                    if (mapel) mapelSet.add(mapel);
-                });
-                availableMapelList = Array.from(mapelSet).sort((a, b) => a.localeCompare(b));
-                renderMapelChips();
 
                 const banner = document.getElementById('taskStateBanner');
                 if (banner) {
@@ -4731,43 +4711,10 @@
                 initTaskDragReorder();
             }
 
-            // Ambil prefix "Mapel:" dari awal teks tugas (mis. "Mat: kerjain..." -> "Mat").
-            // Cuma dianggap valid kalau titik dua-nya deket awal teks & prefix-nya pendek,
-            // biar gak salah tangkep kalimat panjang yang kebetulan ada titik dua di tengah.
-            function extractMapelPrefix(text) {
-                const trimmed = (text || '').trim();
-                const idx = trimmed.indexOf(':');
-                if (idx === -1 || idx > 15) return null;
-                const prefix = trimmed.slice(0, idx).trim();
-                if (!prefix || prefix.length > 15) return null;
-                if (!/^[A-Za-z0-9. ]+$/.test(prefix)) return null;
-                return prefix;
-            }
-
-            function renderMapelChips() {
-                const wrap = document.getElementById('taskMapelChips');
-                if (!wrap) return;
-                wrap.innerHTML = availableMapelList.map(mapel => {
-                    const isActive = taskSearchQuery.trim().toLowerCase() === mapel.toLowerCase();
-                    return `<button type="button" class="task-chip${isActive ? ' active' : ''}" onclick="setTaskMapelChip('${mapel.replace(/'/g, "\\'")}')">${mapel}</button>`;
-                }).join('');
-            }
-
-            function setTaskMapelChip(mapel) {
-                const input = document.getElementById('taskSearchInput');
-                const isSame = taskSearchQuery.trim().toLowerCase() === mapel.toLowerCase();
-                taskSearchQuery = isSame ? '' : mapel; // tap lagi buat batalin
-                if (input) input.value = taskSearchQuery;
-                syncTaskSearchClearBtn();
-                renderMapelChips();
-                renderTaskList(lastRenderRole, lastRenderIsBesokMode);
-            }
-
             function onTaskSearchChange() {
                 const input = document.getElementById('taskSearchInput');
                 taskSearchQuery = input ? input.value : '';
                 syncTaskSearchClearBtn();
-                renderMapelChips();
                 renderTaskList(lastRenderRole, lastRenderIsBesokMode);
             }
 
@@ -4776,7 +4723,6 @@
                 const input = document.getElementById('taskSearchInput');
                 if (input) input.value = '';
                 syncTaskSearchClearBtn();
-                renderMapelChips();
                 renderTaskList(lastRenderRole, lastRenderIsBesokMode);
             }
 
