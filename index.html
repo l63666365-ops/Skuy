@@ -705,6 +705,105 @@
             margin-top: 4px;
         }
 
+        .task-search-wrap {
+            margin-top: 10px;
+        }
+
+        .task-search-box {
+            position: relative;
+        }
+
+        .task-search-box svg {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--color-3);
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        #taskSearchInput {
+            width: 100%;
+            box-sizing: border-box;
+            background: var(--white);
+            border: 2px solid var(--color-4);
+            padding: 8px 30px 8px 32px;
+            border-radius: 10px;
+            color: var(--color-1);
+            font-weight: 600;
+            outline: none;
+            font-family: inherit;
+            font-size: 12px;
+            height: 38px;
+            transition: border-color 0.3s;
+        }
+
+        #taskSearchInput:focus {
+            border-color: var(--color-2);
+        }
+
+        .task-search-clear {
+            all: unset;
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--color-3);
+            cursor: pointer;
+            padding: 4px;
+            display: none;
+        }
+
+        .task-search-clear.show {
+            display: block;
+        }
+
+        .task-filter-chips {
+            display: flex;
+            gap: 6px;
+            overflow-x: auto;
+            margin-top: 8px;
+            padding-bottom: 2px;
+        }
+
+        .task-filter-chips::-webkit-scrollbar {
+            display: none;
+        }
+
+        .task-chip {
+            all: unset;
+            flex-shrink: 0;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 5px 12px;
+            border-radius: 999px;
+            border: 1.5px solid var(--color-4);
+            color: var(--color-3);
+            background: var(--white);
+            cursor: pointer;
+        }
+
+        .task-chip.active {
+            border-color: var(--color-2);
+            background: var(--color-2);
+            color: var(--accent-light);
+        }
+
+        .task-chip-divider {
+            flex-shrink: 0;
+            width: 1.5px;
+            background: var(--color-4);
+            margin: 2px 2px;
+        }
+
+        .task-search-result-count {
+            font-size: 11px;
+            color: var(--color-3);
+            opacity: 0.8;
+            margin: 8px 0 0;
+        }
+
         .task-section p {
             margin-top: 14px !important;
             margin-bottom: 8px;
@@ -2967,6 +3066,30 @@
                         </button>
                     </div>
 
+                    <div class="task-search-wrap">
+                        <div class="task-search-box">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="11" cy="11" r="7"></circle>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            </svg>
+                            <input type="text" id="taskSearchInput" placeholder="Cari tugas..." oninput="onTaskSearchChange()">
+                            <button type="button" class="task-search-clear" id="taskSearchClearBtn" onclick="clearTaskSearch()">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="task-filter-chips" id="taskFilterChips">
+                            <button type="button" class="task-chip active" data-status="semua" onclick="setTaskStatusFilter('semua')">Semua</button>
+                            <button type="button" class="task-chip" data-status="aktif" onclick="setTaskStatusFilter('aktif')">Belum selesai</button>
+                            <button type="button" class="task-chip" data-status="selesai" onclick="setTaskStatusFilter('selesai')">Selesai</button>
+                            <span class="task-chip-divider"></span>
+                            <div id="taskMapelChips" style="display:contents;"></div>
+                        </div>
+                        <p class="task-search-result-count" id="taskSearchResultCount" style="display:none;"></p>
+                    </div>
+
                     <div id="imagePreviewContainer"
                         style="display:none; margin-top:10px; text-align:left; flex-wrap: wrap; gap: 5px;"></div>
                     <div id="taskStateBanner"></div>
@@ -4216,6 +4339,13 @@
             let cloudTasksCache = {};
             let activeTasksCache = [];
             let doneTasksCache = [];
+            let lastRenderRole = null;
+            let lastRenderIsBesokMode = false;
+
+            // ===== SEARCH & FILTER TUGAS =====
+            let taskSearchQuery = '';
+            let taskStatusFilter = 'semua'; // 'semua' | 'aktif' | 'selesai'
+            let availableMapelList = [];
 
             // ===== UNDO HAPUS TUGAS =====
             // Set berisi "kunci" tugas yang lagi masa tunggu undo (5 detik) -- selama
@@ -4366,6 +4496,20 @@
                 // "TUGAS SELESAI" yang dipaginasi lewat renderTaskList().
                 activeTasksCache = combinedTasks.filter(t => t._isBesok || !t.done);
                 doneTasksCache = combinedTasks.filter(t => !t._isBesok && t.done);
+
+                // Simpan biar search/filter bisa render ulang tanpa fetch Firebase lagi
+                lastRenderRole = role;
+                lastRenderIsBesokMode = isBesokMode;
+
+                // Bangun daftar chip mapel otomatis dari prefix "Mapel:" di awal teks tugas
+                // (mis. "Mat:", "KK1:", "JW:") -- gak perlu di-maintain manual.
+                const mapelSet = new Set();
+                combinedTasks.forEach(t => {
+                    const mapel = extractMapelPrefix(t.text);
+                    if (mapel) mapelSet.add(mapel);
+                });
+                availableMapelList = Array.from(mapelSet).sort((a, b) => a.localeCompare(b));
+                renderMapelChips();
 
                 const banner = document.getElementById('taskStateBanner');
                 if (banner) {
@@ -4522,31 +4666,62 @@
                 }, LOOP_MS);
             }
 
-            // Render ulang taskList dari cache (activeTasksCache & doneTasksCache).
-            // Dipanggil loadTasks() abis fetch.
+            // Render ulang taskList dari cache (activeTasksCache & doneTasksCache),
+            // abis disaring dulu sesuai search query & filter status yang aktif.
+            // Dipanggil loadTasks() abis fetch, ATAU langsung dari search/filter tanpa fetch ulang.
             function renderTaskList(role, isBesokMode) {
                 const list = document.getElementById('taskList');
                 if (!list) return;
                 list.innerHTML = "";
 
-                activeTasksCache.forEach(t => {
+                const q = taskSearchQuery.trim().toLowerCase();
+                const matchesFilter = t => {
+                    const matchSearch = !q || (t.text || '').toLowerCase().includes(q);
+                    const matchStatus = taskStatusFilter === 'selesai' ? t.done
+                        : taskStatusFilter === 'aktif' ? !t.done
+                            : true;
+                    return matchSearch && matchStatus;
+                };
+
+                const filteredActive = activeTasksCache.filter(matchesFilter);
+                const filteredDone = doneTasksCache.filter(matchesFilter);
+                const isFiltering = q !== '' || taskStatusFilter !== 'semua';
+
+                const countEl = document.getElementById('taskSearchResultCount');
+                if (countEl) {
+                    if (isFiltering) {
+                        const total = filteredActive.length + filteredDone.length;
+                        countEl.textContent = `${total} dari ${activeTasksCache.length + doneTasksCache.length} tugas`;
+                        countEl.style.display = 'block';
+                    } else {
+                        countEl.style.display = 'none';
+                    }
+                }
+
+                if (isFiltering && filteredActive.length === 0 && filteredDone.length === 0) {
+                    list.innerHTML = `<li style="list-style:none;">${mascotEmptyBlockHtml("Gak ketemu, coba kata kunci lain", true)}</li>`;
+                    initTaskDragReorder();
+                    return;
+                }
+
+                filteredActive.forEach(t => {
                     const canDelete = t.isCloud ? (role === 'sekretaris' || role === 'admin') : true;
                     if (typeof renderTaskItem === 'function') {
                         renderTaskItem(t.id, t, t.isCloud, canDelete, t._isBesok, isBesokMode);
                     }
                 });
 
-                if (doneTasksCache.length === 0) {
+                if (filteredDone.length === 0) {
                     initTaskDragReorder();
                     return;
                 }
 
                 const labelLi = document.createElement('li');
                 labelLi.style.listStyle = 'none';
-                labelLi.innerHTML = `<p class="task-section-label">TUGAS SELESAI (${doneTasksCache.length})</p>`;
+                labelLi.innerHTML = `<p class="task-section-label">TUGAS SELESAI (${filteredDone.length})</p>`;
                 list.appendChild(labelLi);
 
-                doneTasksCache.forEach(t => {
+                filteredDone.forEach(t => {
                     const canDelete = t.isCloud ? (role === 'sekretaris' || role === 'admin') : true;
                     if (typeof renderTaskItem === 'function') {
                         renderTaskItem(t.id, t, t.isCloud, canDelete, t._isBesok, isBesokMode);
@@ -4554,6 +4729,68 @@
                 });
 
                 initTaskDragReorder();
+            }
+
+            // Ambil prefix "Mapel:" dari awal teks tugas (mis. "Mat: kerjain..." -> "Mat").
+            // Cuma dianggap valid kalau titik dua-nya deket awal teks & prefix-nya pendek,
+            // biar gak salah tangkep kalimat panjang yang kebetulan ada titik dua di tengah.
+            function extractMapelPrefix(text) {
+                const trimmed = (text || '').trim();
+                const idx = trimmed.indexOf(':');
+                if (idx === -1 || idx > 15) return null;
+                const prefix = trimmed.slice(0, idx).trim();
+                if (!prefix || prefix.length > 15) return null;
+                if (!/^[A-Za-z0-9. ]+$/.test(prefix)) return null;
+                return prefix;
+            }
+
+            function renderMapelChips() {
+                const wrap = document.getElementById('taskMapelChips');
+                if (!wrap) return;
+                wrap.innerHTML = availableMapelList.map(mapel => {
+                    const isActive = taskSearchQuery.trim().toLowerCase() === mapel.toLowerCase();
+                    return `<button type="button" class="task-chip${isActive ? ' active' : ''}" onclick="setTaskMapelChip('${mapel.replace(/'/g, "\\'")}')">${mapel}</button>`;
+                }).join('');
+            }
+
+            function setTaskMapelChip(mapel) {
+                const input = document.getElementById('taskSearchInput');
+                const isSame = taskSearchQuery.trim().toLowerCase() === mapel.toLowerCase();
+                taskSearchQuery = isSame ? '' : mapel; // tap lagi buat batalin
+                if (input) input.value = taskSearchQuery;
+                syncTaskSearchClearBtn();
+                renderMapelChips();
+                renderTaskList(lastRenderRole, lastRenderIsBesokMode);
+            }
+
+            function onTaskSearchChange() {
+                const input = document.getElementById('taskSearchInput');
+                taskSearchQuery = input ? input.value : '';
+                syncTaskSearchClearBtn();
+                renderMapelChips();
+                renderTaskList(lastRenderRole, lastRenderIsBesokMode);
+            }
+
+            function clearTaskSearch() {
+                taskSearchQuery = '';
+                const input = document.getElementById('taskSearchInput');
+                if (input) input.value = '';
+                syncTaskSearchClearBtn();
+                renderMapelChips();
+                renderTaskList(lastRenderRole, lastRenderIsBesokMode);
+            }
+
+            function syncTaskSearchClearBtn() {
+                const btn = document.getElementById('taskSearchClearBtn');
+                if (btn) btn.classList.toggle('show', taskSearchQuery.trim() !== '');
+            }
+
+            function setTaskStatusFilter(status) {
+                taskStatusFilter = status;
+                document.querySelectorAll('#taskFilterChips .task-chip[data-status]').forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.status === status);
+                });
+                renderTaskList(lastRenderRole, lastRenderIsBesokMode);
             }
 
             function renderTaskItem(id, t, isCloud, canDelete, isTugasBesok, isBesokMode) {
