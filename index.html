@@ -4228,6 +4228,55 @@
             let pendingDeleteState = null; // { key, commitFn, timeoutId }
             let undoSnackbarHideTimer = null;
 
+            // ===== REALTIME SYNC TUGAS (SSE ke Firebase REST, tanpa perlu install SDK) =====
+            let taskEventSource = null;
+
+            // Firebase Realtime Database punya fitur streaming bawaan lewat REST biasa:
+            // buka koneksi ke endpoint yang sama (yang udah dipake fetch() di app ini),
+            // tapi minta format "text/event-stream". Browser punya API bawaan buat ini
+            // (EventSource), jadi gak perlu install Firebase SDK / config apapun.
+            // Server bakal kirim event "put" (data awal/replace penuh) & "patch" (update
+            // sebagian) setiap kali ada perubahan di kelas ini -- realtime, tanpa polling.
+            function initRealtimeTaskSync() {
+                const userKelas = (localStorage.getItem('userKelas') || 'UMUM').trim();
+
+                if (taskEventSource) {
+                    taskEventSource.close();
+                    taskEventSource = null;
+                }
+
+                let es;
+                try {
+                    es = new EventSource(`${firebaseTugasURL}/${userKelas}.json`);
+                } catch (err) {
+                    // Browser lama/gak support EventSource -> diem aja, biarin fallback
+                    // polling (interval yang masih ada di bawah) yang nanganin.
+                    console.warn('EventSource gak tersedia, pakai fallback polling aja', err);
+                    return;
+                }
+
+                const handleRealtimeChange = () => {
+                    const isModalOpen = document.getElementById('imageModal').style.display === 'flex' ||
+                        document.getElementById('docModal').style.display === 'flex';
+                    // Jangan refresh paksa kalau lagi ada interaksi yang bisa keganggu
+                    // (lagi edit tugas, lagi geser urutan, lagi buka gambar/file).
+                    if (!isMediaPlaying && !isEditMode && !isModalOpen && !pendingDeleteState) {
+                        window.lastTasksData = "";
+                        loadTasks();
+                    }
+                };
+
+                es.addEventListener('put', handleRealtimeChange);
+                es.addEventListener('patch', handleRealtimeChange);
+                es.onerror = () => {
+                    // EventSource browser udah otomatis nyoba reconnect sendiri kalau putus,
+                    // jadi cukup dicatat aja -- gak perlu ditangani manual di sini.
+                    console.warn('Koneksi realtime tugas kepotong, browser nyoba reconnect otomatis');
+                };
+
+                taskEventSource = es;
+            }
+
             async function loadTasks() {
                 const list = document.getElementById('taskList');
                 if (!list) return;
@@ -4619,18 +4668,27 @@
             }
 
             setInterval(monitorMediaStatus, 1000);
+            // Ini sekarang cuma "jaring pengaman" -- update beneran udah ditangani realtime
+            // lewat initRealtimeTaskSync() (SSE). Interval ini cuma jaga-jaga kalau koneksi
+            // SSE-nya kebetulan mati diam-diam (misal wifi sempet putus), sekalian nyoba
+            // nyalain ulang koneksi SSE-nya.
             setInterval(() => {
                 const isEditing = isEditMode;
                 const isModalOpen = document.getElementById('imageModal').style.display === 'flex' ||
                     document.getElementById('docModal').style.display === 'flex';
 
-                if (!isMediaPlaying && !isEditing && !isModalOpen) {
-                    console.log("Auto-refresh");
+                if (!isMediaPlaying && !isEditing && !isModalOpen && !pendingDeleteState) {
+                    console.log("Safety-net refresh");
                     loadTasks();
+                    // readyState 2 = CLOSED. Kalau koneksi SSE-nya ternyata udah mati
+                    // dan gak reconnect sendiri, nyalain ulang di sini.
+                    if (!taskEventSource || taskEventSource.readyState === 2) {
+                        initRealtimeTaskSync();
+                    }
                 } else {
                     console.log("Refresh ditahan");
                 }
-            }, 10000);
+            }, 45000);
 
             function renderFilesHtml(t, isCloud, id) {
                 if (!t.images || t.images.length === 0) return "";
@@ -5518,6 +5576,8 @@
                 runPageLoadAnimation();
                 // 4. Load tugas
                 loadTasks();
+                // 4b. Nyalain realtime sync (SSE) biar update tugas instan, gak nunggu polling
+                initRealtimeTaskSync();
                 // 5. Start clock
                 updateTime();
                 _clockInterval = setInterval(updateTime, 1000);
@@ -5543,6 +5603,7 @@
             function adminLihatJadwal(kelas) {
                 localStorage.setItem('userKelas', kelas);
                 sessionStorage.setItem('adminViewingKelas', kelas);
+                initRealtimeTaskSync(); // pindah target realtime sync ke kelas yang baru dipilih
                 const headerKelasEl = document.getElementById('header-kelas');
                 if (headerKelasEl) headerKelasEl.innerText = kelas;
                 const mainContent = document.getElementById('mainScheduleContent');
