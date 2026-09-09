@@ -3252,6 +3252,12 @@
 
             const firebaseTugasURL = "https://jadwal-19962-default-rtdb.asia-southeast1.firebasedatabase.app/tugas_cloud";
 
+            // Jam "ganti hari virtual": mulai jam segini, app nganggep udah masuk konteks
+            // besok (badge HARI INI/BESOK, jadwal, urutan tugas ikut geser). Dulu 18:00,
+            // diubah ke 17:00 -- rata-rata siswa nyampe rumah jam 16:00, jadi 17:00 ngasih
+            // jeda istirahat sebentar tapi gak sampe ketinggalan momentum mikirin besok.
+            const JAM_GANTI_HARI = 17;
+
             // Auth check — dijalankan segera, sebelum DOM lain dibutuhkan
             (function authCheck() {
                 if (localStorage.getItem('isLoggedIn') !== 'true') {
@@ -3635,9 +3641,9 @@
             }
 
             function setAutoWeek() {
-                // Gunakan virtual date: setelah jam 18 = sudah masuk hari berikutnya
+                // Gunakan virtual date: setelah JAM_GANTI_HARI = sudah masuk hari berikutnya
                 let ref = new Date();
-                if (ref.getHours() >= 18) {
+                if (ref.getHours() >= JAM_GANTI_HARI) {
                     ref = new Date(ref);
                     ref.setDate(ref.getDate() + 1);
                 }
@@ -3655,7 +3661,7 @@
                 document.getElementById('clock').innerText = `${h}:${m}`;
                 document.getElementById('full-date').innerText = now.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long' });
                 let virtualDate = new Date(now);
-                if (now.getHours() >= 18) {
+                if (now.getHours() >= JAM_GANTI_HARI) {
                     virtualDate.setDate(virtualDate.getDate() + 1);
                 }
                 if (virtualDate.toDateString() !== lastDateStr) {
@@ -3684,7 +3690,7 @@
                 now = now || new Date();
                 const currentTimeMs = now.getTime();
                 const currentTimeMin = now.getHours() * 60 + now.getMinutes();
-                const jamGantiHari = 18 * 60;
+                const jamGantiHari = JAM_GANTI_HARI * 60;
                 const days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
                 const todayName = days[now.getDay()];
                 const statLabel = document.getElementById('stat-label');
@@ -3693,7 +3699,7 @@
 
                 // Tentukan hari & minggu yang relevan: sebelum jam ganti hari = hari ini, setelahnya = besok
                 let refDate = new Date(now);
-                if (now.getHours() >= 18) refDate.setDate(refDate.getDate() + 1);
+                if (now.getHours() >= JAM_GANTI_HARI) refDate.setDate(refDate.getDate() + 1);
                 const autoWeek = (getWeekNumber(refDate) % 2 === 0) ? "m2" : "m1";
                 const namaHariRelevan = days[refDate.getDay()];
                 const listMapel = jadwalData[autoWeek][namaHariRelevan] || [];
@@ -3916,7 +3922,7 @@
                     currentViewDate.getDate() === now.getDate();
                 if (!sameDate) return false;
                 let ref = new Date(now);
-                if (ref.getHours() >= 18) ref.setDate(ref.getDate() + 1);
+                if (ref.getHours() >= JAM_GANTI_HARI) ref.setDate(ref.getDate() + 1);
                 const autoWeek = (getWeekNumber(ref) % 2 === 0) ? "m2" : "m1";
                 return currentWeekType === autoWeek;
             }
@@ -4467,7 +4473,7 @@
                 const sekarang = new Date();
                 const jamSekarang = sekarang.getHours();
                 let targetHariIdx = sekarang.getDay();
-                const isBesokMode = jamSekarang >= 18; // true = 18:00-23:59, false = 00:00-17:59
+                const isBesokMode = jamSekarang >= JAM_GANTI_HARI; // true = udah masuk konteks besok
                 if (isBesokMode) {
                     targetHariIdx = (targetHariIdx + 1) % 7;
                 }
@@ -4556,7 +4562,7 @@
 
                 const sekarang = new Date();
                 let targetHariIdx = sekarang.getDay();
-                if (sekarang.getHours() >= 18) targetHariIdx = (targetHariIdx + 1) % 7;
+                if (sekarang.getHours() >= JAM_GANTI_HARI) targetHariIdx = (targetHariIdx + 1) % 7;
                 const namaHariTarget = days[targetHariIdx];
                 // Badge cuma relevan buat hari yang lagi "aktif" (hari ini/besok sesuai jam skrg),
                 // biar gak salah kaprah nyocokin ke hari lain yang mapelnya kebetulan sama nama.
