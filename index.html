@@ -4348,6 +4348,37 @@
             let pendingDeleteState = null; // { key, commitFn, timeoutId }
             let undoSnackbarHideTimer = null;
 
+            // ===== GUARD: JANGAN RENDER ULANG TASKLIST DI TENGAH KLIK =====
+            // Bug yang kejadian: kalau taskList di-render ulang (innerHTML dibersihin & rebuild)
+            // TEPAT di antara mousedown & mouseup pas user lagi ngeklik sesuatu di dalam kartu
+            // (misalnya link), elemen lama yang kena mousedown udah gak ada lagi pas mouseup,
+            // jadi browser gak nganggep itu "klik" yang valid -> link/tombol gak ke-trigger.
+            // Sekarang render ulang dari sumber background (realtime sync / safety-net poll)
+            // ditunda dulu selama ada jari/mouse yang masih nempel di area taskList.
+            let isPointerDownOnTaskList = false;
+            let refreshPendingAfterPointer = false;
+
+            document.addEventListener('pointerdown', (e) => {
+                if (e.target.closest && e.target.closest('#taskList')) {
+                    isPointerDownOnTaskList = true;
+                }
+            }, true);
+
+            function releaseTaskListPointerGuard() {
+                if (!isPointerDownOnTaskList) return;
+                isPointerDownOnTaskList = false;
+                if (refreshPendingAfterPointer) {
+                    refreshPendingAfterPointer = false;
+                    // Kasih jeda dikit biar event click yang lagi diproses browser kelar dulu
+                    setTimeout(() => {
+                        window.lastTasksData = "";
+                        loadTasks();
+                    }, 150);
+                }
+            }
+            document.addEventListener('pointerup', releaseTaskListPointerGuard, true);
+            document.addEventListener('pointercancel', releaseTaskListPointerGuard, true);
+
             // ===== REALTIME SYNC TUGAS (SSE ke Firebase REST, tanpa perlu install SDK) =====
             let taskEventSource = null;
 
@@ -4381,6 +4412,12 @@
                     // Jangan refresh paksa kalau lagi ada interaksi yang bisa keganggu
                     // (lagi edit tugas, lagi geser urutan, lagi buka gambar/file).
                     if (!isMediaPlaying && !isEditMode && !isModalOpen && !pendingDeleteState) {
+                        if (isPointerDownOnTaskList) {
+                            // Ada jari/mouse yang masih nempel di taskList (kemungkinan lagi
+                            // proses klik) -- tunda render ulangnya, proses abis dilepas.
+                            refreshPendingAfterPointer = true;
+                            return;
+                        }
                         window.lastTasksData = "";
                         loadTasks();
                     }
@@ -4861,12 +4898,16 @@
                     document.getElementById('docModal').style.display === 'flex';
 
                 if (!isMediaPlaying && !isEditing && !isModalOpen && !pendingDeleteState) {
-                    console.log("Safety-net refresh");
-                    loadTasks();
-                    // readyState 2 = CLOSED. Kalau koneksi SSE-nya ternyata udah mati
-                    // dan gak reconnect sendiri, nyalain ulang di sini.
-                    if (!taskEventSource || taskEventSource.readyState === 2) {
-                        initRealtimeTaskSync();
+                    if (isPointerDownOnTaskList) {
+                        refreshPendingAfterPointer = true;
+                    } else {
+                        console.log("Safety-net refresh");
+                        loadTasks();
+                        // readyState 2 = CLOSED. Kalau koneksi SSE-nya ternyata udah mati
+                        // dan gak reconnect sendiri, nyalain ulang di sini.
+                        if (!taskEventSource || taskEventSource.readyState === 2) {
+                            initRealtimeTaskSync();
+                        }
                     }
                 } else {
                     console.log("Refresh ditahan");
