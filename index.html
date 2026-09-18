@@ -4698,8 +4698,20 @@
                 list.innerHTML = "";
 
                 const q = taskSearchQuery.trim().toLowerCase();
+                // Pakai word-boundary ("\b") biar "Mat" cuma nyantol ke kata yang beneran
+                // DIAWALI "mat" (kayak "Mat:" nama mapel), bukan yang cuma nyempil di tengah
+                // kata lain yang gak nyambung (mis. "for-MAT", "infor-MAT-ika").
+                let searchRegex = null;
+                if (q) {
+                    try {
+                        searchRegex = new RegExp('\\b' + q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
+                    } catch (err) {
+                        searchRegex = null;
+                    }
+                }
                 const matchesFilter = t => {
-                    const matchSearch = !q || (t.text || '').toLowerCase().includes(q);
+                    const text = t.text || '';
+                    const matchSearch = !q || (searchRegex ? searchRegex.test(text) : text.toLowerCase().includes(q));
                     const matchStatus = taskStatusFilter === 'selesai' ? t.done
                         : taskStatusFilter === 'aktif' ? !t.done
                             : true;
