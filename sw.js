@@ -49,6 +49,7 @@ body{
 .mascot-bot{position:relative;z-index:2;animation:botBob 2.8s ease-in-out infinite;transform-origin:bottom center;}
 @keyframes botBob{0%,100%{transform:translateY(0) rotate(-3deg);}50%{transform:translateY(-6px) rotate(3deg);}}
 .mascot-bot svg{width:108px;height:128px;display:block;}
+.mascot-static-img{display:block;width:170px;max-width:65%;height:auto;margin:20px auto 16px;}
 
 .eye{animation:blink 4.4s ease-in-out infinite;transform-origin:center;}
 .eye.right{animation-delay:.15s;}
@@ -134,26 +135,7 @@ function toggleTheme() {
 </button>
 
 <div class="card">
-  <div class="mascot-wrap">
-    <div class="mascot-glow"></div>
-    <div class="mascot-shadow"></div>
-    <div class="mascot-bot" id="mascotBot">
-      <svg viewBox="0 -14 120 154" xmlns="http://www.w3.org/2000/svg">
-        <path class="sig sig3" d="M43,-3 Q60,-17 77,-3"/>
-        <path class="sig sig2" d="M48,2 Q60,-9 72,2"/>
-        <path class="sig sig1" d="M53,7 Q60,-1 67,7"/>
-        <circle class="ant-halo" cx="60" cy="22" r="12"/>
-        <line x1="60" y1="44" x2="60" y2="26" stroke="#5483b3" stroke-width="4" stroke-linecap="round"/>
-        <circle class="ant-tip" cx="60" cy="22" r="6"/>
-        <rect class="mascot-body-shape" x="20" y="40" width="80" height="80" rx="28" fill="#052659"/>
-        <rect class="mascot-face-shape" x="32" y="56" width="56" height="46" rx="18" fill="#c1e8ff"/>
-        <circle class="eye left" cx="48" cy="78" r="5" fill="#021024"/>
-        <circle class="eye right" cx="72" cy="78" r="5" fill="#021024"/>
-        <path class="mouth-sad" d="M50,95 Q60,89 70,95" stroke="#021024" stroke-width="3" fill="none" stroke-linecap="round"/>
-        <path class="mouth-happy" d="M50,90 Q60,99 70,90" stroke="#021024" stroke-width="3" fill="none" stroke-linecap="round"/>
-      </svg>
-    </div>
-  </div>
+  <img src="https://i.ibb.co.com/wFWTTwVR/2c7dd225026c121ccf232ea78efcbbbf.jpg" alt="" class="mascot-static-img">
 
   <h1>Kamu Lagi Offline</h1>
 
@@ -232,7 +214,6 @@ function goOnline() {
   clearInterval(retryInterval);
   setStatusColor('green');
   showMessage('Sinyal balik! Membuka jadwal kamu...');
-  document.getElementById('mascotBot').classList.add('online');
   document.getElementById('retryLabel').innerText = 'Membuka...';
   document.getElementById('retryFill').style.transition = 'width .3s';
   document.getElementById('retryFill').style.width = '100%';
