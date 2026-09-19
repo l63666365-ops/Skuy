@@ -1,5 +1,5 @@
 // SkuyJadwal Service Worker v10 - update background offline page jadi gradient
-const CACHE_VERSION = 'skuy-v40';
+const CACHE_VERSION = 'skuy-v30';
 const CACHE_NAME = CACHE_VERSION;
 const FONT_CACHE = 'skuy-fonts-v1';
 
@@ -49,7 +49,7 @@ body{
 .mascot-bot{position:relative;z-index:2;animation:botBob 2.8s ease-in-out infinite;transform-origin:bottom center;}
 @keyframes botBob{0%,100%{transform:translateY(0) rotate(-3deg);}50%{transform:translateY(-6px) rotate(3deg);}}
 .mascot-bot svg{width:108px;height:128px;display:block;}
-.mascot-static-img{display:block;width:170px;max-width:65%;height:auto;margin:20px auto 16px;}
+.mascot-static-img{display:block;width:290px;max-width:92%;height:auto;margin:16px auto 4px;}
 
 .eye{animation:blink 4.4s ease-in-out infinite;transform-origin:center;}
 .eye.right{animation-delay:.15s;}
@@ -135,7 +135,7 @@ function toggleTheme() {
 </button>
 
 <div class="card">
-  <img src="https://i.ibb.co.com/93q5F38H/2c7dd225026c121ccf232ea78efcbbbf.png" alt="" class="mascot-static-img">
+  <img src="https://i.ibb.co.com/Kx6qM9WV/2c7dd225026c121ccf232ea78efcbbbf.png" alt="" class="mascot-static-img">
 
   <h1>Kamu Lagi Offline</h1>
 
