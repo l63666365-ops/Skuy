@@ -2829,6 +2829,20 @@
             max-width: 65%;
             height: auto;
             margin: 20px auto 14px;
+            /* Foto JPG-nya ada background putih bawaan (JPG gak bisa transparan).
+               Multiply bikin area putih itu "ilang" nyatu sama background halaman
+               yang terang, tanpa perlu edit fotonya sama sekali. */
+            mix-blend-mode: multiply;
+        }
+
+        /* Di dark mode, multiply malah bikin fotonya jadi gelap kusam (background-nya
+           gelap). Jadi khusus dark mode, kasih kartu putih bulat di belakangnya biar
+           tetep keliatan rapi kayak bingkai foto, bukan blend yang rusak. */
+        [data-theme="dark"] .mascot-static-img {
+            mix-blend-mode: normal;
+            background: #fff;
+            border-radius: 18px;
+            padding: 8px;
         }
 
         /* ===== Page load animation ===== */
