@@ -4283,7 +4283,7 @@
                     // modal preview (foto/dokumen) atau di elemen video/audio. Biar zoom, geser,
                     // pinch, atau scrub media gak ke-anggap "tarik buat refresh" & bikin halaman
                     // reload sendiri pas lagi dilihat.
-                    if (e.target.closest('.modal-overlay, video, audio')) {
+                    if (e.target.closest('.modal-overlay, video, audio, .task-item[data-draggable="true"]')) {
                         pulling = false;
                         return;
                     }
