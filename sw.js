@@ -1,5 +1,5 @@
 // SkuyJadwal Service Worker v10 - update background offline page jadi gradient
-const CACHE_VERSION = 'skuy-v30';
+const CACHE_VERSION = 'skuy-v40';
 const CACHE_NAME = CACHE_VERSION;
 const FONT_CACHE = 'skuy-fonts-v1';
 
@@ -135,7 +135,7 @@ function toggleTheme() {
 </button>
 
 <div class="card">
-  <img src="https://i.ibb.co.com/wFWTTwVR/2c7dd225026c121ccf232ea78efcbbbf.jpg" alt="" class="mascot-static-img">
+  <img src="https://i.ibb.co.com/93q5F38H/2c7dd225026c121ccf232ea78efcbbbf.png" alt="" class="mascot-static-img">
 
   <h1>Kamu Lagi Offline</h1>
 
