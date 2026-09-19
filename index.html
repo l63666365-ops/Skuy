@@ -2829,20 +2829,6 @@
             max-width: 65%;
             height: auto;
             margin: 20px auto 14px;
-            /* Foto JPG-nya ada background putih bawaan (JPG gak bisa transparan).
-               Multiply bikin area putih itu "ilang" nyatu sama background halaman
-               yang terang, tanpa perlu edit fotonya sama sekali. */
-            mix-blend-mode: multiply;
-        }
-
-        /* Di dark mode, multiply malah bikin fotonya jadi gelap kusam (background-nya
-           gelap). Jadi khusus dark mode, kasih kartu putih bulat di belakangnya biar
-           tetep keliatan rapi kayak bingkai foto, bukan blend yang rusak. */
-        [data-theme="dark"] .mascot-static-img {
-            mix-blend-mode: normal;
-            background: #fff;
-            border-radius: 18px;
-            padding: 8px;
         }
 
         /* ===== Page load animation ===== */
@@ -4360,11 +4346,11 @@
                     colMapel.innerHTML = "<div class='item-box'>Libur</div>";
                     colJam.innerHTML = "<div class='item-box'>-</div>";
                     colRuang.innerHTML = "<div class='item-box'>-</div>";
-                    if (cardsWrap) cardsWrap.innerHTML = mascotImageBlockHtml("Libur, gak ada jadwal hari ini", "https://i.ibb.co.com/21R3RMPn/91139f2f2b71db55948b0bbf8bce9ca2.jpg");
+                    if (cardsWrap) cardsWrap.innerHTML = mascotImageBlockHtml("Libur, gak ada jadwal hari ini", "https://i.ibb.co.com/RpNYX1K6/91139f2f2b71db55948b0bbf8bce9ca2.png");
                     return;
                 }
                 if (!isEditMode && hariIni.length === 0 && cardsWrap) {
-                    cardsWrap.innerHTML = mascotImageBlockHtml("Belum ada jadwal buat hari ini", "https://i.ibb.co.com/Hp1RBZ6h/d79a4f6fd745ec02131bfe77bb901bc2.jpg");
+                    cardsWrap.innerHTML = mascotImageBlockHtml("Belum ada jadwal buat hari ini", "https://i.ibb.co.com/Q7Rsk6HG/d79a4f6fd745ec02131bfe77bb901bc2-1.png");
                 }
                 hariIni.forEach((item, index) => {
                     if (isEditMode) {
@@ -4821,7 +4807,7 @@
                 const banner = document.getElementById('taskStateBanner');
                 if (banner) {
                     if (combinedTasks.length === 0) {
-                        banner.innerHTML = mascotImageBlockHtml("Belum ada tugas, santai dulu~", "https://i.ibb.co.com/Hp1RBZ6h/d79a4f6fd745ec02131bfe77bb901bc2.jpg");
+                        banner.innerHTML = mascotImageBlockHtml("Belum ada tugas, santai dulu~", "https://i.ibb.co.com/Q7Rsk6HG/d79a4f6fd745ec02131bfe77bb901bc2-1.png");
                     } else if (combinedTasks.every(t => t.done)) {
                         banner.innerHTML = `<p style="text-align:center; font-size:12px; font-weight:800; color: var(--color-2); margin: 4px 0 12px;">Mantap, semua tugas hari ini kelar 🎉</p>`;
                     } else {
@@ -5018,7 +5004,7 @@
                 }
 
                 if (isFiltering && filteredActive.length === 0 && filteredDone.length === 0) {
-                    list.innerHTML = `<li style="list-style:none;">${mascotImageBlockHtml("Gak ketemu, coba kata kunci lain", "https://i.ibb.co.com/4wVRBLMh/2a22db05ca72277943da40fd84436020.jpg")}</li>`;
+                    list.innerHTML = `<li style="list-style:none;">${mascotImageBlockHtml("Gak ketemu, coba kata kunci lain", "https://i.ibb.co.com/dwvNk4Zb/2a22db05ca72277943da40fd84436020.png")}</li>`;
                     initTaskDragReorder();
                     return;
                 }
