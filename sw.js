@@ -1,5 +1,5 @@
 // SkuyJadwal Service Worker v10 - update background offline page jadi gradient
-const CACHE_VERSION = 'skuy-v30';
+const CACHE_VERSION = 'skuy-v50';
 const CACHE_NAME = CACHE_VERSION;
 const FONT_CACHE = 'skuy-fonts-v1';
 
@@ -49,7 +49,7 @@ body{
 .mascot-bot{position:relative;z-index:2;animation:botBob 2.8s ease-in-out infinite;transform-origin:bottom center;}
 @keyframes botBob{0%,100%{transform:translateY(0) rotate(-3deg);}50%{transform:translateY(-6px) rotate(3deg);}}
 .mascot-bot svg{width:108px;height:128px;display:block;}
-.mascot-static-img{display:block;width:290px;max-width:92%;height:auto;margin:16px auto 4px;}
+.mascot-static-img{display:block;width:250px;max-width:82%;height:auto;margin:16px auto 4px;}
 
 .eye{animation:blink 4.4s ease-in-out infinite;transform-origin:center;}
 .eye.right{animation-delay:.15s;}
