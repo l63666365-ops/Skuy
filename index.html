@@ -4816,18 +4816,31 @@
                 lastRenderRole = role;
                 lastRenderIsBesokMode = isBesokMode;
 
-                const banner = document.getElementById('taskStateBanner');
-                if (banner) {
-                    if (combinedTasks.length === 0) {
-                        banner.innerHTML = mascotImageBlockHtml("Belum ada tugas, santai dulu~", "https://i.ibb.co.com/HL1p965M/d79a4f6fd745ec02131bfe77bb901bc2-1.png", "santai");
-                    } else if (combinedTasks.every(t => t.done)) {
-                        banner.innerHTML = `<p style="text-align:center; font-size:12px; font-weight:800; color: var(--color-2); margin: 4px 0 12px;">Mantap, semua tugas hari ini kelar 🎉</p>`;
-                    } else {
-                        banner.innerHTML = "";
-                    }
-                }
+                updateTaskStateBanner();
                 renderTaskList(role, isBesokMode);
                 updateJadwalTugasBadges();
+            }
+
+            // Nentuin isi banner di atas list tugas ("santai dulu~" / "semua kelar 🎉").
+            // Dipanggil dari loadTasks() DAN dari search/filter, biar banner ini gak
+            // nyangkut/stale nunjukin pesan lama pas lagi ada search aktif -- soalnya
+            // pesan "gak ketemu" udah diurus sendiri di dalam list, jangan sampai dobel.
+            function updateTaskStateBanner() {
+                const banner = document.getElementById('taskStateBanner');
+                if (!banner) return;
+
+                const isFiltering = taskSearchQuery.trim() !== '' || taskStatusFilter !== 'semua';
+                const total = activeTasksCache.length + doneTasksCache.length;
+
+                if (isFiltering) {
+                    banner.innerHTML = "";
+                } else if (total === 0) {
+                    banner.innerHTML = mascotImageBlockHtml("Belum ada tugas, santai dulu~", "https://i.ibb.co.com/HL1p965M/d79a4f6fd745ec02131bfe77bb901bc2-1.png", "santai");
+                } else if (activeTasksCache.every(t => t.done)) {
+                    banner.innerHTML = `<p style="text-align:center; font-size:12px; font-weight:800; color: var(--color-2); margin: 4px 0 12px;">Mantap, semua tugas hari ini kelar 🎉</p>`;
+                } else {
+                    banner.innerHTML = "";
+                }
             }
 
             // Nempelin badge "Ada tugas" di kartu jadwal (hari ini/besok, sesuai jam skrg)
@@ -5052,6 +5065,7 @@
                 const input = document.getElementById('taskSearchInput');
                 taskSearchQuery = input ? input.value : '';
                 syncTaskSearchClearBtn();
+                updateTaskStateBanner();
                 renderTaskList(lastRenderRole, lastRenderIsBesokMode);
             }
 
@@ -5060,6 +5074,7 @@
                 const input = document.getElementById('taskSearchInput');
                 if (input) input.value = '';
                 syncTaskSearchClearBtn();
+                updateTaskStateBanner();
                 renderTaskList(lastRenderRole, lastRenderIsBesokMode);
             }
 
@@ -5073,6 +5088,7 @@
                 document.querySelectorAll('#taskFilterChips .task-chip[data-status]').forEach(btn => {
                     btn.classList.toggle('active', btn.dataset.status === status);
                 });
+                updateTaskStateBanner();
                 renderTaskList(lastRenderRole, lastRenderIsBesokMode);
             }
 
