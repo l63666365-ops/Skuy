@@ -4673,14 +4673,19 @@
             // dinurutin di semua device/versi browser (makanya "kadang doang" kejadian).
             // Ini lapisan pengaman tambahan di level JS yang lebih pasti: kalau jari narik
             // ke bawah PAS halaman udah di posisi paling atas (scrollY 0), gesture-nya
-            // langsung di-preventDefault -- gak peduli lagi nyentuh kartu tugas atau bagian
-            // lain halaman mana pun.
+            // langsung di-preventDefault.
+            //
+            // PENTING: kartu yang bisa digeser (data-draggable="true") udah punya sistem
+            // sendiri (touch-action:none + state machine pending/scrolling/dragging).
+            // Guard ini WAJIB dikecualiin dari kartu itu, kalau enggak malah nabrak &
+            // bikin gesture geser di kartu jadi kaku/gak jalan sama sekali.
             let ptrGuardStartY = 0;
             document.addEventListener('touchstart', (e) => {
                 if (e.touches.length === 1) ptrGuardStartY = e.touches[0].clientY;
             }, { passive: true });
 
             document.addEventListener('touchmove', (e) => {
+                if (e.target.closest && e.target.closest('.task-item[data-draggable="true"]')) return;
                 if (window.scrollY <= 0 && e.touches.length === 1) {
                     const dy = e.touches[0].clientY - ptrGuardStartY;
                     if (dy > 0) {
