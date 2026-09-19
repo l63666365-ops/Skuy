@@ -3504,9 +3504,11 @@
 
             // Versi mascot pake foto asli (statis, tanpa animasi gerak) -- dipake
             // buat state-state tertentu yang sengaja diganti fotonya, bukan robot SVG.
-            function mascotImageBlockHtml(caption, imageUrl) {
+            // variant: dikasih class tambahan biar tiap foto bisa di-tuning ukuran/posisi
+            // sendiri-sendiri (soalnya tiap file PNG beda-beda spasi transparannya).
+            function mascotImageBlockHtml(caption, imageUrl, variant) {
                 return `<div class="mascot-empty">
-                    <img src="${imageUrl}" alt="" class="mascot-static-img" loading="lazy">
+                    <img src="${imageUrl}" alt="" class="mascot-static-img${variant ? ' mascot-img-' + variant : ''}" loading="lazy">
                     <p class="mascot-caption">${caption}</p>
                 </div>`;
             }
@@ -4346,11 +4348,11 @@
                     colMapel.innerHTML = "<div class='item-box'>Libur</div>";
                     colJam.innerHTML = "<div class='item-box'>-</div>";
                     colRuang.innerHTML = "<div class='item-box'>-</div>";
-                    if (cardsWrap) cardsWrap.innerHTML = mascotImageBlockHtml("Libur, gak ada jadwal hari ini", "https://i.ibb.co.com/nMhV4WP1/91139f2f2b71db55948b0bbf8bce9ca2.png");
+                    if (cardsWrap) cardsWrap.innerHTML = mascotImageBlockHtml("Libur, gak ada jadwal hari ini", "https://i.ibb.co.com/nMhV4WP1/91139f2f2b71db55948b0bbf8bce9ca2.png", "libur");
                     return;
                 }
                 if (!isEditMode && hariIni.length === 0 && cardsWrap) {
-                    cardsWrap.innerHTML = mascotImageBlockHtml("Belum ada jadwal buat hari ini", "https://i.ibb.co.com/HL1p965M/d79a4f6fd745ec02131bfe77bb901bc2-1.png");
+                    cardsWrap.innerHTML = mascotImageBlockHtml("Belum ada jadwal buat hari ini", "https://i.ibb.co.com/HL1p965M/d79a4f6fd745ec02131bfe77bb901bc2-1.png", "santai");
                 }
                 hariIni.forEach((item, index) => {
                     if (isEditMode) {
@@ -4807,7 +4809,7 @@
                 const banner = document.getElementById('taskStateBanner');
                 if (banner) {
                     if (combinedTasks.length === 0) {
-                        banner.innerHTML = mascotImageBlockHtml("Belum ada tugas, santai dulu~", "https://i.ibb.co.com/HL1p965M/d79a4f6fd745ec02131bfe77bb901bc2-1.png");
+                        banner.innerHTML = mascotImageBlockHtml("Belum ada tugas, santai dulu~", "https://i.ibb.co.com/HL1p965M/d79a4f6fd745ec02131bfe77bb901bc2-1.png", "santai");
                     } else if (combinedTasks.every(t => t.done)) {
                         banner.innerHTML = `<p style="text-align:center; font-size:12px; font-weight:800; color: var(--color-2); margin: 4px 0 12px;">Mantap, semua tugas hari ini kelar 🎉</p>`;
                     } else {
@@ -5004,7 +5006,7 @@
                 }
 
                 if (isFiltering && filteredActive.length === 0 && filteredDone.length === 0) {
-                    list.innerHTML = `<li style="list-style:none;">${mascotImageBlockHtml("Gak ketemu, coba kata kunci lain", "https://i.ibb.co.com/63r3gdC/2a22db05ca72277943da40fd84436020.png")}</li>`;
+                    list.innerHTML = `<li style="list-style:none;">${mascotImageBlockHtml("Gak ketemu, coba kata kunci lain", "https://i.ibb.co.com/63r3gdC/2a22db05ca72277943da40fd84436020.png", "search")}</li>`;
                     initTaskDragReorder();
                     return;
                 }
