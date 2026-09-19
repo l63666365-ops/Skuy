@@ -5983,13 +5983,25 @@
                     document.removeEventListener('pointermove', onPointerMove);
                     document.removeEventListener('pointerup', onPointerUp);
                     document.removeEventListener('pointercancel', onPointerUp);
+                    document.removeEventListener('touchmove', onTouchMoveRaw);
                     if (mode === 'dragging') finishDragMode();
                     if (mode === 'scrolling') startMomentumScroll();
+                }
+
+                // Selain preventDefault() di pointermove, kita CEGAT JUGA raw touchmove-nya.
+                // Soalnya di sebagian browser/device, preventDefault() di Pointer Events
+                // ternyata gak selalu nyampe ke jalur internal yang nyegah gesture
+                // pull-to-refresh -- beda sama preventDefault() di Touch Events yang lebih
+                // konsisten nutupnya. Ini di-scope KHUSUS ke gesture kartu ini aja (nempel &
+                // lepas bareng listener lain di atas), jadi gak nabrak bagian lain halaman.
+                function onTouchMoveRaw(ev) {
+                    ev.preventDefault();
                 }
 
                 document.addEventListener('pointermove', onPointerMove);
                 document.addEventListener('pointerup', onPointerUp);
                 document.addEventListener('pointercancel', onPointerUp);
+                document.addEventListener('touchmove', onTouchMoveRaw, { passive: false });
 
                 pressTimer = setTimeout(() => {
                     if (mode !== 'pending') return; // udah kepake buat scroll duluan
