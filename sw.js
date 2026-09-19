@@ -1,9 +1,15 @@
-// SkuyJadwal Service Worker v10 - update background offline page jadi gradient
-const CACHE_VERSION = 'skuy-v50';
+// SkuyJadwal Service Worker v11 - cache foto mascot offline biar kebuka walau beneran offline
+const CACHE_VERSION = 'skuy-v31';
 const CACHE_NAME = CACHE_VERSION;
 const FONT_CACHE = 'skuy-fonts-v1';
+const IMAGE_CACHE = 'skuy-images-v1';
 
 const POPPINS_CSS_URL = 'https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap';
+// Foto mascot di halaman offline ini di-host di server luar (ibb.co), padahal
+// halaman ini justru muncul PAS GAK ADA INTERNET. Jadi fotonya wajib di-cache
+// duluan pas device masih online (lihat "Install" di bawah), biar nanti pas
+// beneran offline diambil dari cache, bukan nembak ke server luar.
+const OFFLINE_MASCOT_URL = 'https://i.ibb.co.com/Kx6qM9WV/2c7dd225026c121ccf232ea78efcbbbf.png';
 
 const OFFLINE_HTML = `<!DOCTYPE html>
 <html lang="id">
@@ -408,6 +414,17 @@ self.addEventListener('install', (event) => {
             } catch (err) {
                 console.warn('[SW] Gagal cache font Poppins:', err);
             }
+
+            try {
+                const imgCache = await caches.open(IMAGE_CACHE);
+                // mode 'no-cors' dipake soalnya ibb.co gak ngirim header CORS -- responnya
+                // jadi "opaque" (gak bisa dibaca isinya lewat JS), tapi tetep bisa disimpen
+                // di cache & dipakai buat nampilin <img> normal, itu doang yang kita perlu.
+                const imgRes = await fetch(OFFLINE_MASCOT_URL, { mode: 'no-cors' });
+                await imgCache.put(OFFLINE_MASCOT_URL, imgRes);
+            } catch (err) {
+                console.warn('[SW] Gagal cache foto mascot offline:', err);
+            }
         })()
     );
 });
@@ -417,7 +434,7 @@ self.addEventListener('activate', (event) => {
     event.waitUntil(
         caches.keys().then(keys =>
             Promise.all(
-                keys.filter(k => k !== CACHE_NAME && k !== FONT_CACHE)
+                keys.filter(k => k !== CACHE_NAME && k !== FONT_CACHE && k !== IMAGE_CACHE)
                     .map(k => caches.delete(k))
             )
         ).then(() => clients.claim())
@@ -441,6 +458,25 @@ self.addEventListener('fetch', (event) => {
                     if (response && response.status === 200) {
                         cache.put(event.request, response.clone());
                     }
+                    return response;
+                } catch (_) {
+                    return new Response('', { status: 404 });
+                }
+            })
+        );
+        return;
+    }
+
+    // Foto mascot offline: coba cache dulu (biar kebuka walau lagi offline beneran),
+    // baru fallback ke network kalau ternyata belum sempat ke-cache.
+    if (event.request.url === OFFLINE_MASCOT_URL) {
+        event.respondWith(
+            caches.open(IMAGE_CACHE).then(async (cache) => {
+                const cached = await cache.match(OFFLINE_MASCOT_URL);
+                if (cached) return cached;
+                try {
+                    const response = await fetch(event.request, { mode: 'no-cors' });
+                    cache.put(OFFLINE_MASCOT_URL, response.clone());
                     return response;
                 } catch (_) {
                     return new Response('', { status: 404 });
