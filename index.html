@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport"
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="color-scheme" content="light">
     <title>Jadwal Sekolah Pro</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap');
@@ -15,6 +16,18 @@
             -moz-text-size-adjust: 100% !important;
             text-size-adjust: 100% !important;
             overscroll-behavior-y: none;
+        }
+
+        /* Tema HANYA ditentukan lewat atribut data-theme (default terang, gelap kalau user milih).
+           color-scheme dideklarasiin eksplisit supaya kontrol bawaan browser (scrollbar, input
+           tanggal/jam, dll) ikut tema app — bukan ikut mode gelap sistem HP — dan supaya
+           WebView gak nebak sendiri buat menggelapkan halaman ini. */
+        :root {
+            color-scheme: light;
+        }
+
+        :root[data-theme="dark"] {
+            color-scheme: dark;
         }
 
         * {
@@ -1037,6 +1050,13 @@
             word-break: normal;
             overflow-wrap: anywhere;
             display: block;
+        }
+
+        /* Kartu yang punya tombol edit/hapus (posisinya absolut di kanan) butuh ruang kosong
+           di kanan teks, kalau nggak ujung teks tertutup tombolnya. Kartu tanpa tombol
+           (siswa lihat tugas kelas) tetap pakai jarak lama biar teksnya gak menyempit. */
+        .task-item.has-actions .task-text {
+            padding-right: 66px !important;
         }
 
         .task-img {
@@ -5710,7 +5730,7 @@
                 const li = document.createElement('li');
                 li.id = `task-${id}`;
                 const badgeClass = isTugasBesok ? (isBesokMode ? 'task-besok' : 'task-hariini') : '';
-                li.className = `task-item ${t.done ? 'done' : ''} ${badgeClass}`;
+                li.className = `task-item ${t.done ? 'done' : ''} ${badgeClass}${canDelete ? ' has-actions' : ''}`;
                 li.style.cssText = "flex-direction: column; align-items: flex-start; position: relative; padding-bottom: 15px;";
                 const toggleFunc = isCloud ? `toggleTaskCloud('${id}', ${t.done}, event)` : `toggleTaskLocal('${id}', event)`;
                 const deleteFunc = isCloud ? `deleteTaskCloud('${id}', event)` : `deleteTaskLocal('${id}', event)`;
