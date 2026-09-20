@@ -4062,12 +4062,16 @@
                     setArcDown(sisaMs, totalMs, `${jamSisa}j`);
                 }
 
-                // Titik mulai libur = Sabtu jam 00:00 minggu ini
+                // Titik mulai libur = Jumat jam JAM_GANTI_HARI (17:00). Di jam itu app udah
+                // nganggep "besok = Sabtu" alias mode libur udah nyala, jadi ring-nya harus
+                // mulai penuh dari situ. Dulu dipatok Sabtu 00:00, akibatnya pas Jumat sore
+                // getStartLibur() mundur ke Sabtu MINGGU LALU -> ring cuma ~28% terus
+                // lompat ke 100% pas lewat tengah malam.
                 function getStartLibur() {
                     const d = new Date(now);
-                    // Mundur ke Sabtu
-                    while (d.getDay() !== 6) d.setDate(d.getDate() - 1);
-                    d.setHours(0, 0, 0, 0);
+                    // Mundur ke Jumat terdekat (hari ini kalau lagi Jumat)
+                    while (d.getDay() !== 5) d.setDate(d.getDate() - 1);
+                    d.setHours(JAM_GANTI_HARI, 0, 0, 0);
                     return d;
                 }
 
