@@ -140,11 +140,6 @@
             padding: 16px 10px;
             padding-bottom: calc(16px + env(safe-area-inset-bottom, 20px));
             background-color: var(--bg-color);
-            background-image: var(--bg-pattern), var(--bg-blobs), var(--bg-gradient);
-            background-attachment: fixed, fixed, fixed;
-            background-size: 225px 225px, cover, cover;
-            background-repeat: repeat, no-repeat, no-repeat;
-            background-position: 0 0, center, center;
             color: var(--color-1);
             min-height: 100vh;
             overscroll-behavior-y: none;
@@ -159,6 +154,23 @@
             justify-content: center;
             padding: 16px 10px;
             transition: background-color 0.4s ease, color 0.4s ease, background-image 0.4s ease;
+        }
+
+        /* Latar (pola ikon + blob + gradien) dipindah dari body (background-attachment: fixed)
+           ke layer fixed sendiri. background-attachment: fixed bikin browser menggambar ulang
+           latar seukuran layar di SETIAP frame scroll (berat di WebView HP) — dengan layer
+           sendiri, latarnya cukup digambar sekali lalu tinggal digeser GPU. Tampilannya sama. */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            pointer-events: none;
+            background-image: var(--bg-pattern), var(--bg-blobs), var(--bg-gradient);
+            background-size: 225px 225px, cover, cover;
+            background-repeat: repeat, no-repeat, no-repeat;
+            background-position: 0 0, center, center;
+            will-change: transform;
         }
 
         .theme-toggle-btn {
@@ -1843,14 +1855,18 @@
             color: var(--accent-light);
         }
 
-        /* Kartu yang bisa digeser dikasih touch-action:none biar browser gak ikut
-           campur nanganin scroll/refresh gesture di situ -- semuanya kita handle
-           manual lewat JS (termasuk scroll manual + efek momentum pas dilepas). */
+        /* Kartu yang bisa digeser: scroll VERTIKAL tetap diurus browser (native, jadi mulus
+           + momentum bawaan HP). Baru pas kartu ditahan lama & mode geser aktif, scroll-nya
+           ditahan lewat JS (lihat onCardTouchMove). Dulu di sini touch-action:none dan
+           scroll-nya dikerjain manual lewat JS -> itu yang bikin geser di atas kartu kesendat. */
         .task-item[data-draggable="true"] {
-            touch-action: none;
+            touch-action: pan-y;
+            -webkit-touch-callout: none;
         }
 
         .task-item.dragging-task {
+            user-select: none;
+            -webkit-user-select: none;
             opacity: 0.96;
             box-shadow: 0 10px 24px rgba(var(--shadow-rgb), 0.25);
             background: var(--white);
@@ -4503,12 +4519,32 @@
 
             
 
+            // Tulis teks/HTML ke elemen HANYA kalau isinya beneran beda dari yang terakhir ditulis.
+            // updateTime() jalan tiap detik; nulis ulang teks yang sama tetap ngeganti node DOM &
+            // bikin browser hitung ulang style/layout/paint bagian header tiap detik — itu yang
+            // bikin scroll "kesendat" tiap beberapa saat di HP yang lemot.
+            function setText(el, value) {
+                if (!el) return;
+                const k = 't:' + value;
+                if (el.__k === k) return;
+                el.__k = k;
+                el.textContent = value;
+            }
+
+            function setHtml(el, html) {
+                if (!el) return;
+                const k = 'h:' + html;
+                if (el.__k === k) return;
+                el.__k = k;
+                el.innerHTML = html;
+            }
+
             function updateTime() {
                 const now = new Date();
                 const h = String(now.getHours()).padStart(2, '0');
                 const m = String(now.getMinutes()).padStart(2, '0');
-                document.getElementById('clock').innerText = `${h}:${m}`;
-                document.getElementById('full-date').innerText = now.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long' });
+                setText(document.getElementById('clock'), `${h}:${m}`);
+                setText(document.getElementById('full-date'), now.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long' }));
                 let virtualDate = new Date(now);
                 if (now.getHours() >= JAM_GANTI_HARI) {
                     virtualDate.setDate(virtualDate.getDate() + 1);
@@ -4618,7 +4654,7 @@
                     }
                     arcF.style.strokeDasharray = String(ARC_CIRC);
                     arcF.style.strokeDashoffset = String(offset);
-                    if (arcT) arcT.textContent = labelStr;
+                    if (arcT) setText(arcT, labelStr);
                     if (arcS) arcS.style.display = '';
                 }
 
@@ -4644,16 +4680,16 @@
 
                 if (currentTimeMin >= jamGantiHari) {
                     if (isLiburRelevan) {
-                        statLabel.innerText = "Libur akhir pekan";
-                        statNow.innerText = "Selamat beristirahat ✨";
-                        statNext.innerText = "";
+                        setText(statLabel, "Libur akhir pekan");
+                        setText(statNow, "Selamat beristirahat ✨");
+                        setText(statNext, "");
                         setMascotMood(true);
                         setArcLibur(getStartLibur(), getFirstLessonTime(getNextSchoolDay()));
                         tampilkanNotif("Libur Akhir Pekan ✨", "");
                     } else {
-                        statLabel.innerText = "Persiapan besok";
-                        statNow.innerText = namaHariRelevan;
-                        statNext.innerText = "Tugas sudah diurutkan sesuai jadwal besok";
+                        setText(statLabel, "Persiapan besok");
+                        setText(statNow, namaHariRelevan);
+                        setText(statNext, "Tugas sudah diurutkan sesuai jadwal besok");
                         setMascotMood(true);
                         if (arcEl2) arcEl2.style.display = 'none';
                         tampilkanNotif(`Persiapan Besok: ${namaHariRelevan}`, "Tugas sudah diurutkan sesuai jadwal besok");
@@ -4661,9 +4697,9 @@
                     return;
                 }
                 if (isLiburRelevan) {
-                    statLabel.innerText = "Libur akhir pekan";
-                    statNow.innerText = "Selamat beristirahat ✨";
-                    statNext.innerText = "";
+                    setText(statLabel, "Libur akhir pekan");
+                    setText(statNow, "Selamat beristirahat ✨");
+                    setText(statNext, "");
                     setMascotMood(true);
                     setArcLibur(getStartLibur(), getFirstLessonTime(getNextSchoolDay()));
                     tampilkanNotif("Libur Akhir Pekan ✨", "");
@@ -4708,9 +4744,9 @@
                 }
 
                 if (ongoing) {
-                    statLabel.innerHTML = `Sedang berlangsung<span class="status-dots"><span>.</span><span>.</span><span>.</span></span>`;
-                    statNow.innerText = `${ongoing.name}, sisa ${ongoing.countdown}`;
-                    statNext.innerText = next ? `Selanjutnya: ${next.name}` : "Selanjutnya: Jam Pulang 🎉";
+                    setHtml(statLabel, `Sedang berlangsung<span class="status-dots"><span>.</span><span>.</span><span>.</span></span>`);
+                    setText(statNow, `${ongoing.name}, sisa ${ongoing.countdown}`);
+                    setText(statNext, next ? `Selanjutnya: ${next.name}` : "Selanjutnya: Jam Pulang 🎉");
                     setMascotMood(false);
                     const totalMin = ongoing.endMin - ongoing.startMin;
                     const sisaMin = ongoing.endMin - currentTimeMin;
@@ -4730,9 +4766,9 @@
                     setArcDown(sisaSecs, totalSecs, label);
                     tampilkanNotif(`Sekarang: ${ongoing.name}`, next ? `Selanjutnya: ${next.name}` : "Selanjutnya: Jam Pulang 🎉");
                 } else if (next) {
-                    statLabel.innerText = "Istirahat";
-                    statNow.innerText = `${next.name} mulai ${next.countdown} lagi`;
-                    statNext.innerText = "";
+                    setText(statLabel, "Istirahat");
+                    setText(statNow, `${next.name} mulai ${next.countdown} lagi`);
+                    setText(statNext, "");
                     setMascotMood(true);
                     // Arc mundur: sisa waktu sampai pelajaran berikutnya
                     const nextTimeStr = listMapel.find(l => l[0] === next.name)?.[1]?.replace(/\./g,':').replace(/\s/g,'') || '';
@@ -4759,9 +4795,9 @@
                     }
                     tampilkanNotif("Istirahat", `Selanjutnya: ${next.name}`);
                 } else {
-                    statLabel.innerText = "Semua mapel selesai";
-                    statNow.innerText = "Waktunya istirahat 🏆";
-                    statNext.innerText = "";
+                    setText(statLabel, "Semua mapel selesai");
+                    setText(statNow, "Waktunya istirahat 🏆");
+                    setText(statNext, "");
                     setMascotMood(true);
                     hideArc();
                     tampilkanNotif("Semua mapel hari ini selesai 🏆", "Waktunya istirahat");
@@ -5217,6 +5253,21 @@
             let isPointerDownOnTaskList = false;
             let refreshPendingAfterPointer = false;
 
+            // Refresh dari sumber latar belakang (SSE realtime / polling) jangan sampai kejadian
+            // pas user lagi scroll: bangun ulang daftar di tengah scroll bikin kesendat/loncat.
+            let lastUserScrollTs = 0;
+            let bgRefreshTimer = null;
+            window.addEventListener('scroll', () => { lastUserScrollTs = Date.now(); }, { passive: true });
+
+            function backgroundRefreshTasks() {
+                clearTimeout(bgRefreshTimer);
+                if (Date.now() - lastUserScrollTs < 700) {
+                    bgRefreshTimer = setTimeout(backgroundRefreshTasks, 800);
+                    return;
+                }
+                loadTasks(); // di-skip otomatis kalau datanya sama (lihat renderSig di loadTasks)
+            }
+
             document.addEventListener('pointerdown', (e) => {
                 if (e.target.closest && e.target.closest('#taskList')) {
                     isPointerDownOnTaskList = true;
@@ -5230,8 +5281,7 @@
                     refreshPendingAfterPointer = false;
                     // Kasih jeda dikit biar event click yang lagi diproses browser kelar dulu
                     setTimeout(() => {
-                        window.lastTasksData = "";
-                        loadTasks();
+                        backgroundRefreshTasks();
                     }, 150);
                 }
             }
@@ -5304,8 +5354,7 @@
                             refreshPendingAfterPointer = true;
                             return;
                         }
-                        window.lastTasksData = "";
-                        loadTasks();
+                        backgroundRefreshTasks();
                     }
                 };
 
@@ -5334,6 +5383,20 @@
                     console.log("Gagal ambil data cloud", e);
                 }
                 let localTasks = JSON.parse(localStorage.getItem('mySchoolTasks')) || [];
+                // Kalau semua yang mempengaruhi tampilan daftar tugas sama persis dengan render
+                // terakhir, gak usah bangun ulang seluruh daftar (bangun ulang = reflow + gambar
+                // dimuat ulang + scroll keganggu). Yang mau maksa render ulang cukup set
+                // window.lastTasksData = "" dulu (sudah dilakukan semua aksi user: centang, hapus, dst).
+                // Potongan waktu 10 menit dimasukin biar keterangan "x menit yang lalu" tetap segar.
+                const renderSig = JSON.stringify([
+                    role, cloudTasks, localTasks, personalChecks,
+                    new Date().getHours() >= JAM_GANTI_HARI,
+                    (typeof jadwalData !== 'undefined' && jadwalData && jadwalData[currentWeekType]) || null,
+                    Array.from(pendingDeleteIds),
+                    Math.floor(Date.now() / 600000)
+                ]);
+                if (renderSig === window.lastTasksData) return;
+                window.lastTasksData = renderSig;
                 let combinedTasks = [];
                 Object.keys(cloudTasks).forEach(id => {
                     const isDone = cloudTasks[id].done || personalChecks[id] === true;
@@ -5817,7 +5880,7 @@
                         refreshPendingAfterPointer = true;
                     } else {
                         console.log("Safety-net refresh");
-                        loadTasks();
+                        backgroundRefreshTasks();
                         // readyState 2 = CLOSED. Kalau koneksi SSE-nya ternyata udah mati
                         // dan gak reconnect sendiri, nyalain ulang di sini.
                         if (!taskEventSource || taskEventSource.readyState === 2) {
@@ -5828,6 +5891,20 @@
                     console.log("Refresh ditahan");
                 }
             }, 45000);
+
+            // Foto lampiran ditampilin cuma 80x80px, tapi src-nya dulu file ASLI (bisa beberapa MB)
+            // yang harus di-download & di-decode semua tiap daftar dirender -> berat pas scroll.
+            // Untuk Cloudinary, minta versi kecil (240px) lewat transformasi URL. Kalau server
+            // nolak (mis. akun Cloudinary mengunci transformasi), onerror balik ke file asli.
+            function thumbUrl(url) {
+                try {
+                    if (typeof url === 'string' && url.indexOf('res.cloudinary.com') !== -1 &&
+                        url.indexOf('/image/upload/') !== -1 && url.indexOf('/image/upload/w_') === -1) {
+                        return url.replace('/image/upload/', '/image/upload/w_240,h_240,c_fill,q_auto,f_auto/');
+                    }
+                } catch (e) { }
+                return url;
+            }
 
             function renderFilesHtml(t, isCloud, id) {
                 if (!t.images || t.images.length === 0) return "";
@@ -5843,7 +5920,7 @@
                     const isVideo = /\.(mp4|webm|mov|mkv)$/i.test(fileUrl);
                     if (isImage) {
                         hasPhotos = true;
-                        photosHtml += `<img src="${fileUrl}" class="task-img" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; border: 1px solid var(--color-4); cursor: pointer;" 
+                        photosHtml += `<img src="${escapeHtml(thumbUrl(fileUrl))}" data-full="${escapeHtml(fileUrl)}" loading="lazy" decoding="async" onerror="if(this.dataset.full&&this.src!==this.dataset.full){this.src=this.dataset.full;}" class="task-img" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; border: 1px solid var(--color-4); cursor: pointer;" 
                          onclick="openImageFromTask('${isCloud ? -1 : id}', ${idx}, '${id}')">`;
                     }
                     else {
@@ -6364,24 +6441,37 @@
             // Kartunya sengaja dibiarin polos kayak biasa (gak ada ikon/titik tambahan).
             // Caranya: tahan (long-press) sebentar di badan kartu, baru mode geser aktif.
             //
-            // Kartu draggable dikasih touch-action:none, jadi browser gak ikut campur
-            // nanganin gesture di situ (termasuk scroll & pull-to-refresh) -- semuanya
-            // kita handle manual lewat JS pakai state machine:
-            //   pending   -> baru nempel jari, belum jelas niatnya apa
-            //   scrolling -> jari gerak duluan sebelum hold-nya kepenuhan -> scroll manual
-            //               (dikasih efek momentum pas dilepas biar gak berhenti mendadak)
-            //   dragging  -> jari diem sampai long-press kepenuhan -> mode geser kartu
+            // PENTING soal scroll: kartu ini touch-action:pan-y, jadi scroll vertikal SELALU
+            // diurus browser (native = mulus + momentum bawaan HP). Kita gak pernah scroll
+            // manual lewat JS lagi (dulu begitu, dan itu bikin geser di atas kartu kesendat).
+            //   pending  -> jari baru nempel, nunggu apakah ini long-press atau mau scroll
+            //   (scroll) -> jari gerak duluan sebelum hold kepenuhan -> kita mundur, browser scroll
+            //   dragging -> jari diem sampai long-press kepenuhan -> mode geser kartu; scroll
+            //               native ditahan lewat preventDefault di touchmove (onCardTouchMove)
             const DRAG_LONG_PRESS_MS = 380;
             const DRAG_MOVE_CANCEL_PX = 8;
 
-            // Kalau ada momentum scroll yang masih jalan pas gesture baru dimulai, batalin dulu
-            let activeMomentumRaf = null;
+            let taskDragActive = false;  // true selama kartu lagi digeser (nahan scroll native)
+            let taskPressActive = false; // true selama jari nempel di kartu (nahan menu tekan-lama)
+
+            // Dipasang STATIS di tiap kartu (bukan pas gesture mulai) supaya browser udah tahu
+            // dari awal & preventDefault-nya pasti kepake begitu mode geser aktif.
+            function onCardTouchMove(ev) {
+                if (taskDragActive && ev.cancelable) ev.preventDefault();
+            }
+
+            function onCardContextMenu(ev) {
+                // Cegah menu/seleksi teks bawaan yang muncul karena tekan-lama pas mau geser kartu
+                if (taskDragActive || taskPressActive) ev.preventDefault();
+            }
 
             function initTaskDragReorder() {
                 const list = document.getElementById('taskList');
                 if (!list) return;
                 list.querySelectorAll('.task-item[data-draggable="true"]').forEach(li => {
                     li.addEventListener('pointerdown', onCardPointerDown);
+                    li.addEventListener('touchmove', onCardTouchMove, { passive: false });
+                    li.addEventListener('contextmenu', onCardContextMenu);
                 });
             }
 
@@ -6389,11 +6479,6 @@
                 if (e.button !== undefined && e.button !== 0) return; // cuma klik kiri/touch utama
                 // Biar checkbox, tombol edit/hapus/salin, dan lampiran (gambar/link) tetap berfungsi normal
                 if (e.target.closest('button, a, .task-check-custom, [onclick]')) return;
-
-                if (activeMomentumRaf !== null) {
-                    cancelAnimationFrame(activeMomentumRaf);
-                    activeMomentumRaf = null;
-                }
 
                 const li = e.currentTarget;
                 const list = document.getElementById('taskList');
@@ -6403,30 +6488,10 @@
                 const startClientX = e.clientX;
                 const startClientY = e.clientY;
                 let lastY = e.clientY;
-                let lastMoveTime = performance.now();
-                let velocityY = 0; // px per ms, dipakai buat momentum pas dilepas
                 let pressTimer = null;
-                let mode = 'pending'; // 'pending' | 'scrolling' | 'dragging'
+                let mode = 'pending'; // 'pending' | 'dragging' | 'scroll'
                 let currentTY = 0;
-
-                // Buat mode 'scrolling': jangan panggil window.scrollBy tiap event pointermove
-                // (bisa nembak puluhan kali/detik -> bikin main-thread keteteran/lag).
-                // Tabung dulu jaraknya, baru dieksekusi sekali per frame lewat rAF.
-                let scrollDeltaAccum = 0;
-                let scrollRafId = null;
-
-                function flushScroll() {
-                    window.scrollBy(0, scrollDeltaAccum);
-                    scrollDeltaAccum = 0;
-                    scrollRafId = null;
-                }
-
-                function queueScroll(delta) {
-                    scrollDeltaAccum += delta;
-                    if (scrollRafId === null) {
-                        scrollRafId = requestAnimationFrame(flushScroll);
-                    }
-                }
+                taskPressActive = true;
 
                 function getGroupItems() {
                     return Array.from(list.querySelectorAll('.task-item[data-draggable="true"]'));
@@ -6434,6 +6499,7 @@
 
                 function enterDragMode() {
                     mode = 'dragging';
+                    taskDragActive = true;
                     try { li.setPointerCapture(pointerId); } catch (err) { }
                     li.classList.add('dragging-task');
                     li.style.position = 'relative';
@@ -6483,6 +6549,7 @@
                 }
 
                 function finishDragMode() {
+                    taskDragActive = false;
                     try { li.releasePointerCapture(pointerId); } catch (err) { }
                     li.classList.remove('dragging-task');
                     li.style.transform = '';
@@ -6492,88 +6559,46 @@
                     persistNewOrder();
                 }
 
+                function removeListeners() {
+                    document.removeEventListener('pointermove', onPointerMove);
+                    document.removeEventListener('pointerup', onPointerUp);
+                    document.removeEventListener('pointercancel', onPointerUp);
+                }
+
                 function onPointerMove(ev) {
                     if (ev.pointerId !== pointerId) return;
-                    ev.preventDefault();
 
                     if (mode === 'pending') {
                         const dx = Math.abs(ev.clientX - startClientX);
                         const dy = Math.abs(ev.clientY - startClientY);
                         if (dx > DRAG_MOVE_CANCEL_PX || dy > DRAG_MOVE_CANCEL_PX) {
-                            // Jari udah gerak duluan sebelum hold-nya kepenuhan -> ini niatnya scroll,
-                            // bukan geser. Karena touch-action di kartu ini "none" (browser gak ikut
-                            // ngurusin), kita scroll manual sendiri lewat JS biar tetep mulus.
+                            // Jari udah gerak duluan sebelum hold-nya kepenuhan -> ini niatnya scroll.
+                            // Batalin long-press & lepas gesture ini; browser yang scroll (native).
                             clearTimeout(pressTimer);
-                            mode = 'scrolling';
-                            lastY = ev.clientY;
+                            mode = 'scroll';
+                            taskPressActive = false;
+                            removeListeners();
                         }
                         return;
                     }
 
-                    if (mode === 'scrolling') {
-                        const now = performance.now();
-                        const dt = Math.max(now - lastMoveTime, 1);
-                        const dy = ev.clientY - lastY;
-                        lastY = ev.clientY;
-                        lastMoveTime = now;
-                        velocityY = dy / dt; // px per ms, buat efek momentum pas dilepas
-                        queueScroll(-dy);
-                        return;
-                    }
-
-                    // mode === 'dragging'
-                    onDragMove(ev);
-                }
-
-                function startMomentumScroll() {
-                    let velocity = velocityY; // px per ms
-                    let lastTs = performance.now();
-                    function step(ts) {
-                        const dt = Math.min(ts - lastTs, 48);
-                        lastTs = ts;
-                        // Gesekan biar makin lama makin pelan terus berhenti, kayak scroll native
-                        velocity *= Math.pow(0.94, dt / 16);
-                        if (Math.abs(velocity) < 0.02) {
-                            activeMomentumRaf = null;
-                            return;
-                        }
-                        window.scrollBy(0, -velocity * dt);
-                        activeMomentumRaf = requestAnimationFrame(step);
-                    }
-                    if (Math.abs(velocity) > 0.05) {
-                        activeMomentumRaf = requestAnimationFrame(step);
+                    if (mode === 'dragging') {
+                        ev.preventDefault();
+                        onDragMove(ev);
                     }
                 }
 
                 function onPointerUp(ev) {
                     if (ev.pointerId !== pointerId) return;
                     clearTimeout(pressTimer);
-                    if (scrollRafId !== null) {
-                        cancelAnimationFrame(scrollRafId);
-                        scrollRafId = null;
-                    }
-                    document.removeEventListener('pointermove', onPointerMove);
-                    document.removeEventListener('pointerup', onPointerUp);
-                    document.removeEventListener('pointercancel', onPointerUp);
-                    document.removeEventListener('touchmove', onTouchMoveRaw);
+                    removeListeners();
                     if (mode === 'dragging') finishDragMode();
-                    if (mode === 'scrolling') startMomentumScroll();
-                }
-
-                // Selain preventDefault() di pointermove, kita CEGAT JUGA raw touchmove-nya.
-                // Soalnya di sebagian browser/device, preventDefault() di Pointer Events
-                // ternyata gak selalu nyampe ke jalur internal yang nyegah gesture
-                // pull-to-refresh -- beda sama preventDefault() di Touch Events yang lebih
-                // konsisten nutupnya. Ini di-scope KHUSUS ke gesture kartu ini aja (nempel &
-                // lepas bareng listener lain di atas), jadi gak nabrak bagian lain halaman.
-                function onTouchMoveRaw(ev) {
-                    ev.preventDefault();
+                    taskPressActive = false;
                 }
 
                 document.addEventListener('pointermove', onPointerMove);
                 document.addEventListener('pointerup', onPointerUp);
                 document.addEventListener('pointercancel', onPointerUp);
-                document.addEventListener('touchmove', onTouchMoveRaw, { passive: false });
 
                 pressTimer = setTimeout(() => {
                     if (mode !== 'pending') return; // udah kepake buat scroll duluan
