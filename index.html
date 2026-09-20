@@ -33,11 +33,32 @@
             --color-5: #c1e8ff;
             --white: #ffffff;
             --accent-light: #c1e8ff;
-            --bg-gradient: linear-gradient(135deg, #e2e5f0 0%, #d4daf0 50%, #cbd2eb 100%);
+            /* ===== Variabel turunan warna aksen (default = Biru). Kalau siswa milih
+               warna lain, <style id="skuy-accent-style"> (dibuat di <head>, lihat
+               skuyApplyAccent) cuma perlu menimpa nilai-nilai di bawah ini. ===== */
+            --color-hl: #4a90d9;
+            --color-hl-rgb: 74, 144, 217;
+            --color-3-rgb: 84, 131, 179;
+            --shadow-rgb: 5, 38, 89;
+            --hl-bg: #1a3f6f;
+            --hl-text: #d4eaff;
+            --hl-shadow-rgb: 26, 63, 111;
+            --hl-bg-dark: #0f2a4a;
+            --hl-text-dark: #c8e0f8;
+            --file-bg: #e1e8f0;
+            --file-ink: #3b6ea5;
+            --btn-hover-dark: #2a5686;
+            --dark-tint-rgb: 20, 53, 92;
+            --bg-g1: #e2e5f0;
+            --bg-g2: #d4daf0;
+            --bg-g3: #cbd2eb;
+            --blob-1-rgb: 200, 207, 235;
+            --blob-2-rgb: 218, 224, 245;
+            --bg-gradient: linear-gradient(135deg, var(--bg-g1) 0%, var(--bg-g2) 50%, var(--bg-g3) 100%);
             --bg-blobs:
                 radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.4) 0%, transparent 40%),
-                radial-gradient(circle at 20% 60%, rgba(200, 207, 235, 0.6) 0%, transparent 50%),
-                radial-gradient(circle at 70% 80%, rgba(218, 224, 245, 0.5) 0%, transparent 45%);
+                radial-gradient(circle at 20% 60%, rgba(var(--blob-1-rgb), 0.6) 0%, transparent 50%),
+                radial-gradient(circle at 70% 80%, rgba(var(--blob-2-rgb), 0.5) 0%, transparent 45%);
             --bg-pattern: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='320' viewBox='0 0 320 320'%3E%3Cdefs%3E%3Csymbol id='ic-book' viewBox='0 0 90 70'%3E%3Crect x='8' y='9' width='74' height='52' rx='4'/%3E%3Cpath d='M45,9 L45,61'/%3E%3Cpath d='M17,22 L36,22'/%3E%3Cpath d='M17,32 L34,32'/%3E%3Cpath d='M17,42 L32,42'/%3E%3Cpath d='M54,22 L73,22'/%3E%3Cpath d='M56,32 L73,32'/%3E%3Cpath d='M58,42 L73,42'/%3E%3C/symbol%3E%3Csymbol id='ic-pencil' viewBox='0 0 40 100'%3E%3Crect x='15' y='26' width='10' height='58'/%3E%3Cpath d='M15,26 L20,8 L25,26 Z'/%3E%3Cpath d='M14,84 L26,84'/%3E%3Crect x='14' y='84' width='12' height='11' rx='2'/%3E%3C/symbol%3E%3Csymbol id='ic-cap' viewBox='0 0 100 70'%3E%3Cpath d='M6,26 L50,10 L94,26 L50,42 Z'/%3E%3Cpath d='M27,29 Q27,52 50,56 Q73,52 73,29'/%3E%3Cpath d='M84,23 L91,52'/%3E%3Ccircle cx='91' cy='57' r='4'/%3E%3C/symbol%3E%3Csymbol id='ic-clock' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='56' r='34'/%3E%3Cpath d='M50,56 L50,36'/%3E%3Cpath d='M50,56 L66,62'/%3E%3Cpath d='M28,24 L16,10'/%3E%3Ccircle cx='15' cy='8' r='5'/%3E%3Cpath d='M72,24 L84,10'/%3E%3Ccircle cx='85' cy='8' r='5'/%3E%3Cpath d='M38,90 L34,98'/%3E%3Cpath d='M62,90 L66,98'/%3E%3C/symbol%3E%3Csymbol id='ic-ruler' viewBox='0 0 100 40'%3E%3Crect x='4' y='12' width='92' height='18' rx='2'/%3E%3Cpath d='M14,12 L14,20'/%3E%3Cpath d='M24,12 L24,17'/%3E%3Cpath d='M34,12 L34,20'/%3E%3Cpath d='M44,12 L44,17'/%3E%3Cpath d='M54,12 L54,20'/%3E%3Cpath d='M64,12 L64,17'/%3E%3Cpath d='M74,12 L74,20'/%3E%3Cpath d='M84,12 L84,17'/%3E%3C/symbol%3E%3C/defs%3E%3Cg fill='none' stroke='%235483b3' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cuse href='%23ic-clock' x='167.3' y='13.5' width='37' height='37' opacity='0.29' transform='rotate(11 185.8 32.0)'/%3E%3Cuse href='%23ic-pencil' x='262.0' y='247.3' width='39' height='39' opacity='0.18' transform='rotate(-20 281.5 266.8)'/%3E%3Cuse href='%23ic-book' x='194.0' y='107.3' width='43' height='43' opacity='0.41' transform='rotate(14 215.5 128.8)'/%3E%3Cuse href='%23ic-ruler' x='1.5' y='35.7' width='39' height='39' opacity='0.29' transform='rotate(23 21.0 55.2)'/%3E%3Cuse href='%23ic-ruler' x='321.5' y='35.7' width='39' height='39' opacity='0.29' transform='rotate(23 341.0 55.2)'/%3E%3Cuse href='%23ic-cap' x='194.2' y='240.4' width='43' height='43' opacity='0.41' transform='rotate(-19 215.7 261.9)'/%3E%3Cuse href='%23ic-book' x='92.3' y='180.3' width='42' height='42' opacity='0.41' transform='rotate(24 113.3 201.3)'/%3E%3Cuse href='%23ic-cap' x='200.5' y='181.9' width='39' height='39' opacity='0.34' transform='rotate(12 220.0 201.4)'/%3E%3Cuse href='%23ic-pencil' x='275.6' y='160.2' width='36' height='36' opacity='0.34' transform='rotate(-21 293.6 178.2)'/%3E%3Cuse href='%23ic-ruler' x='271.7' y='97.0' width='40' height='40' opacity='0.41' transform='rotate(8 291.7 117.0)'/%3E%3Cuse href='%23ic-clock' x='20.2' y='110.1' width='37' height='37' opacity='0.29' transform='rotate(-15 38.7 128.6)'/%3E%3Cuse href='%23ic-ruler' x='82.4' y='21.2' width='36' height='36' opacity='0.18' transform='rotate(20 100.4 39.2)'/%3E%3Cuse href='%23ic-book' x='6.8' y='266.0' width='43' height='43' opacity='0.34' transform='rotate(-17 28.3 287.5)'/%3E%3Cuse href='%23ic-book' x='326.8' y='266.0' width='43' height='43' opacity='0.34' transform='rotate(-17 348.3 287.5)'/%3E%3Cuse href='%23ic-clock' x='122.3' y='243.2' width='38' height='38' opacity='0.29' transform='rotate(-9 141.3 262.2)'/%3E%3Cuse href='%23ic-pencil' x='248.0' y='36.1' width='38' height='38' opacity='0.23' transform='rotate(-14 267.0 55.1)'/%3E%3Cuse href='%23ic-cap' x='79.2' y='121.0' width='39' height='39' opacity='0.41' transform='rotate(18 98.7 140.5)'/%3E%3Cuse href='%23ic-clock' x='22.9' y='195.8' width='43' height='43' opacity='0.34' transform='rotate(15 44.4 217.3)'/%3E%3C/g%3E%3C/svg%3E");
         }
 
@@ -49,8 +70,8 @@
             --color-5: #14355c;
             --bg-gradient: linear-gradient(160deg, #101114 0%, #17181c 100%);
             --bg-blobs:
-                radial-gradient(circle at 85% 0%, rgba(74, 144, 217, 0.10) 0%, transparent 45%),
-                radial-gradient(circle at 0% 100%, rgba(20, 53, 92, 0.25) 0%, transparent 55%);
+                radial-gradient(circle at 85% 0%, rgba(var(--color-hl-rgb), 0.10) 0%, transparent 45%),
+                radial-gradient(circle at 0% 100%, rgba(var(--dark-tint-rgb), 0.25) 0%, transparent 55%);
             --bg-pattern: none;
         }
 
@@ -73,7 +94,7 @@
 
         [data-theme="dark"] .btn-nav:hover,
         [data-theme="dark"] .btn-add:hover {
-            background: #2a5686;
+            background: var(--btn-hover-dark);
         }
 
         [data-theme="dark"] #clock,
@@ -87,7 +108,7 @@
 
         [data-theme="dark"] .task-besok,
         [data-theme="dark"] .task-hariini {
-            background: linear-gradient(to right, #2a2410, #1c2233) !important;
+            background: linear-gradient(to right, #2a2410, #1d1e23) !important;
             box-shadow: 0 4px 15px rgba(212, 175, 55, 0.12) !important;
         }
 
@@ -99,7 +120,7 @@
 
         [data-theme="dark"] .task-besok.done,
         [data-theme="dark"] .task-hariini.done {
-            background: linear-gradient(to right, #1c1a12, #171b26) !important;
+            background: linear-gradient(to right, #1c1a12, #17181c) !important;
         }
 
         body {
@@ -141,7 +162,7 @@
             justify-content: center;
             cursor: pointer;
             z-index: 2900;
-            box-shadow: 0 4px 15px rgba(5, 38, 89, 0.15);
+            box-shadow: 0 4px 15px rgba(var(--shadow-rgb), 0.15);
             transition: background 0.3s ease, transform 0.15s ease;
         }
 
@@ -158,7 +179,7 @@
             align-items: center;
             justify-content: center;
             color: var(--color-2);
-            box-shadow: 0 4px 15px rgba(5, 38, 89, 0.25);
+            box-shadow: 0 4px 15px rgba(var(--shadow-rgb), 0.25);
             opacity: 0;
             pointer-events: none;
             z-index: 5000;
@@ -316,7 +337,7 @@
             text-align: center;
             position: relative;
             overflow: hidden;
-            box-shadow: 0 4px 15px rgba(5, 38, 89, 0.05);
+            box-shadow: 0 4px 15px rgba(var(--shadow-rgb), 0.05);
         }
 
         .glass-card.header-strip {
@@ -404,7 +425,7 @@
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             z-index: 100;
             border: 1px solid var(--color-4);
-            box-shadow: 0 15px 35px rgba(5, 38, 89, 0.1);
+            box-shadow: 0 15px 35px rgba(var(--shadow-rgb), 0.1);
         }
 
         #quote-popup.show {
@@ -563,7 +584,7 @@
             padding: 9px 18px;
             margin-top: -8px;
             cursor: pointer;
-            box-shadow: 0 4px 12px rgba(5, 38, 89, 0.35);
+            box-shadow: 0 4px 12px rgba(var(--shadow-rgb), 0.35);
             transition: transform 0.15s ease, box-shadow 0.15s ease;
             animation: slideSwap 0.7s cubic-bezier(0.22, 1, 0.36, 1);
         }
@@ -576,7 +597,7 @@
 
         .btn-today-link:active {
             transform: scale(0.94);
-            box-shadow: 0 2px 6px rgba(5, 38, 89, 0.35);
+            box-shadow: 0 2px 6px rgba(var(--shadow-rgb), 0.35);
         }
 
         .week-toggle {
@@ -647,7 +668,7 @@
             flex-direction: column;
             gap: 2px;
             position: relative;
-            box-shadow: 0 2px 4px rgba(5, 38, 89, 0.02);
+            box-shadow: 0 2px 4px rgba(var(--shadow-rgb), 0.02);
             white-space: normal;
             word-break: break-word;
             line-height: 1.3;
@@ -681,21 +702,21 @@
             color: var(--accent-light) !important;
             border-left: 8px solid var(--color-1) !important;
             z-index: 2;
-            box-shadow: 0 8px 20px rgba(5, 38, 89, 0.2);
+            box-shadow: 0 8px 20px rgba(var(--shadow-rgb), 0.2);
             animation: pulse-glow-light 2s infinite ease-in-out;
         }
 
         @keyframes pulse-glow-light {
             0% {
-                box-shadow: 0 0 10px rgba(5, 38, 89, 0.1);
+                box-shadow: 0 0 10px rgba(var(--shadow-rgb), 0.1);
             }
 
             50% {
-                box-shadow: 0 0 20px rgba(5, 38, 89, 0.3);
+                box-shadow: 0 0 20px rgba(var(--shadow-rgb), 0.3);
             }
 
             100% {
-                box-shadow: 0 0 10px rgba(5, 38, 89, 0.1);
+                box-shadow: 0 0 10px rgba(var(--shadow-rgb), 0.1);
             }
         }
 
@@ -975,7 +996,7 @@
             max-width: 430px;
             z-index: 99;
             transition: all 0.1s ease;
-            box-shadow: 0 4px 0 var(--color-2), 0 6px 20px rgba(5,38,89,0.15);
+            box-shadow: 0 4px 0 var(--color-2), 0 6px 20px rgba(var(--shadow-rgb),0.15);
             zoom: 0.93;
         }
 
@@ -1009,7 +1030,7 @@
             justify-content: center;
             font-size: 20px;
             cursor: pointer;
-            box-shadow: 0 4px 15px rgba(5, 38, 89, 0.3);
+            box-shadow: 0 4px 15px rgba(var(--shadow-rgb), 0.3);
             z-index: 999;
             transition: transform 0.2s;
         }
@@ -1039,7 +1060,7 @@
             background: var(--white);
             border-radius: 20px;
             border: 1px solid var(--color-4);
-            box-shadow: 0 15px 30px rgba(5, 38, 89, 0.1);
+            box-shadow: 0 15px 30px rgba(var(--shadow-rgb), 0.1);
         }
 
         .pomo-time-big {
@@ -1075,7 +1096,7 @@
             z-index: 4400;
             text-align: center;
             display: none;
-            box-shadow: 0 20px 50px rgba(5, 38, 89, 0.15);
+            box-shadow: 0 20px 50px rgba(var(--shadow-rgb), 0.15);
             transition: 0.3s;
         }
 
@@ -1117,7 +1138,7 @@
             text-align: center;
             display: none;
             padding: 34px 24px 28px;
-            box-shadow: 0 30px 70px rgba(5, 38, 89, 0.2);
+            box-shadow: 0 30px 70px rgba(var(--shadow-rgb), 0.2);
             opacity: 0;
             transition: opacity 0.3s ease, transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
             overflow: hidden;
@@ -1246,14 +1267,14 @@
             cursor: pointer;
             width: 100%;
             letter-spacing: 0.5px;
-            box-shadow: 0 6px 20px rgba(5, 38, 89, 0.25);
+            box-shadow: 0 6px 20px rgba(var(--shadow-rgb), 0.25);
             transition: transform 0.1s, box-shadow 0.1s;
             animation: fadeSlideUp 0.4s ease 0.35s both;
         }
 
         .success-btn:active {
             transform: scale(0.97);
-            box-shadow: 0 3px 10px rgba(5, 38, 89, 0.2);
+            box-shadow: 0 3px 10px rgba(var(--shadow-rgb), 0.2);
         }
 
         .success-sparkles {
@@ -1301,7 +1322,7 @@
             z-index: 4301;
             text-align: center;
             display: none;
-            box-shadow: 0 24px 60px rgba(5, 38, 89, 0.18);
+            box-shadow: 0 24px 60px rgba(var(--shadow-rgb), 0.18);
             opacity: 0;
             transition: opacity 0.25s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
@@ -1430,7 +1451,7 @@
             z-index: 3500;
             text-align: center;
             display: none;
-            box-shadow: 0 24px 60px rgba(5, 38, 89, 0.18);
+            box-shadow: 0 24px 60px rgba(var(--shadow-rgb), 0.18);
             opacity: 0;
             transition: opacity 0.25s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
@@ -1599,7 +1620,7 @@
             background: var(--white);
             border-radius: 20px;
             border: 1px solid var(--color-4);
-            box-shadow: 0 15px 30px rgba(5, 38, 89, 0.15);
+            box-shadow: 0 15px 30px rgba(var(--shadow-rgb), 0.15);
         }
 
         .edit-task-box h3 {
@@ -1647,7 +1668,7 @@
             align-items: center;
             justify-content: space-between;
             gap: 8px;
-            background: rgba(84, 131, 179, 0.08);
+            background: rgba(var(--color-3-rgb), 0.08);
             border: 1px solid var(--color-4);
             border-radius: 8px;
             padding: 6px 10px;
@@ -1706,7 +1727,7 @@
 
         .task-item.dragging-task {
             opacity: 0.96;
-            box-shadow: 0 10px 24px rgba(5, 38, 89, 0.25);
+            box-shadow: 0 10px 24px rgba(var(--shadow-rgb), 0.25);
             background: var(--white);
             border-radius: 12px;
         }
@@ -1923,7 +1944,7 @@
         }
 
         .file-box {
-            background: #e1e8f0;
+            background: var(--file-bg);
             padding: 10px;
             border-radius: 8px;
             font-size: 11px;
@@ -1939,24 +1960,24 @@
         }
 
         .file-doc-box {
-            background: #e1e8f0;
+            background: var(--file-bg);
             padding: 12px;
             border-radius: 10px;
             display: flex;
             align-items: center;
             gap: 12px;
-            border: 1.5px solid #7da0ca;
+            border: 1.5px solid var(--color-4);
             cursor: pointer;
             transition: background 0.3s ease, border-color 0.3s ease;
         }
 
         .file-doc-box svg {
-            color: #3b6ea5;
+            color: var(--file-ink);
         }
 
         .file-doc-name {
             font-size: 11px;
-            color: #052659;
+            color: var(--color-2);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -1965,7 +1986,7 @@
         .file-doc-sub {
             font-size: 9px;
             font-style: italic;
-            color: #3b6ea5;
+            color: var(--file-ink);
             margin-top: 2px;
         }
 
@@ -1991,6 +2012,49 @@
         .file-audio-el {
             width: 100%;
             height: 35px;
+        }
+
+        /* ===== Pemilih warna aksen (tab Profil) ===== */
+        .accent-swatch {
+            all: unset;
+            box-sizing: border-box;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .accent-dot {
+            display: block;
+            box-sizing: border-box;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            border: 4px solid transparent;
+            outline: 2px solid transparent;
+            outline-offset: 2px;
+            transition: transform 0.15s ease, outline-color 0.2s ease;
+        }
+
+        .accent-swatch:active .accent-dot {
+            transform: scale(0.9);
+        }
+
+        .accent-swatch.active .accent-dot {
+            outline-color: var(--color-2);
+        }
+
+        .accent-name {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--color-3);
+        }
+
+        .accent-swatch.active .accent-name {
+            color: var(--color-1);
         }
 
         /* --- Dark mode only, light mode above stays untouched --- */
@@ -2213,8 +2277,8 @@
             border-radius: 20px;
             padding: 6px;
             box-shadow:
-                0 8px 32px rgba(5, 38, 89, 0.18),
-                0 2px 8px rgba(5, 38, 89, 0.10);
+                0 8px 32px rgba(var(--shadow-rgb), 0.18),
+                0 2px 8px rgba(var(--shadow-rgb), 0.10);
             z-index: 100;
             zoom: 0.93;
         }
@@ -2374,25 +2438,25 @@
         }
 
         .schedule-card.highlight {
-            background: #1a3f6f !important;
-            border-color: #4a90d9 !important;
-            border-left: 4px solid #4a90d9 !important;
+            background: var(--hl-bg) !important;
+            border-color: var(--color-hl) !important;
+            border-left: 4px solid var(--color-hl) !important;
             box-shadow:
-                0 0 0 2px rgba(74, 144, 217, 0.25),
-                0 6px 24px rgba(26, 63, 111, 0.45) !important;
+                0 0 0 2px rgba(var(--color-hl-rgb), 0.25),
+                0 6px 24px rgba(var(--hl-shadow-rgb), 0.45) !important;
             animation: card-pulse 2.5s ease-in-out infinite !important;
             transform: translateY(-1px);
         }
 
         @keyframes card-pulse {
-            0%, 100% { box-shadow: 0 0 0 2px rgba(74, 144, 217, 0.25), 0 6px 24px rgba(26, 63, 111, 0.45); }
-            50%       { box-shadow: 0 0 0 4px rgba(74, 144, 217, 0.45), 0 8px 32px rgba(26, 63, 111, 0.60); }
+            0%, 100% { box-shadow: 0 0 0 2px rgba(var(--color-hl-rgb), 0.25), 0 6px 24px rgba(var(--hl-shadow-rgb), 0.45); }
+            50%       { box-shadow: 0 0 0 4px rgba(var(--color-hl-rgb), 0.45), 0 8px 32px rgba(var(--hl-shadow-rgb), 0.60); }
         }
 
         .schedule-card.highlight .sc-time,
         .schedule-card.highlight .sc-ruang,
         .schedule-card.highlight .sc-mapel {
-            color: #d4eaff !important;
+            color: var(--hl-text) !important;
         }
 
         .schedule-card.highlight .sc-mapel {
@@ -2460,7 +2524,7 @@
             background: #FAC775;
             border: none;
             border-radius: 20px;
-            box-shadow: 0 2px 8px rgba(5, 38, 89, 0.25);
+            box-shadow: 0 2px 8px rgba(var(--shadow-rgb), 0.25);
             text-transform: uppercase;
             font-size: 9px;
             white-space: nowrap;
@@ -2790,7 +2854,7 @@
             width: 48px;
             height: 10px;
             border-radius: 50%;
-            background: rgba(5, 38, 89, .14);
+            background: rgba(var(--shadow-rgb), .14);
             animation: mascotShadow 2.6s ease-in-out infinite;
         }
 
@@ -2893,11 +2957,11 @@
         }
 
         [data-theme="dark"] .schedule-card.highlight {
-            background: #0f2a4a !important;
-            border-color: #4a90d9 !important;
-            border-left: 4px solid #4a90d9 !important;
+            background: var(--hl-bg-dark) !important;
+            border-color: var(--color-hl) !important;
+            border-left: 4px solid var(--color-hl) !important;
             box-shadow:
-                0 0 0 2px rgba(74, 144, 217, 0.30),
+                0 0 0 2px rgba(var(--color-hl-rgb), 0.30),
                 0 6px 28px rgba(10, 30, 60, 0.70) !important;
             animation: card-pulse 2.5s ease-in-out infinite !important;
         }
@@ -2905,7 +2969,7 @@
         [data-theme="dark"] .schedule-card.highlight .sc-time,
         [data-theme="dark"] .schedule-card.highlight .sc-ruang,
         [data-theme="dark"] .schedule-card.highlight .sc-mapel {
-            color: #c8e0f8 !important;
+            color: var(--hl-text-dark) !important;
         }
 
         [data-theme="dark"] .schedule-card.highlight .sc-mapel {
@@ -2923,10 +2987,115 @@
         }
 
         [data-theme="dark"] .bottom-nav-btn.active {
-            background: rgba(74, 144, 217, 0.15);
+            background: rgba(var(--color-hl-rgb), 0.15);
             color: var(--color-2);
         }
     </style>
+    <script>
+        // ===== WARNA AKSEN PILIHAN =====
+        // Biru = tampilan bawaan (nilai default di :root), jadi gak perlu ditimpa apa-apa.
+        // Warna lain cuma nimpa variabel lewat <style id="skuy-accent-style">.
+        // Dijalanin seawal mungkin di <head> (sebelum body ke-render) supaya gak ada
+        // kedip biru dulu pas app dibuka.
+        //   c1..c5 = ramp mode terang (c1 tergelap, c5 tint paling muda)
+        //   d2/d5  = versi mode gelap dari c2 & c5    | bg = 3 warna gradien latar
+        //   b1/b2  = warna blob latar (rgb)           | hl/hlText = kartu jadwal "sedang berlangsung"
+        //   file/ink = kotak file lampiran            | dHover/dHl/dHlText = varian mode gelap
+        var SKUY_ACCENTS = {
+            biru: { name: 'Biru', c1: '#021024', c2: '#052659', c3: '#5483b3', c4: '#7da0ca', c5: '#c1e8ff' },
+            hijau: {
+                name: 'Hijau', c1: '#062615', c2: '#14532d', c3: '#4d9a6a', c4: '#86c79f', c5: '#d5f2e0',
+                bg: ['#e3efe7', '#d3e4da', '#c8dcd0'], b1: '200, 225, 210', b2: '218, 236, 225',
+                file: '#dfeee5', ink: '#3a7f58', hl: '#1d5a37', hlText: '#d6f5e3',
+                d2: '#4caf78', d5: '#14402a', dHover: '#2a6b46', dHl: '#0f3020', dHlText: '#c8eedb'
+            },
+            ungu: {
+                name: 'Ungu', c1: '#1e1147', c2: '#4527a0', c3: '#8a6fd1', c4: '#b4a0e6', c5: '#e6defa',
+                bg: ['#e8e5f3', '#dbd6ef', '#d0cae9'], b1: '212, 205, 238', b2: '226, 221, 244',
+                file: '#e6e2f3', ink: '#6b53b8', hl: '#3f2b87', hlText: '#e6defa',
+                d2: '#9b7fe8', d5: '#2f2160', dHover: '#55429f', dHl: '#241a4d', dHlText: '#dcd2f7'
+            },
+            coral: {
+                name: 'Coral', c1: '#3a0f0a', c2: '#8f2a17', c3: '#d0684f', c4: '#eb9d8a', c5: '#fbe0d8',
+                bg: ['#f3e8e4', '#efd9d2', '#ead0c8'], b1: '240, 208, 198', b2: '247, 224, 217',
+                file: '#f6e6e1', ink: '#b5533b', hl: '#a63a24', hlText: '#fbe0d8',
+                d2: '#e2725a', d5: '#5a2218', dHover: '#8a3e2d', dHl: '#4a1a10', dHlText: '#f8d3c9'
+            },
+            teal: {
+                name: 'Teal', c1: '#032b2b', c2: '#0f5c5c', c3: '#3a9d9d', c4: '#7cc7c4', c5: '#d3f3f0',
+                bg: ['#e2f0ef', '#d1e6e4', '#c5dedc'], b1: '196, 226, 224', b2: '214, 236, 234',
+                file: '#dcefed', ink: '#2a8583', hl: '#14706f', hlText: '#d3f3f0',
+                d2: '#3fb5b0', d5: '#0f4444', dHover: '#1f6b69', dHl: '#0c3535', dHlText: '#c5eeeb'
+            }
+        };
+
+        // Pola ikon di latar (buku, jam, topi wisuda) warnanya ditanam di data URI SVG,
+        // yang gak bisa pakai var(). Makanya diambil sekali (versi terang, sebelum
+        // data-theme kepasang) lalu warnanya diganti lewat string replace.
+        var SKUY_PATTERN_BASE = '';
+        try {
+            SKUY_PATTERN_BASE = getComputedStyle(document.documentElement).getPropertyValue('--bg-pattern').trim();
+        } catch (e) { }
+
+        function skuyHexToRgb(hex) {
+            var h = hex.replace('#', '');
+            return parseInt(h.substr(0, 2), 16) + ', ' + parseInt(h.substr(2, 2), 16) + ', ' + parseInt(h.substr(4, 2), 16);
+        }
+
+        function skuyApplyAccent(key) {
+            var a = SKUY_ACCENTS[key];
+            var old = document.getElementById('skuy-accent-style');
+            if (!a || key === 'biru') {
+                if (old && old.parentNode) old.parentNode.removeChild(old);
+                return;
+            }
+            var pattern = '';
+            if (SKUY_PATTERN_BASE && SKUY_PATTERN_BASE.indexOf('%235483b3') !== -1) {
+                pattern = SKUY_PATTERN_BASE.split('%235483b3').join('%23' + a.c3.replace('#', ''));
+            }
+            // Selector sengaja dibikin lebih spesifik dari :root & [data-theme="dark"] bawaan
+            // supaya menang tanpa peduli urutan tulis di file.
+            var css =
+                ':root{' +
+                '--color-3:' + a.c3 + ';--color-4:' + a.c4 + ';--accent-light:' + a.c5 + ';' +
+                '--color-3-rgb:' + skuyHexToRgb(a.c3) + ';' +
+                '--color-hl:' + a.d2 + ';--color-hl-rgb:' + skuyHexToRgb(a.d2) + ';' +
+                '--shadow-rgb:' + skuyHexToRgb(a.c2) + ';' +
+                '--hl-bg:' + a.hl + ';--hl-text:' + a.hlText + ';--hl-shadow-rgb:' + skuyHexToRgb(a.hl) + ';' +
+                '--hl-bg-dark:' + a.dHl + ';--hl-text-dark:' + a.dHlText + ';' +
+                '--file-bg:' + a.file + ';--file-ink:' + a.ink + ';--btn-hover-dark:' + a.dHover + ';' +
+                '--dark-tint-rgb:' + skuyHexToRgb(a.d5) + ';' +
+                '--bg-g1:' + a.bg[0] + ';--bg-g2:' + a.bg[1] + ';--bg-g3:' + a.bg[2] + ';' +
+                '--blob-1-rgb:' + a.b1 + ';--blob-2-rgb:' + a.b2 + ';' +
+                '}' +
+                ':root:not([data-theme="dark"]){' +
+                '--color-1:' + a.c1 + ';--color-2:' + a.c2 + ';--color-5:' + a.c5 + ';--bg-color:' + a.bg[0] + ';' +
+                (pattern ? '--bg-pattern:' + pattern + ';' : '') +
+                '}' +
+                ':root[data-theme="dark"]{' +
+                '--color-2:' + a.d2 + ';--color-5:' + a.d5 + ';' +
+                '}';
+            if (!old) {
+                old = document.createElement('style');
+                old.id = 'skuy-accent-style';
+                document.head.appendChild(old);
+            }
+            old.textContent = css;
+        }
+
+        function skuySetAccent(key) {
+            if (!SKUY_ACCENTS[key]) key = 'biru';
+            try { localStorage.setItem('skuyAccent', key); } catch (e) { }
+            skuyApplyAccent(key);
+            if (typeof updateProfilAccentUI === 'function') updateProfilAccentUI();
+        }
+
+        (function () {
+            var saved = 'biru';
+            try { saved = localStorage.getItem('skuyAccent') || 'biru'; } catch (e) { }
+            skuyApplyAccent(saved);
+        })();
+    </script>
     <script>
         (function () {
             var saved = localStorage.getItem('skuyTheme');
@@ -2968,7 +3137,7 @@
             const knob = document.getElementById('profil-theme-knob');
             const icon = document.getElementById('profil-theme-icon');
             if (label) label.textContent = isDark ? 'Mode Gelap' : 'Mode Terang';
-            if (toggle) toggle.style.background = isDark ? '#4a90d9' : 'var(--color-4)';
+            if (toggle) toggle.style.background = isDark ? 'var(--color-hl)' : 'var(--color-4)';
             if (knob) knob.style.left = isDark ? '21px' : '3px';
             if (icon) {
                 icon.innerHTML = isDark
@@ -2977,13 +3146,35 @@
             }
         }
 
+        function updateProfilAccentUI() {
+            const wrap = document.getElementById('profil-accent-swatches');
+            if (!wrap || typeof SKUY_ACCENTS === 'undefined') return;
+            let current = 'biru';
+            try { current = localStorage.getItem('skuyAccent') || 'biru'; } catch (e) { }
+            if (!SKUY_ACCENTS[current]) current = 'biru';
+            if (!wrap.dataset.built) {
+                wrap.innerHTML = Object.keys(SKUY_ACCENTS).map(k => {
+                    const a = SKUY_ACCENTS[k];
+                    return `<button type="button" class="accent-swatch" data-key="${k}" aria-label="Warna ${a.name}" aria-pressed="false" onclick="skuySetAccent('${k}')"><span class="accent-dot" style="background:${a.c2}; border-color:${a.c5};"></span><span class="accent-name">${a.name}</span></button>`;
+                }).join('');
+                wrap.dataset.built = '1';
+            }
+            wrap.querySelectorAll('.accent-swatch').forEach(b => {
+                const on = b.dataset.key === current;
+                b.classList.toggle('active', on);
+                b.setAttribute('aria-pressed', on ? 'true' : 'false');
+            });
+            const sub = document.getElementById('profil-accent-sub');
+            if (sub) sub.textContent = 'Warna utama: ' + SKUY_ACCENTS[current].name;
+        }
+
         function updateProfilNotifUI() {
             const isOn = localStorage.getItem('notifEnabled') !== 'false';
             const label = document.getElementById('profil-notif-label');
             const toggle = document.getElementById('profil-notif-toggle');
             const knob = document.getElementById('profil-notif-knob');
             if (label) label.textContent = isOn ? 'Notifikasi Aktif' : 'Notifikasi Mati';
-            if (toggle) toggle.style.background = isOn ? '#4a90d9' : 'var(--color-4)';
+            if (toggle) toggle.style.background = isOn ? 'var(--color-hl)' : 'var(--color-4)';
             if (knob) knob.style.left = isOn ? '21px' : '3px';
         }
 
@@ -3022,7 +3213,7 @@
                     Dokumen</b>
                 <div style="display: flex; gap: 8px; align-items: center;">
                     <a id="docOpenNewTab" href="#" target="_blank" rel="noopener"
-                        style="background: #5483b3; color: white; border: none; padding: 5px 12px; border-radius: 8px; cursor: pointer; font-weight: bold; text-decoration: none; font-size: 13px; white-space: nowrap;">Buka
+                        style="background: var(--color-3); color: white; border: none; padding: 5px 12px; border-radius: 8px; cursor: pointer; font-weight: bold; text-decoration: none; font-size: 13px; white-space: nowrap;">Buka
                         Tab Baru</a>
                     <button onclick="closeDocPreview()"
                         style="background: #dc3545; color: white; border: none; padding: 5px 12px; border-radius: 8px; cursor: pointer; font-weight: bold;">Tutup</button>
@@ -3354,6 +3545,21 @@
                         </div>
                     </div>
 
+                    <!-- Warna Aksen -->
+                    <div style="background:var(--white); border:1.5px solid var(--color-5); border-radius:14px; padding:14px 16px;">
+                        <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--color-2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/>
+                                <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/>
+                            </svg>
+                            <div>
+                                <p style="font-size:13px; font-weight:700; color:var(--color-1); margin:0;">Warna Aksen</p>
+                                <p id="profil-accent-sub" style="font-size:11px; color:var(--color-3); margin:2px 0 0;">Warna utama aplikasi</p>
+                            </div>
+                        </div>
+                        <div id="profil-accent-swatches" style="display:flex; gap:6px;"></div>
+                    </div>
+
                     <!-- Toggle Notifikasi -->
                     <div onclick="toggleNotif(); updateProfilNotifUI()" style="display:flex; align-items:center; justify-content:space-between; background:var(--white); border:1.5px solid var(--color-5); border-radius:14px; padding:14px 16px; cursor:pointer;">
                         <div style="display:flex; align-items:center; gap:12px;">
@@ -3453,7 +3659,7 @@
     <script>
             function linkify(text) {
                 const urlPattern = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
-                return text.replace(urlPattern, '<a href="$1" target="_blank" style="color: #5483b3; text-decoration: underline;">$1</a>');
+                return text.replace(urlPattern, '<a href="$1" target="_blank" style="color: var(--color-3); text-decoration: underline;">$1</a>');
             }
 
             function mascotSvg() {
@@ -3592,6 +3798,7 @@
                     updateProfilThemeUI();
                     updateProfilNotifUI();
                     updateProfilBgUI();
+                    updateProfilAccentUI();
                 }
                 syncFixedNavButtons();
             }
@@ -3753,7 +3960,7 @@
             function spawnSparkles() {
                 const container = document.getElementById('successSparkles');
                 container.innerHTML = '';
-                const colors = ['#28a745', '#20c050', '#5483b3', '#ffd700', '#052659', '#7da0ca', '#ffffff'];
+                const colors = ['#28a745', '#20c050', 'var(--color-3)', '#ffd700', 'var(--color-2)', 'var(--color-4)', '#ffffff'];
                 for (let i = 0; i < 22; i++) {
                     const el = document.createElement('div');
                     el.className = 'sparkle';
@@ -4591,11 +4798,11 @@
                             const url = URL.createObjectURL(file);
                             previewTag = `<img src="${url}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px;">`;
                         } else if (file.type.startsWith('audio')) {
-                            previewTag = `<div style="width: 60px; height: 60px; background: #5483b3; color: white; display: flex; align-items: center; justify-content: center; border-radius: 8px;"><svg width="18" height="18" viewBox="1 1 22 22" fill="none"><path d="M13,17.5V3a25.84,25.84,0,0,0,3.44,3c1.66,1.07,1.91,2.76,1.15,5" style="fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2.2;"></path><circle cx="9.5" cy="17.5" r="3.5" style="fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2.2;"></circle></svg></div>`;
+                            previewTag = `<div style="width: 60px; height: 60px; background: var(--color-3); color: white; display: flex; align-items: center; justify-content: center; border-radius: 8px;"><svg width="18" height="18" viewBox="1 1 22 22" fill="none"><path d="M13,17.5V3a25.84,25.84,0,0,0,3.44,3c1.66,1.07,1.91,2.76,1.15,5" style="fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2.2;"></path><circle cx="9.5" cy="17.5" r="3.5" style="fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2.2;"></circle></svg></div>`;
                         } else if (file.type.startsWith('video')) {
-                            previewTag = `<div style="width: 60px; height: 60px; background: #5483b3; color: white; display: flex; align-items: center; justify-content: center; border-radius: 8px;"><svg width="24" height="24" viewBox="0 0 122.88 111.34" fill="currentColor"><path d="M23.59,0h75.7a23.68,23.68,0,0,1,23.59,23.59V87.75A23.56,23.56,0,0,1,116,104.41l-.22.2a23.53,23.53,0,0,1-16.44,6.73H23.59a23.53,23.53,0,0,1-16.66-6.93l-.2-.22A23.46,23.46,0,0,1,0,87.75V23.59A23.66,23.66,0,0,1,23.59,0ZM54,47.73,79.25,65.36a3.79,3.79,0,0,1,.14,6.3L54.22,89.05a3.75,3.75,0,0,1-2.4.87A3.79,3.79,0,0,1,48,86.13V50.82h0A3.77,3.77,0,0,1,54,47.73ZM7.35,26.47h14L30.41,7.35H23.59A16.29,16.29,0,0,0,7.35,23.59v2.88ZM37.05,7.35,28,26.47H53.36L62.43,7.38v0Zm32,0L59.92,26.47h24.7L93.7,7.35Zm31.32,0L91.26,26.47h24.27V23.59a16.32,16.32,0,0,0-15.2-16.21Zm15.2,26.68H7.35V87.75A16.21,16.21,0,0,0,12,99.05l.17.16A16.19,16.19,0,0,0,23.59,104h75.7a16.21,16.21,0,0,0,11.3-4.6l.16-.18a16.17,16.17,0,0,0,4.78-11.46V34.06Z"/></svg></div>`;
+                            previewTag = `<div style="width: 60px; height: 60px; background: var(--color-3); color: white; display: flex; align-items: center; justify-content: center; border-radius: 8px;"><svg width="24" height="24" viewBox="0 0 122.88 111.34" fill="currentColor"><path d="M23.59,0h75.7a23.68,23.68,0,0,1,23.59,23.59V87.75A23.56,23.56,0,0,1,116,104.41l-.22.2a23.53,23.53,0,0,1-16.44,6.73H23.59a23.53,23.53,0,0,1-16.66-6.93l-.2-.22A23.46,23.46,0,0,1,0,87.75V23.59A23.66,23.66,0,0,1,23.59,0ZM54,47.73,79.25,65.36a3.79,3.79,0,0,1,.14,6.3L54.22,89.05a3.75,3.75,0,0,1-2.4.87A3.79,3.79,0,0,1,48,86.13V50.82h0A3.77,3.77,0,0,1,54,47.73ZM7.35,26.47h14L30.41,7.35H23.59A16.29,16.29,0,0,0,7.35,23.59v2.88ZM37.05,7.35,28,26.47H53.36L62.43,7.38v0Zm32,0L59.92,26.47h24.7L93.7,7.35Zm31.32,0L91.26,26.47h24.27V23.59a16.32,16.32,0,0,0-15.2-16.21Zm15.2,26.68H7.35V87.75A16.21,16.21,0,0,0,12,99.05l.17.16A16.19,16.19,0,0,0,23.59,104h75.7a16.21,16.21,0,0,0,11.3-4.6l.16-.18a16.17,16.17,0,0,0,4.78-11.46V34.06Z"/></svg></div>`;
                         } else {
-                            previewTag = `<div style="width: 60px; height: 60px; background: #7da0ca; color: white; display: flex; align-items: center; justify-content: center; border-radius: 8px;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M4 4V20C4 21.1046 4.89543 22 6 22L18 22C19.1046 22 20 21.1046 20 20V8.34162C20 7.8034 19.7831 7.28789 19.3982 6.91161L14.9579 2.56999C14.5842 2.20459 14.0824 2 13.5597 2L6 2C4.89543 2 4 2.89543 4 4Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 13H15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 17H12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 2V6C14 7.10457 14.8954 8 16 8H20" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg></div>`;
+                            previewTag = `<div style="width: 60px; height: 60px; background: var(--color-4); color: white; display: flex; align-items: center; justify-content: center; border-radius: 8px;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M4 4V20C4 21.1046 4.89543 22 6 22L18 22C19.1046 22 20 21.1046 20 20V8.34162C20 7.8034 19.7831 7.28789 19.3982 6.91161L14.9579 2.56999C14.5842 2.20459 14.0824 2 13.5597 2L6 2C4.89543 2 4 2.89543 4 4Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 13H15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 17H12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 2V6C14 7.10457 14.8954 8 16 8H20" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg></div>`;
                         }
                         wrapper.innerHTML = `${previewTag}<button onclick="removeSpecificImage('${fileId}', this)" style="position:absolute; top:-5px; right:-5px; background:red; color:white; border:none; border-radius:50%; width:18px; height:18px; cursor:pointer; font-size:12px; display:flex; align-items:center; justify-content:center;">×</button>`;
                         previewContainer.appendChild(wrapper);
@@ -5182,7 +5389,7 @@
               stroke="var(--color-2)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
     </svg>` :
                         `<svg viewBox="0 0 24 24" fill="none" width="20" height="20">
-        <circle cx="12" cy="12" r="9" stroke="#aac0d8" stroke-width="1.8"/>
+        <circle cx="12" cy="12" r="9" stroke="var(--color-4)" stroke-width="1.8"/>
     </svg>`
                     }
 </div>
