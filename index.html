@@ -806,26 +806,24 @@
             margin: 4px 3px;
         }
 
-        /* Isi tugas dulunya semi-bold (600) — di bobot itu teks *tebal* hampir gak kelihatan
-           bedanya. Makanya isi tugas diturunin ke 400 (normal) & tebal 700, mirip Word.
-           Mau balik ke tampilan lama? Ganti 400 jadi 600 di bawah (tebal jadi kurang kentara). */
-        .task-text {
-            font-weight: 400;
-        }
-
+        /* Isi tugas tetap semi-bold (600) sesuai tampilan asli app; teks *tebal* dinaikkan
+           ke 800 (bobot paling tebal yang dimuat font Poppins di app ini). */
         .task-text b {
-            font-weight: 700;
+            font-weight: 800;
         }
 
+        /* Daftar ala WhatsApp: menjorok dikit dari kiri, penanda (•, 1., a.) nempel rapat ke
+           teksnya (cuma sejarak 1 spasi), dan baris yang kepanjangan tetap sejajar di bawah teks. */
         .ft-li {
             display: flex;
             align-items: flex-start;
-            gap: 6px;
+            gap: 0.3em;
+            padding-left: 0.6em;
         }
 
         .ft-mk {
             flex: none;
-            min-width: 1.3em;
+            min-width: 0.85em;
         }
 
         .ft-lt {
@@ -3839,7 +3837,7 @@
                     if (m) {
                         const level = Math.min(4, Math.floor(m[1].replace(/\t/g, '  ').length / 2));
                         const mk = m[2] ? '•' : (m[3] !== undefined ? m[3] + '.' : m[4] + '.');
-                        return '<div class="ft-li"' + (level ? ' style="margin-left:' + (level * 14) + 'px"' : '') + '>' +
+                        return '<div class="ft-li"' + (level ? ' style="margin-left:' + (level * 12) + 'px"' : '') + '>' +
                             '<span class="ft-mk">' + mk + '</span><span class="ft-lt">' + fmtInline(m[5]) + '</span></div>';
                     }
                     if (line.trim() === '') return '<div class="ft-ln"><br></div>';
