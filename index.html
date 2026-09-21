@@ -4856,6 +4856,7 @@
             }
 
             // ==== Pull to refresh custom ====
+            const PTR_SETTLE_MS = 600; // harus diam di paling atas segini lama sebelum tarik-refresh aktif
             (function () {
                 const indicator = document.getElementById('pull-refresh-indicator');
                 if (!indicator) return;
@@ -4895,7 +4896,10 @@
                         return;
                     }
                     // boleh mulai narik dari mana aja di layar, asal halamannya lagi di posisi paling atas
-                    if (window.scrollY <= 0) {
+                    // DAN bukan baru aja selesai scroll. Kalau baru nyampe atas gara-gara scroll naik,
+                    // usapan berikutnya (yang masih lanjutan scroll) dulu bikin halaman ke-refresh &
+                    // balik ke posisi awal — makanya harus diam dulu sebentar di atas.
+                    if (window.scrollY <= 0 && Date.now() - lastUserScrollTs > PTR_SETTLE_MS) {
                         startY = e.touches[0].clientY;
                         pulling = true;
                     }
@@ -6448,7 +6452,8 @@
             //   (scroll) -> jari gerak duluan sebelum hold kepenuhan -> kita mundur, browser scroll
             //   dragging -> jari diem sampai long-press kepenuhan -> mode geser kartu; scroll
             //               native ditahan lewat preventDefault di touchmove (onCardTouchMove)
-            const DRAG_LONG_PRESS_MS = 380;
+            const DRAG_LONG_PRESS_MS = 450;
+            const DRAG_IDLE_AFTER_SCROLL_MS = 350; // sentuhan pas daftar masih meluncur = ngerem scroll, bukan mau geser kartu
             const DRAG_MOVE_CANCEL_PX = 8;
 
             let taskDragActive = false;  // true selama kartu lagi digeser (nahan scroll native)
@@ -6479,6 +6484,11 @@
                 if (e.button !== undefined && e.button !== 0) return; // cuma klik kiri/touch utama
                 // Biar checkbox, tombol edit/hapus/salin, dan lampiran (gambar/link) tetap berfungsi normal
                 if (e.target.closest('button, a, .task-check-custom, [onclick]')) return;
+
+                // Jari nyentuh pas daftar masih meluncur (baru aja scroll) -> itu buat ngerem scroll,
+                // jangan diitung sebagai awal long-press geser kartu (kalau kepicu, kartunya malah
+                // keangkat & loncat ke atas, bukan daftarnya yang di-scroll).
+                if (Date.now() - lastUserScrollTs < DRAG_IDLE_AFTER_SCROLL_MS) return;
 
                 const li = e.currentTarget;
                 const list = document.getElementById('taskList');
