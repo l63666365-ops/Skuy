@@ -5655,6 +5655,7 @@
             function renderTaskList(role, isBesokMode) {
                 const list = document.getElementById('taskList');
                 if (!list) return;
+                const __scrollBefore = window.scrollY;
                 list.innerHTML = "";
 
                 const q = taskSearchQuery.trim().toLowerCase();
@@ -5724,6 +5725,22 @@
                 });
 
                 initTaskDragReorder();
+                // KETEMU AKAR MASALAHNYA: list.innerHTML="" bikin dokumen SEKEJAP jadi pendek
+                // banget (daftar kosong dulu sebelum dibangun ulang). Kalau posisi scroll user
+                // waktu itu lebih dalam dari tinggi dokumen yang lagi kosong itu, browser
+                // (perilaku standar semua browser, BUKAN cuma bug WebView) langsung "mepetin"
+                // (clamp) scroll ke posisi maksimum baru yang jauh lebih pendek -- dan begitu
+                // daftar kelar dibangun ulang & dokumen tinggi lagi, browser TIDAK otomatis
+                // scroll balik naik. Makanya user ngerasa "layar balik ke atas" pas lagi
+                // scroll-scroll, apalagi pas awal buka (banyak render ulang: fetch awal + SSE).
+                // Fix: balikin lagi scroll ke posisi semula begitu daftar kelar dibangun ulang.
+                // Ini AMAN & selalu dijalankan (gak dicek "lagi discroll user apa enggak") sebab
+                // baris ini jalan sinkron tepat setelah baris di atas -- gak mungkin ada gesture
+                // jari nyusup di tengah situ (JS single-thread), jadi apapun bedanya psoisi
+                // scroll di titik ini murni akibat pembangunan ulang barusan, bukan aksi user.
+                if (window.scrollY !== __scrollBefore) {
+                    window.scrollTo(0, __scrollBefore);
+                }
             }
 
             function onTaskSearchChange() {
@@ -6725,10 +6742,11 @@
                 renderSchedule();
                 // 3. Jalankan animasi berurutan
                 runPageLoadAnimation();
-                // 4. Load tugas
-                loadTasks();
-                // 4b. Nyalain realtime sync (SSE) biar update tugas instan, gak nunggu polling
-                initRealtimeTaskSync();
+                // 4. Load tugas dulu sampai kelar, BARU nyalain realtime sync (SSE). SSE Firebase
+                // selalu ngirim snapshot lengkap begitu connect -- kalau dinyalain bareng/duluan,
+                // #taskList bisa kebangun ulang 2x beruntun pas awal buka & bikin scroll ke-reset
+                // ke atas di sebagian WebView HP. .finally biar SSE tetap nyala walau fetch gagal.
+                loadTasks().finally(initRealtimeTaskSync);
                 // 5. Start clock
                 updateTime();
                 _clockInterval = setInterval(updateTime, 1000);
