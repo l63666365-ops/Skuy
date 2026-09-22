@@ -3133,6 +3133,27 @@
         }
     </style>
     <script>
+        // Matiin restorasi scroll otomatis bawaan browser (defaultnya 'auto'). Ini WAJIB
+        // paling awal, sebelum apa pun lain dieksekusi -- soalnya inilah akar masalah "layar
+        // balik ke atas pas scroll", yang taunya cuma muncul kalau: lagi di tab TUGAS, terus
+        // di-refresh (reload) selagi TAB itu masih ke-inget sebagai tab terakhir.
+        //
+        // Kejadiannya: browser secara OTOMATIS nyoba manggil balik scroll ke posisi SEBELUM
+        // refresh. Tapi pas refresh, tab Tugas dipulihin (showScreen('tugas')) DULUAN sebelum
+        // daftar tugasnya sendiri sempet dimuat dari server (loadTasks() masih nunggu network) --
+        // jadi <ul id="taskList"> nya masih KOSONG waktu browser nyoba manggil balik scroll itu.
+        // Karena halamannya kepotong pendek banget (kosong), scroll KEPAKSA nempel ke 0 (gak ada
+        // yang bisa discroll). Begitu daftar tugas kelar dimuat & halaman jadi panjang lagi,
+        // scroll-nya TETAP di 0 -- gak otomatis balik naik ke posisi semula. Makanya user ngerasa
+        // "discroll dikit malah balik ke atas", padahal itu sisa dari kegagalan restore di awal.
+        //
+        // Fix paling aman & standar: matiin restorasi otomatis ini sepenuhnya. Abis refresh,
+        // halaman mulai bersih dari paling atas (perilaku normal kebanyakan web app), gak nyoba
+        // nebak-nebak posisi lama yang bisa gagal & nyangkut kayak di atas.
+        if ('scrollRestoration' in history) {
+            try { history.scrollRestoration = 'manual'; } catch (e) { }
+        }
+
         // ===== WARNA AKSEN PILIHAN =====
         // Biru = tampilan bawaan (nilai default di :root), jadi gak perlu ditimpa apa-apa.
         // Warna lain cuma nimpa variabel lewat <style id="skuy-accent-style">.
