@@ -3133,6 +3133,42 @@
         }
     </style>
     <script>
+        // ===== PANEL DEBUG SEMENTARA (buat lacak bug "scroll balik ke atas") =====
+        // Nyatet kejadian penting: reload beneran, lompatan scroll gede, & tiap kali KODE
+        // KITA sendiri manggil scrollTo (biar ketauan lompatannya dari kode kita apa dari
+        // luar/WebView). Aman dihapus abis bug-nya ketemu.
+        (function () {
+            var buf = [];
+            function log(msg) {
+                var t = new Date();
+                var ts = String(t.getHours()).padStart(2, '0') + ':' + String(t.getMinutes()).padStart(2, '0') + ':' + String(t.getSeconds()).padStart(2, '0') + '.' + String(t.getMilliseconds()).padStart(3, '0');
+                buf.push(ts + ' ' + msg);
+                if (buf.length > 40) buf.shift();
+                var el = document.getElementById('skuyDebugLog');
+                if (el) el.textContent = buf.join('\n');
+            }
+            window.__skuyLog = log;
+            log('SCRIPT MULAI (parsing <head>)');
+            document.addEventListener('DOMContentLoaded', function () { log('DOMContentLoaded scrollY=' + window.scrollY); });
+            window.addEventListener('load', function () { log('window.load scrollY=' + window.scrollY + ' tinggiDok=' + document.body.scrollHeight); });
+            window.addEventListener('pageshow', function (e) { log('pageshow (persisted=' + e.persisted + ') scrollY=' + window.scrollY); });
+            window.addEventListener('pagehide', function () { log('>>> PAGEHIDE: halaman BENERAN mau di-reload/ditutup/navigasi <<<'); });
+            window.addEventListener('beforeunload', function () { log('>>> BEFOREUNLOAD: navigasi/reload BENERAN kejadian <<<'); });
+            document.addEventListener('visibilitychange', function () { log('visibilitychange -> ' + document.visibilityState); });
+            var lastY = 0, lastT = 0;
+            window.addEventListener('scroll', function () {
+                var y = window.scrollY, t = performance.now();
+                var dy = y - lastY, dt = t - lastT;
+                if (Math.abs(dy) > 200 && dt < 120) log('!!! LOMPATAN SCROLL: ' + lastY + ' -> ' + y + ' (dlm ' + dt.toFixed(0) + 'ms) !!!');
+                lastY = y; lastT = t;
+            }, { passive: true, capture: true });
+            var origScrollTo = window.scrollTo.bind(window);
+            window.scrollTo = function () {
+                log('window.scrollTo(' + Array.prototype.slice.call(arguments).join(',') + ') dipanggil KODE KITA, dari scrollY=' + window.scrollY);
+                return origScrollTo.apply(window, arguments);
+            };
+        })();
+
         // Matiin restorasi scroll otomatis bawaan browser (defaultnya 'auto'). Ini WAJIB
         // paling awal, sebelum apa pun lain dieksekusi -- soalnya inilah akar masalah "layar
         // balik ke atas pas scroll", yang taunya cuma muncul kalau: lagi di tab TUGAS, terus
@@ -3345,7 +3381,8 @@
 </head>
 
 <body>
-    <div id="pull-refresh-indicator">
+    <pre id="skuyDebugLog" style="position:fixed;top:0;left:0;right:0;z-index:99999;background:rgba(0,0,0,.86);color:#5CFF7A;font-size:9px;line-height:1.35;padding:6px 8px;max-height:34vh;overflow:auto;white-space:pre-wrap;margin:0;pointer-events:none;font-family:monospace;"></pre>
+<div id="pull-refresh-indicator">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"
             stroke-linejoin="round">
             <path d="M21 12a9 9 0 1 1-3-6.7"></path>
@@ -4161,6 +4198,7 @@
 
             // ===== Navigasi bawah (Jadwal / Tugas / Profil) =====
             function showScreen(name) {
+                if (window.__skuyLog) window.__skuyLog('showScreen(\'' + name + '\') dipanggil, scrollY=' + window.scrollY);
                 document.querySelectorAll('.app-screen').forEach(el => el.classList.remove('active'));
                 const target = document.getElementById('screen-' + name);
                 if (target) {
@@ -4898,6 +4936,7 @@
                 }
 
                 function triggerRefresh() {
+                    if (window.__skuyLog) window.__skuyLog('>>> PULL-TO-REFRESH KEPICU: bakal location.reload() <<<');
                     refreshing = true;
                     indicator.style.transition = 'transform 0.2s ease, opacity 0.2s ease';
                     indicator.style.transform = `translateY(${PULL_THRESHOLD}px) rotate(0deg)`;
@@ -5677,6 +5716,7 @@
                 const list = document.getElementById('taskList');
                 if (!list) return;
                 const __scrollBefore = window.scrollY;
+                if (window.__skuyLog) window.__skuyLog('renderTaskList MULAI, scrollY=' + __scrollBefore);
                 list.innerHTML = "";
 
                 const q = taskSearchQuery.trim().toLowerCase();
@@ -5759,6 +5799,7 @@
                 // baris ini jalan sinkron tepat setelah baris di atas -- gak mungkin ada gesture
                 // jari nyusup di tengah situ (JS single-thread), jadi apapun bedanya psoisi
                 // scroll di titik ini murni akibat pembangunan ulang barusan, bukan aksi user.
+                if (window.__skuyLog) window.__skuyLog('renderTaskList SELESAI, scrollY=' + window.scrollY + ' (sblm dibangun ulang: ' + __scrollBefore + ')');
                 if (window.scrollY !== __scrollBefore) {
                     window.scrollTo(0, __scrollBefore);
                 }
