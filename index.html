@@ -3162,11 +3162,42 @@
                 if (Math.abs(dy) > 200 && dt < 120) log('!!! LOMPATAN SCROLL: ' + lastY + ' -> ' + y + ' (dlm ' + dt.toFixed(0) + 'ms) !!!');
                 lastY = y; lastT = t;
             }, { passive: true, capture: true });
+            // KETEMU DARI LOG: ada yang manggil scrollTo(0,0) BERULANG-ULANG super cepat (puluhan
+            // kali/detik), terus-menerus -- padahal kode KITA gak ada yang kayak gitu. Ini pasti
+            // script/fitur LUAR yang disisipin ke halaman (kemungkinan besar dari WebToApp,
+            // gara-gara fitur kayak "Floating Back Button"/"Long Press Menu"), yang maksa scroll
+            // balik ke (0,0) berkali-kali -- itu sebabnya kerasa "susah discroll"/"balik ke atas
+            // mulu". Gak bisa dibenerin dari sisi setelan WebToApp, tapi bisa DIBLOKIR dari sini:
+            // kalau kedeteksi pola "scrollTo(0,0) diulang-ulang dalam waktu singkat", panggilan
+            // BERIKUTNYA dari pola itu diabaikan -- kode KITA sendiri gak pernah butuh manggil
+            // scrollTo(0,0) berkali-kali beruntun kayak gitu, jadi aman diabaikan.
             var origScrollTo = window.scrollTo.bind(window);
-            window.scrollTo = function () {
-                log('window.scrollTo(' + Array.prototype.slice.call(arguments).join(',') + ') dipanggil KODE KITA, dari scrollY=' + window.scrollY);
-                return origScrollTo.apply(window, arguments);
-            };
+            var origScroll = window.scroll ? window.scroll.bind(window) : origScrollTo;
+            var zeroZeroTimes = [];
+            var ZERO_FLOOD_WINDOW_MS = 400;
+            var ZERO_FLOOD_COUNT = 3;
+            function isZeroZeroCall(args) {
+                if (args.length >= 2) return Number(args[0]) === 0 && Number(args[1]) === 0;
+                if (args.length === 1 && args[0] && typeof args[0] === 'object') {
+                    return (Number(args[0].left) || 0) === 0 && (Number(args[0].top) || 0) === 0;
+                }
+                return false;
+            }
+            function guardedScroll(orig, args) {
+                if (isZeroZeroCall(args)) {
+                    var now = performance.now();
+                    zeroZeroTimes.push(now);
+                    while (zeroZeroTimes.length && now - zeroZeroTimes[0] > ZERO_FLOOD_WINDOW_MS) zeroZeroTimes.shift();
+                    if (zeroZeroTimes.length > ZERO_FLOOD_COUNT) {
+                        log('!!! scrollTo(0,0) DIBLOKIR -- kedeteksi dipanggil berulang cepat dari LUAR kode kita !!!');
+                        return;
+                    }
+                }
+                log('scrollTo dipanggil (' + Array.prototype.slice.call(args).join(',') + '), scrollY skrg=' + window.scrollY);
+                return orig.apply(window, args);
+            }
+            window.scrollTo = function () { return guardedScroll(origScrollTo, arguments); };
+            window.scroll = function () { return guardedScroll(origScroll, arguments); };
         })();
 
         // Matiin restorasi scroll otomatis bawaan browser (defaultnya 'auto'). Ini WAJIB
