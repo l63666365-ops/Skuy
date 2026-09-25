@@ -3200,6 +3200,45 @@
             }
             window.scrollTo = function () { return guardedScroll(origScrollTo, arguments); };
             window.scroll = function () { return guardedScroll(origScroll, arguments); };
+
+            // window.scrollTo/scroll ternyata BUKAN satu-satunya jalur (masih ada residu abis
+            // diblokir). Dua jalur lain yang bisa geser scroll TANPA lewat scrollTo sama sekali:
+            //   1) elemen.scrollTop = 0   (nyetel properti langsung)
+            //   2) elemen.scrollTo(0,0)   (versi method punya elemen, beda dari window.scrollTo)
+            // Keduanya cuma dijaga di documentElement/body/scrollingElement -- BUKAN semua elemen
+            // -- soalnya beberapa bagian app (chip hari, filter tugas) sengaja discroll horizontal
+            // sendiri & itu harus tetap bisa dipakai normal.
+            function isPageScrollEl(el) {
+                return el === document.documentElement || el === document.body || el === document.scrollingElement;
+            }
+            [document.documentElement, document.body].forEach(function (el) {
+                if (!el) return;
+                var proto = Object.getPrototypeOf(el);
+                var desc = null;
+                while (proto && !desc) { desc = Object.getOwnPropertyDescriptor(proto, 'scrollTop'); proto = Object.getPrototypeOf(proto); }
+                if (!desc || !desc.set) return;
+                Object.defineProperty(el, 'scrollTop', {
+                    configurable: true,
+                    get: function () { return desc.get.call(this); },
+                    set: function (v) {
+                        if (Number(v) === 0) {
+                            blokCount++;
+                            if (blokCount % 20 === 1) log('!!! ' + el.tagName + '.scrollTop=0 DIBLOKIR (total: ' + blokCount + 'x) !!!');
+                            return;
+                        }
+                        return desc.set.call(this, v);
+                    }
+                });
+            });
+            var origElScrollTo = Element.prototype.scrollTo;
+            Element.prototype.scrollTo = function () {
+                if (isPageScrollEl(this) && isZeroZeroCall(arguments)) {
+                    blokCount++;
+                    if (blokCount % 20 === 1) log('!!! elemen.scrollTo(0,0) DIBLOKIR (total: ' + blokCount + 'x) !!!');
+                    return;
+                }
+                return origElScrollTo.apply(this, arguments);
+            };
         })();
 
         // Matiin restorasi scroll otomatis bawaan browser (defaultnya 'auto'). Ini WAJIB
