@@ -3133,51 +3133,14 @@
         }
     </style>
     <script>
-        // ===== PANEL DEBUG SEMENTARA (buat lacak bug "scroll balik ke atas") =====
-        // Nyatet kejadian penting: reload beneran, lompatan scroll gede, & tiap kali KODE
-        // KITA sendiri manggil scrollTo (biar ketauan lompatannya dari kode kita apa dari
-        // luar/WebView). Aman dihapus abis bug-nya ketemu.
+        // ===== Cegah scroll dipaksa balik ke (0,0) dari luar kode kita =====
+        // Ketemu lewat debugging: ada sesuatu di luar kode kita (kemungkinan besar fitur
+        // WebToApp seperti Floating Back Button / Long Press Menu) yang berulang kali manggil
+        // scroll balik ke (0,0), bikin scroll kerasa "ketarik balik ke atas mulu". Kode kita
+        // sendiri gak pernah butuh manggil scroll ke (0,0) dengan sengaja, jadi aman diblokir
+        // total lewat 4 jalur yang bisa dipakai buat geser scroll: window.scrollTo/scroll,
+        // elemen.scrollTo, dan nyetel elemen.scrollTop langsung.
         (function () {
-            var buf = [];
-            function log(msg) {
-                var t = new Date();
-                var ts = String(t.getHours()).padStart(2, '0') + ':' + String(t.getMinutes()).padStart(2, '0') + ':' + String(t.getSeconds()).padStart(2, '0') + '.' + String(t.getMilliseconds()).padStart(3, '0');
-                buf.push(ts + ' ' + msg);
-                if (buf.length > 40) buf.shift();
-                var el = document.getElementById('skuyDebugLog');
-                if (el) el.textContent = buf.join('\n');
-            }
-            window.__skuyLog = log;
-            log('SCRIPT MULAI (parsing <head>)');
-            document.addEventListener('DOMContentLoaded', function () { log('DOMContentLoaded scrollY=' + window.scrollY); });
-            window.addEventListener('load', function () { log('window.load scrollY=' + window.scrollY + ' tinggiDok=' + document.body.scrollHeight); });
-            window.addEventListener('pageshow', function (e) { log('pageshow (persisted=' + e.persisted + ') scrollY=' + window.scrollY); });
-            window.addEventListener('pagehide', function () { log('>>> PAGEHIDE: halaman BENERAN mau di-reload/ditutup/navigasi <<<'); });
-            window.addEventListener('beforeunload', function () { log('>>> BEFOREUNLOAD: navigasi/reload BENERAN kejadian <<<'); });
-            document.addEventListener('visibilitychange', function () { log('visibilitychange -> ' + document.visibilityState); });
-            var lastY = 0, lastT = 0;
-            window.addEventListener('scroll', function () {
-                var y = window.scrollY, t = performance.now();
-                var dy = y - lastY, dt = t - lastT;
-                if (Math.abs(dy) > 200 && dt < 120) log('!!! LOMPATAN SCROLL: ' + lastY + ' -> ' + y + ' (dlm ' + dt.toFixed(0) + 'ms) !!!');
-                lastY = y; lastT = t;
-            }, { passive: true, capture: true });
-            // KETEMU DARI LOG: ada yang manggil scrollTo(0,0) BERULANG-ULANG super cepat (puluhan
-            // kali/detik), terus-menerus -- padahal kode KITA gak ada yang kayak gitu. Ini pasti
-            // script/fitur LUAR yang disisipin ke halaman (kemungkinan besar dari WebToApp,
-            // gara-gara fitur kayak "Floating Back Button"/"Long Press Menu"), yang maksa scroll
-            // balik ke (0,0) berkali-kali -- itu sebabnya kerasa "susah discroll"/"balik ke atas
-            // mulu". Gak bisa dibenerin dari sisi setelan WebToApp, tapi bisa DIBLOKIR dari sini:
-            // kalau kedeteksi pola "scrollTo(0,0) diulang-ulang dalam waktu singkat", panggilan
-            // BERIKUTNYA dari pola itu diabaikan -- kode KITA sendiri gak pernah butuh manggil
-            // scrollTo(0,0) berkali-kali beruntun kayak gitu, jadi aman diabaikan.
-            // Ternyata seranganya dateng dalam semburan2 kecil (bukan satu aliran nonstop),
-            // jadi aturan "boleh lolos 3x dulu tiap 400ms" kemarin masih kebobolan tiap semburan
-            // baru mulai. Sekarang lebih tegas: (0,0) SELALU ditolak, gak ada jatah lolos sama
-            // sekali -- aman, soalnya kode KITA sendiri emang gak pernah sengaja butuh manggil
-            // scrollTo(0,0) (satu2nya tempat yg manggil scrollTo, di renderTaskList, cuma jalan
-            // kalau posisi SEBELUM & SESUDAH beda -- jadi gak mungkin manggil ke titik yg sama
-            // kayak (0,0) ke (0,0)).
             var origScrollTo = window.scrollTo.bind(window);
             var origScroll = window.scroll ? window.scroll.bind(window) : origScrollTo;
             function isZeroZeroCall(args) {
@@ -3187,22 +3150,14 @@
                 }
                 return false;
             }
-            var blokCount = 0;
             function guardedScroll(orig, args) {
-                if (isZeroZeroCall(args)) {
-                    blokCount++;
-                    // Cuma dicatat 1x per 20 kejadian biar log gak kebanjiran & tetep kebaca
-                    if (blokCount % 20 === 1) log('!!! scrollTo(0,0) DIBLOKIR (total sejauh ini: ' + blokCount + 'x) !!!');
-                    return;
-                }
-                log('scrollTo dipanggil (' + Array.prototype.slice.call(args).join(',') + '), scrollY skrg=' + window.scrollY);
+                if (isZeroZeroCall(args)) return;
                 return orig.apply(window, args);
             }
             window.scrollTo = function () { return guardedScroll(origScrollTo, arguments); };
             window.scroll = function () { return guardedScroll(origScroll, arguments); };
 
-            // window.scrollTo/scroll ternyata BUKAN satu-satunya jalur (masih ada residu abis
-            // diblokir). Dua jalur lain yang bisa geser scroll TANPA lewat scrollTo sama sekali:
+            // Dua jalur lain yang bisa geser scroll TANPA lewat scrollTo sama sekali:
             //   1) elemen.scrollTop = 0   (nyetel properti langsung)
             //   2) elemen.scrollTo(0,0)   (versi method punya elemen, beda dari window.scrollTo)
             // Keduanya cuma dijaga di documentElement/body/scrollingElement -- BUKAN semua elemen
@@ -3221,22 +3176,14 @@
                     configurable: true,
                     get: function () { return desc.get.call(this); },
                     set: function (v) {
-                        if (Number(v) === 0) {
-                            blokCount++;
-                            if (blokCount % 20 === 1) log('!!! ' + el.tagName + '.scrollTop=0 DIBLOKIR (total: ' + blokCount + 'x) !!!');
-                            return;
-                        }
+                        if (Number(v) === 0) return;
                         return desc.set.call(this, v);
                     }
                 });
             });
             var origElScrollTo = Element.prototype.scrollTo;
             Element.prototype.scrollTo = function () {
-                if (isPageScrollEl(this) && isZeroZeroCall(arguments)) {
-                    blokCount++;
-                    if (blokCount % 20 === 1) log('!!! elemen.scrollTo(0,0) DIBLOKIR (total: ' + blokCount + 'x) !!!');
-                    return;
-                }
+                if (isPageScrollEl(this) && isZeroZeroCall(arguments)) return;
                 return origElScrollTo.apply(this, arguments);
             };
         })();
@@ -3453,7 +3400,6 @@
 </head>
 
 <body>
-    <pre id="skuyDebugLog" style="position:fixed;top:0;left:0;right:0;z-index:99999;background:rgba(0,0,0,.86);color:#5CFF7A;font-size:9px;line-height:1.35;padding:6px 8px;max-height:34vh;overflow:auto;white-space:pre-wrap;margin:0;pointer-events:none;font-family:monospace;"></pre>
 <div id="pull-refresh-indicator">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"
             stroke-linejoin="round">
@@ -4270,7 +4216,6 @@
 
             // ===== Navigasi bawah (Jadwal / Tugas / Profil) =====
             function showScreen(name) {
-                if (window.__skuyLog) window.__skuyLog('showScreen(\'' + name + '\') dipanggil, scrollY=' + window.scrollY);
                 document.querySelectorAll('.app-screen').forEach(el => el.classList.remove('active'));
                 const target = document.getElementById('screen-' + name);
                 if (target) {
@@ -4629,11 +4574,22 @@
                 }
             }
 
-            function getWeekNumber(d) {
-                d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
-                d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
-                var yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-                return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+            // Patokan pola Minggu 1/Minggu 2 sesuai kalender akademik sekolah: Senin, 28
+            // September 2026 = Minggu 1, lalu selang-seling tiap minggu (Minggu 2, Minggu 1,
+            // Minggu 2, dst). Dihitung dari SELISIH MINGGU ke tanggal patokan ini -- BUKAN dari
+            // nomor pekan ISO tahun kalender (dulu pakai itu) -- soalnya nomor pekan ISO reset
+            // tiap ganti tahun & sebagian tahun punya 53 pekan, jadi pola ganjil-genapnya bisa
+            // meleset begitu kalender akademiknya lewat pergantian tahun (kalender ini kan
+            // sampai Juli 2027).
+            var WEEK_ANCHOR_MONDAY = new Date(Date.UTC(2026, 8, 28)); // 28 Sept 2026 = Senin, Minggu 1
+
+            function getWeekType(d) {
+                var dd = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+                var dow = dd.getUTCDay() || 7; // Senin=1 ... Minggu=7
+                dd.setUTCDate(dd.getUTCDate() - (dow - 1)); // mundurin ke Senin minggu itu
+                var diffWeeks = Math.round((dd - WEEK_ANCHOR_MONDAY) / (7 * 86400000));
+                var parity = ((diffWeeks % 2) + 2) % 2; // aman buat tanggal SEBELUM patokan (nilai negatif)
+                return parity === 0 ? "m1" : "m2";
             }
 
             function setAutoWeek() {
@@ -4643,7 +4599,7 @@
                     ref = new Date(ref);
                     ref.setDate(ref.getDate() + 1);
                 }
-                currentWeekType = (getWeekNumber(ref) % 2 === 0) ? "m2" : "m1";
+                currentWeekType = getWeekType(ref);
                 document.getElementById('btn-m1').classList.toggle('active', currentWeekType === 'm1');
                 document.getElementById('btn-m2').classList.toggle('active', currentWeekType === 'm2');
             }
@@ -4716,7 +4672,7 @@
                 // Tentukan hari & minggu yang relevan: sebelum jam ganti hari = hari ini, setelahnya = besok
                 let refDate = new Date(now);
                 if (now.getHours() >= JAM_GANTI_HARI) refDate.setDate(refDate.getDate() + 1);
-                const autoWeek = (getWeekNumber(refDate) % 2 === 0) ? "m2" : "m1";
+                const autoWeek = getWeekType(refDate);
                 const namaHariRelevan = days[refDate.getDay()];
                 const listMapel = jadwalData[autoWeek][namaHariRelevan] || [];
                 // Libur cuma kalau Sabtu/Minggu DAN memang belum ada mapel yang diisi buat hari itu
@@ -4738,7 +4694,7 @@
 
                 function getFirstLessonTime(targetDate) {
                     const dayName = days[targetDate.getDay()];
-                    const autoWeekTarget = (getWeekNumber(targetDate) % 2 === 0) ? "m2" : "m1";
+                    const autoWeekTarget = getWeekType(targetDate);
                     const lessons = jadwalData[autoWeekTarget][dayName] || [];
                     let earliestMin = null;
                     for (let l of lessons) {
@@ -4943,7 +4899,7 @@
                 if (!sameDate) return false;
                 let ref = new Date(now);
                 if (ref.getHours() >= JAM_GANTI_HARI) ref.setDate(ref.getDate() + 1);
-                const autoWeek = (getWeekNumber(ref) % 2 === 0) ? "m2" : "m1";
+                const autoWeek = getWeekType(ref);
                 return currentWeekType === autoWeek;
             }
 
@@ -5008,7 +4964,6 @@
                 }
 
                 function triggerRefresh() {
-                    if (window.__skuyLog) window.__skuyLog('>>> PULL-TO-REFRESH KEPICU: bakal location.reload() <<<');
                     refreshing = true;
                     indicator.style.transition = 'transform 0.2s ease, opacity 0.2s ease';
                     indicator.style.transform = `translateY(${PULL_THRESHOLD}px) rotate(0deg)`;
@@ -5788,7 +5743,6 @@
                 const list = document.getElementById('taskList');
                 if (!list) return;
                 const __scrollBefore = window.scrollY;
-                if (window.__skuyLog) window.__skuyLog('renderTaskList MULAI, scrollY=' + __scrollBefore);
                 list.innerHTML = "";
 
                 const q = taskSearchQuery.trim().toLowerCase();
@@ -5871,7 +5825,6 @@
                 // baris ini jalan sinkron tepat setelah baris di atas -- gak mungkin ada gesture
                 // jari nyusup di tengah situ (JS single-thread), jadi apapun bedanya psoisi
                 // scroll di titik ini murni akibat pembangunan ulang barusan, bukan aksi user.
-                if (window.__skuyLog) window.__skuyLog('renderTaskList SELESAI, scrollY=' + window.scrollY + ' (sblm dibangun ulang: ' + __scrollBefore + ')');
                 if (window.scrollY !== __scrollBefore) {
                     window.scrollTo(0, __scrollBefore);
                 }
