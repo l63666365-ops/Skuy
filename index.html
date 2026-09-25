@@ -3171,11 +3171,15 @@
             // kalau kedeteksi pola "scrollTo(0,0) diulang-ulang dalam waktu singkat", panggilan
             // BERIKUTNYA dari pola itu diabaikan -- kode KITA sendiri gak pernah butuh manggil
             // scrollTo(0,0) berkali-kali beruntun kayak gitu, jadi aman diabaikan.
+            // Ternyata seranganya dateng dalam semburan2 kecil (bukan satu aliran nonstop),
+            // jadi aturan "boleh lolos 3x dulu tiap 400ms" kemarin masih kebobolan tiap semburan
+            // baru mulai. Sekarang lebih tegas: (0,0) SELALU ditolak, gak ada jatah lolos sama
+            // sekali -- aman, soalnya kode KITA sendiri emang gak pernah sengaja butuh manggil
+            // scrollTo(0,0) (satu2nya tempat yg manggil scrollTo, di renderTaskList, cuma jalan
+            // kalau posisi SEBELUM & SESUDAH beda -- jadi gak mungkin manggil ke titik yg sama
+            // kayak (0,0) ke (0,0)).
             var origScrollTo = window.scrollTo.bind(window);
             var origScroll = window.scroll ? window.scroll.bind(window) : origScrollTo;
-            var zeroZeroTimes = [];
-            var ZERO_FLOOD_WINDOW_MS = 400;
-            var ZERO_FLOOD_COUNT = 3;
             function isZeroZeroCall(args) {
                 if (args.length >= 2) return Number(args[0]) === 0 && Number(args[1]) === 0;
                 if (args.length === 1 && args[0] && typeof args[0] === 'object') {
@@ -3183,15 +3187,13 @@
                 }
                 return false;
             }
+            var blokCount = 0;
             function guardedScroll(orig, args) {
                 if (isZeroZeroCall(args)) {
-                    var now = performance.now();
-                    zeroZeroTimes.push(now);
-                    while (zeroZeroTimes.length && now - zeroZeroTimes[0] > ZERO_FLOOD_WINDOW_MS) zeroZeroTimes.shift();
-                    if (zeroZeroTimes.length > ZERO_FLOOD_COUNT) {
-                        log('!!! scrollTo(0,0) DIBLOKIR -- kedeteksi dipanggil berulang cepat dari LUAR kode kita !!!');
-                        return;
-                    }
+                    blokCount++;
+                    // Cuma dicatat 1x per 20 kejadian biar log gak kebanjiran & tetep kebaca
+                    if (blokCount % 20 === 1) log('!!! scrollTo(0,0) DIBLOKIR (total sejauh ini: ' + blokCount + 'x) !!!');
+                    return;
                 }
                 log('scrollTo dipanggil (' + Array.prototype.slice.call(args).join(',') + '), scrollY skrg=' + window.scrollY);
                 return orig.apply(window, args);
