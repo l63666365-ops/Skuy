@@ -2589,9 +2589,10 @@
 
         .sc-guru-icon {
             flex: none;
-            width: 11px;
-            height: 11px;
-            opacity: 0.7;
+            width: 13px;
+            height: 13px;
+            object-fit: contain;
+            display: block;
         }
 
         .schedule-card.highlight {
@@ -5133,13 +5134,13 @@
                             // Pakai data-index supaya checkHighlight bisa match berdasarkan index asli
                             const namaGuru = (item[3] && item[3].trim()) || MAP_GURU[item[0]] || '';
                             const guruHtml = namaGuru
-                                ? `<p class="sc-guru"><svg class="sc-guru-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>${namaGuru}</p>`
+                                ? `<p class="sc-guru"><img class="sc-guru-icon" src="https://i.ibb.co.com/gbB1R3f6/Whats-App-Image-2026-09-26-at-19-40-11.jpg" alt="Guru">${namaGuru}</p>`
                                 : '';
                             cardsWrap.innerHTML += `<div class="schedule-card" id="card-${index}" data-index="${index}">
                     <p class="sc-time">${jamMulai}<br>${jamSelesai}</p>
                     <div>
                         <p class="sc-mapel">${item[0]}</p>
-                        <p class="sc-ruang"><svg class="sc-ruang-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>${item[2] || '-'}</p>
+                        <p class="sc-ruang"><svg class="sc-ruang-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>${item[2] || '-'}</p>
                         ${guruHtml}
                     </div>
                 </div>`;
