@@ -5743,6 +5743,30 @@
                 const list = document.getElementById('taskList');
                 if (!list) return;
                 const __scrollBefore = window.scrollY;
+                // KETEMU AKAR MASALAHNYA: list.innerHTML="" bikin dokumen SEKEJAP jadi pendek
+                // banget (daftar kosong dulu sebelum dibangun ulang). Kalau posisi scroll user
+                // waktu itu lebih dalam dari tinggi dokumen yang lagi kosong itu, browser
+                // (perilaku standar semua browser, BUKAN cuma bug WebView) langsung "mepetin"
+                // (clamp) scroll ke posisi maksimum baru yang jauh lebih pendek -- dan begitu
+                // daftar kelar dibangun ulang & dokumen tinggi lagi, browser TIDAK otomatis
+                // scroll balik naik. Makanya user ngerasa "layar balik ke atas" pas lagi
+                // scroll-scroll, apalagi pas awal buka (banyak render ulang: fetch awal + SSE).
+                // Fix: balikin lagi scroll ke posisi semula begitu daftar kelar dibangun ulang.
+                //
+                // PENTING: fungsi ini punya beberapa jalur "return" lebih awal (misal pas gak
+                // ketemu hasil search, atau gak ada tugas "selesai" sama sekali -- yang justru
+                // paling sering kejadian). Restore-nya WAJIB jalan di SEMUA jalur itu, gak cuma
+                // di ujung fungsi, makanya dibungkus jadi fungsi kecil & dipanggil sebelum tiap
+                // return. Ini aman & selalu dijalankan (gak perlu dicek "lagi discroll user apa
+                // enggak") sebab baris ini jalan sinkron tepat setelah pembangunan ulang barusan
+                // -- gak mungkin ada gesture jari nyusup di tengah situ (JS single-thread), jadi
+                // apapun bedanya posisi scroll di titik ini murni akibat rebuild, bukan aksi user.
+                function restoreScrollIfNeeded() {
+                    if (window.scrollY !== __scrollBefore) {
+                        window.scrollTo(0, __scrollBefore);
+                    }
+                }
+
                 list.innerHTML = "";
 
                 const q = taskSearchQuery.trim().toLowerCase();
@@ -5784,6 +5808,7 @@
                 if (isFiltering && filteredActive.length === 0 && filteredDone.length === 0) {
                     list.innerHTML = `<li style="list-style:none;">${mascotImageBlockHtml("Gak ketemu, coba kata kunci lain", "https://i.ibb.co.com/63r3gdC/2a22db05ca72277943da40fd84436020.png", "search")}</li>`;
                     initTaskDragReorder();
+                    restoreScrollIfNeeded();
                     return;
                 }
 
@@ -5796,6 +5821,7 @@
 
                 if (filteredDone.length === 0) {
                     initTaskDragReorder();
+                    restoreScrollIfNeeded();
                     return;
                 }
 
@@ -5812,22 +5838,7 @@
                 });
 
                 initTaskDragReorder();
-                // KETEMU AKAR MASALAHNYA: list.innerHTML="" bikin dokumen SEKEJAP jadi pendek
-                // banget (daftar kosong dulu sebelum dibangun ulang). Kalau posisi scroll user
-                // waktu itu lebih dalam dari tinggi dokumen yang lagi kosong itu, browser
-                // (perilaku standar semua browser, BUKAN cuma bug WebView) langsung "mepetin"
-                // (clamp) scroll ke posisi maksimum baru yang jauh lebih pendek -- dan begitu
-                // daftar kelar dibangun ulang & dokumen tinggi lagi, browser TIDAK otomatis
-                // scroll balik naik. Makanya user ngerasa "layar balik ke atas" pas lagi
-                // scroll-scroll, apalagi pas awal buka (banyak render ulang: fetch awal + SSE).
-                // Fix: balikin lagi scroll ke posisi semula begitu daftar kelar dibangun ulang.
-                // Ini AMAN & selalu dijalankan (gak dicek "lagi discroll user apa enggak") sebab
-                // baris ini jalan sinkron tepat setelah baris di atas -- gak mungkin ada gesture
-                // jari nyusup di tengah situ (JS single-thread), jadi apapun bedanya psoisi
-                // scroll di titik ini murni akibat pembangunan ulang barusan, bukan aksi user.
-                if (window.scrollY !== __scrollBefore) {
-                    window.scrollTo(0, __scrollBefore);
-                }
+                restoreScrollIfNeeded();
             }
 
             function onTaskSearchChange() {
