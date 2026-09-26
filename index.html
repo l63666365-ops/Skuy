@@ -2578,6 +2578,22 @@
             opacity: 0.7;
         }
 
+        .schedule-card .sc-guru {
+            font-size: 12px;
+            color: var(--color-3);
+            margin: 3px 0 0;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .sc-guru-icon {
+            flex: none;
+            width: 11px;
+            height: 11px;
+            opacity: 0.7;
+        }
+
         .schedule-card.highlight {
             background: var(--hl-bg) !important;
             border-color: var(--color-hl) !important;
@@ -2596,6 +2612,7 @@
 
         .schedule-card.highlight .sc-time,
         .schedule-card.highlight .sc-ruang,
+        .schedule-card.highlight .sc-guru,
         .schedule-card.highlight .sc-mapel {
             color: var(--hl-text) !important;
         }
@@ -3109,6 +3126,7 @@
 
         [data-theme="dark"] .schedule-card.highlight .sc-time,
         [data-theme="dark"] .schedule-card.highlight .sc-ruang,
+        [data-theme="dark"] .schedule-card.highlight .sc-guru,
         [data-theme="dark"] .schedule-card.highlight .sc-mapel {
             color: var(--hl-text-dark) !important;
         }
@@ -4515,6 +4533,27 @@
                 timerQuote = setTimeout(() => { popup.classList.remove('show'); }, 4000);
             }
 
+            // Peta kode mapel → nama guru pengajar, dipakai sebagai fallback kalau
+            // sheet jadwal belum/tidak punya kolom Guru sendiri (lihat fetchJadwalDariSheet
+            // & renderSchedule). Sesuaikan/tambah baris di sini kalau ada guru pengganti
+            // atau kode mapel baru — cukup edit di SATU tempat ini, gak usah ubah sheet.
+            const MAP_GURU = {
+                "KK1": "Juniyanto Panca N, S.T.",
+                "KK2": "Warjito, S.Kom.",
+                "KK3": "Warjito, S.Kom.",
+                "Mat": "Nurani, S.Pd., M.Pd.",
+                "Ing": "Aan Triastuti, S.Pd.",
+                "Ind": "Anik Sri Sumarni, S.Pd.",
+                "Sej": "Anis Munandziroh, S.Pd.",
+                "Agm": "Dra. Prapti Hartini",
+                "Pilihan": "Muammar Affandi, S.Pd.",
+                "KIK": "Muammar Affandi, S.Pd.",
+                "JW": "Suharni, S.Pd.",
+                "OR": "Agustina Dewi Krisnawati, S.Pd.",
+                "BK": "Dwi Arinie Handayanie, S.Pd.",
+                "PKn": "Sri Haryanti, S.Pd."
+            };
+
             // Init jadwalData dari cache lokal dulu (key: savedJadwal) agar tidak kosong saat offline/refresh
             let jadwalData = (() => {
                 try {
@@ -4548,10 +4587,15 @@
                         let mapel = (cols[3] || '').toString().trim();
                             let jam = (cols[4] || '').toString().trim();
                             let ruang = (cols[5] || '').toString().trim();
+                            // Kolom G (index 6) opsional buat nama guru. Kalau sheet belum
+                            // punya kolom ini (atau selnya kosong), pakai MAP_GURU sesuai
+                            // kode mapel sebagai fallback.
+                            let guruSheet = (cols[6] || '').toString().trim();
+                            let guru = guruSheet || MAP_GURU[mapel] || '';
                             if (mapel && jam) {
                                 let week = (mM.toString() == "2") ? "m2" : "m1";
                                 if (!newJadwal[week][mH]) newJadwal[week][mH] = [];
-                                newJadwal[week][mH].push([mapel, jam, ruang]);
+                                newJadwal[week][mH].push([mapel, jam, ruang, guru]);
                             }
                         }
                     });
@@ -5087,11 +5131,16 @@
                             const jamMulai = (jamParts[0] || '').trim();
                             const jamSelesai = (jamParts[1] || '').trim();
                             // Pakai data-index supaya checkHighlight bisa match berdasarkan index asli
+                            const namaGuru = (item[3] && item[3].trim()) || MAP_GURU[item[0]] || '';
+                            const guruHtml = namaGuru
+                                ? `<p class="sc-guru"><svg class="sc-guru-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>${namaGuru}</p>`
+                                : '';
                             cardsWrap.innerHTML += `<div class="schedule-card" id="card-${index}" data-index="${index}">
                     <p class="sc-time">${jamMulai}<br>${jamSelesai}</p>
                     <div>
                         <p class="sc-mapel">${item[0]}</p>
                         <p class="sc-ruang"><svg class="sc-ruang-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>${item[2] || '-'}</p>
+                        ${guruHtml}
                     </div>
                 </div>`;
                         }
