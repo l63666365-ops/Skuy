@@ -2562,40 +2562,36 @@
             margin: 0;
         }
 
-        .schedule-card .sc-meta {
+        .schedule-card .sc-ruang {
             font-size: 12px;
             color: var(--color-3);
             margin: 6px 0 0;
             display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            row-gap: 3px;
-            column-gap: 7px;
-        }
-
-        .sc-meta-item {
-            display: inline-flex;
             align-items: center;
             gap: 5px;
         }
 
-        .sc-meta-sep {
-            opacity: 0.4;
-            margin-right: -3px;
-        }
-
         .sc-ruang-icon {
             flex: none;
-            width: 12px;
-            height: 13px;
-            opacity: 0.85;
+            width: 11px;
+            height: 11px;
+            opacity: 0.7;
+        }
+
+        .schedule-card .sc-guru {
+            font-size: 12px;
+            color: var(--color-3);
+            margin: 3px 0 0;
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
 
         .sc-guru-icon {
             flex: none;
-            width: 12px;
-            height: 12px;
-            opacity: 0.85;
+            width: 11px;
+            height: 11px;
+            opacity: 0.7;
         }
 
         .schedule-card.highlight {
@@ -2615,7 +2611,8 @@
         }
 
         .schedule-card.highlight .sc-time,
-        .schedule-card.highlight .sc-meta,
+        .schedule-card.highlight .sc-ruang,
+        .schedule-card.highlight .sc-guru,
         .schedule-card.highlight .sc-mapel {
             color: var(--hl-text) !important;
         }
@@ -3128,7 +3125,8 @@
         }
 
         [data-theme="dark"] .schedule-card.highlight .sc-time,
-        [data-theme="dark"] .schedule-card.highlight .sc-meta,
+        [data-theme="dark"] .schedule-card.highlight .sc-ruang,
+        [data-theme="dark"] .schedule-card.highlight .sc-guru,
         [data-theme="dark"] .schedule-card.highlight .sc-mapel {
             color: var(--hl-text-dark) !important;
         }
@@ -5135,13 +5133,14 @@
                             // Pakai data-index supaya checkHighlight bisa match berdasarkan index asli
                             const namaGuru = (item[3] && item[3].trim()) || MAP_GURU[item[0]] || '';
                             const guruHtml = namaGuru
-                                ? `<span class="sc-meta-sep">•</span><span class="sc-meta-item"><svg class="sc-guru-icon" viewBox="0 0 100 100" fill="currentColor"><circle cx="50" cy="23" r="11"/><path d="M 50,36 C 41,36 34,43 33,52 L 31,69 L 69,69 L 67,52 C 66,43 59,36 50,36 Z"/><polygon points="46,36 50,42 54,36" fill="#ffffff"/><rect x="13" y="73" width="74" height="6" rx="3" ry="3"/><rect x="22" y="82" width="56" height="13"/></svg>${namaGuru}</span>`
+                                ? `<p class="sc-guru"><svg class="sc-guru-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>${namaGuru}</p>`
                                 : '';
                             cardsWrap.innerHTML += `<div class="schedule-card" id="card-${index}" data-index="${index}">
                     <p class="sc-time">${jamMulai}<br>${jamSelesai}</p>
                     <div>
                         <p class="sc-mapel">${item[0]}</p>
-                        <p class="sc-meta"><span class="sc-meta-item"><svg class="sc-ruang-icon" viewBox="0 0 24 26"><path fill-rule="evenodd" clip-rule="evenodd" fill="currentColor" d="M12,1 C7.03,1 3,5.03 3,10 C3,16.5 12,25 12,25 C12,25 21,16.5 21,10 C21,5.03 16.97,1 12,1 Z M12,10 m-3.2,0 a3.2,3.2 0 1,0 6.4,0 a3.2,3.2 0 1,0 -6.4,0 Z"/></svg>${item[2] || '-'}</span>${guruHtml}</p>
+                        <p class="sc-ruang"><svg class="sc-ruang-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>${item[2] || '-'}</p>
+                        ${guruHtml}
                     </div>
                 </div>`;
                         }
