@@ -4555,6 +4555,127 @@
                 "PKn": "Sri Haryanti, S.Pd."
             };
 
+            // Kalender akademik sekolah (Tahun Pelajaran 2026/2027), ditranskrip manual dari
+            // foto kalender resmi — sama kayak MAP_GURU, sengaja di-hardcode di sini biar gak
+            // perlu nyentuh Google Sheets/Apps Script. Key = tanggal format YYYY-MM-DD.
+            // "tipe" harus salah satu key yang ada di EVENT_META di bawah.
+            // Kalau ada revisi kalender/tahun ajaran baru, tinggal update dua tabel ini.
+            const KALENDER_AKADEMIK = {
+                // --- Libur Akhir Semester (awal Juli 2026, sebelum tahun ajaran mulai) ---
+                "2026-07-01": { tipe: "libur", label: "Libur Akhir Semester" },
+                "2026-07-02": { tipe: "libur", label: "Libur Akhir Semester" },
+                "2026-07-03": { tipe: "libur", label: "Libur Akhir Semester" },
+                "2026-07-06": { tipe: "libur", label: "Libur Akhir Semester" },
+                "2026-07-07": { tipe: "libur", label: "Libur Akhir Semester" },
+                "2026-07-08": { tipe: "libur", label: "Libur Akhir Semester" },
+                "2026-07-09": { tipe: "libur", label: "Libur Akhir Semester" },
+                "2026-07-10": { tipe: "libur", label: "Libur Akhir Semester" },
+                "2026-07-13": { tipe: "libur", label: "Libur Akhir Semester" },
+                "2026-07-14": { tipe: "libur", label: "Libur Akhir Semester" },
+                "2026-07-15": { tipe: "libur", label: "Libur Akhir Semester" },
+                // --- Upacara Bendera semester ganjil ---
+                "2026-08-17": { tipe: "upacara", label: "Upacara HUT Kemerdekaan RI" },
+                "2026-10-01": { tipe: "upacara", label: "Upacara Hari Kesaktian Pancasila" },
+                "2026-10-28": { tipe: "upacara", label: "Upacara Hari Sumpah Pemuda" },
+                "2026-11-10": { tipe: "upacara", label: "Upacara Hari Pahlawan" },
+                // --- Penilaian Sumatif Tengah Semester (PTS) ganjil ---
+                "2026-09-21": { tipe: "pts", label: "Penilaian Sumatif Tengah Semester" },
+                "2026-09-22": { tipe: "pts", label: "Penilaian Sumatif Tengah Semester" },
+                "2026-09-23": { tipe: "pts", label: "Penilaian Sumatif Tengah Semester" },
+                "2026-09-24": { tipe: "pts", label: "Penilaian Sumatif Tengah Semester" },
+                "2026-09-25": { tipe: "pts", label: "Penilaian Sumatif Tengah Semester" },
+                // --- Penilaian Sumatif Akhir Semester (PAS) ganjil ---
+                "2026-11-30": { tipe: "pas", label: "Penilaian Sumatif Akhir Semester" },
+                "2026-12-01": { tipe: "pas", label: "Penilaian Sumatif Akhir Semester" },
+                "2026-12-02": { tipe: "pas", label: "Penilaian Sumatif Akhir Semester" },
+                "2026-12-03": { tipe: "pas", label: "Penilaian Sumatif Akhir Semester" },
+                "2026-12-04": { tipe: "pas", label: "Penilaian Sumatif Akhir Semester" },
+                "2026-12-07": { tipe: "pas", label: "Penilaian Sumatif Akhir Semester" },
+                // --- Penyerahan Raport semester ganjil ---
+                "2026-12-18": { tipe: "raport", label: "Penyerahan Raport" },
+                // --- Libur Akhir Semester ganjil (Natal & Tahun Baru) ---
+                "2026-12-21": { tipe: "libur", label: "Libur Akhir Semester" },
+                "2026-12-22": { tipe: "libur", label: "Libur Akhir Semester" },
+                "2026-12-23": { tipe: "libur", label: "Libur Akhir Semester" },
+                "2026-12-24": { tipe: "libur", label: "Libur Akhir Semester" },
+                "2026-12-25": { tipe: "libur", label: "Libur Akhir Semester" },
+                "2026-12-28": { tipe: "libur", label: "Libur Akhir Semester" },
+                "2026-12-29": { tipe: "libur", label: "Libur Akhir Semester" },
+                "2026-12-30": { tipe: "libur", label: "Libur Akhir Semester" },
+                "2026-12-31": { tipe: "libur", label: "Libur Akhir Semester" },
+                "2027-01-01": { tipe: "libur", label: "Libur Akhir Semester" },
+                // --- Perkiraan Awal Puasa ---
+                "2027-02-10": { tipe: "puasa", label: "Perkiraan Awal Puasa" },
+                // --- Cuti Bersama & Hari Raya Idul Fitri ---
+                "2027-03-09": { tipe: "cuti", label: "Cuti Bersama" },
+                "2027-03-10": { tipe: "lebaran", label: "Hari Raya Idul Fitri" },
+                "2027-03-11": { tipe: "lebaran", label: "Hari Raya Idul Fitri" },
+                "2027-03-12": { tipe: "cuti", label: "Cuti Bersama" },
+                // --- Penilaian Sumatif Tengah Semester (PTS) genap ---
+                "2027-03-22": { tipe: "pts", label: "Penilaian Sumatif Tengah Semester" },
+                "2027-03-23": { tipe: "pts", label: "Penilaian Sumatif Tengah Semester" },
+                "2027-03-24": { tipe: "pts", label: "Penilaian Sumatif Tengah Semester" },
+                "2027-03-25": { tipe: "pts", label: "Penilaian Sumatif Tengah Semester" },
+                // --- Asesmen Sumatif Akhir Jenjang (ASAJ) ---
+                "2027-03-29": { tipe: "asaj", label: "Asesmen Sumatif Akhir Jenjang" },
+                "2027-03-30": { tipe: "asaj", label: "Asesmen Sumatif Akhir Jenjang" },
+                "2027-03-31": { tipe: "asaj", label: "Asesmen Sumatif Akhir Jenjang" },
+                // --- Upacara Bendera semester genap ---
+                "2027-04-21": { tipe: "upacara", label: "Upacara Hari Kartini" },
+                "2027-05-20": { tipe: "upacara", label: "Upacara Hari Kebangkitan Nasional" },
+                "2027-06-01": { tipe: "upacara", label: "Upacara Hari Lahir Pancasila" },
+                // --- Penilaian Sumatif Akhir Semester (PAS) genap ---
+                "2027-05-31": { tipe: "pas", label: "Penilaian Sumatif Akhir Semester" },
+                "2027-06-02": { tipe: "pas", label: "Penilaian Sumatif Akhir Semester" },
+                "2027-06-03": { tipe: "pas", label: "Penilaian Sumatif Akhir Semester" },
+                "2027-06-04": { tipe: "pas", label: "Penilaian Sumatif Akhir Semester" },
+                // --- Penyerahan Raport semester genap (kenaikan kelas) ---
+                "2027-06-18": { tipe: "raport", label: "Penyerahan Raport" },
+                // --- Libur Akhir Semester genap ---
+                "2027-06-21": { tipe: "libur", label: "Libur Akhir Semester" },
+                "2027-06-22": { tipe: "libur", label: "Libur Akhir Semester" },
+                "2027-06-23": { tipe: "libur", label: "Libur Akhir Semester" },
+                "2027-06-24": { tipe: "libur", label: "Libur Akhir Semester" },
+                "2027-06-25": { tipe: "libur", label: "Libur Akhir Semester" },
+                "2027-06-28": { tipe: "libur", label: "Libur Akhir Semester" },
+                "2027-07-01": { tipe: "libur", label: "Libur Akhir Semester" },
+                "2027-07-02": { tipe: "libur", label: "Libur Akhir Semester" },
+                "2027-07-05": { tipe: "libur", label: "Libur Akhir Semester" },
+                "2027-07-06": { tipe: "libur", label: "Libur Akhir Semester" },
+                "2027-07-07": { tipe: "libur", label: "Libur Akhir Semester" },
+                "2027-07-08": { tipe: "libur", label: "Libur Akhir Semester" },
+                "2027-07-09": { tipe: "libur", label: "Libur Akhir Semester" },
+                "2027-07-12": { tipe: "libur", label: "Libur Akhir Semester" },
+                "2027-07-13": { tipe: "libur", label: "Libur Akhir Semester" },
+                "2027-07-14": { tipe: "libur", label: "Libur Akhir Semester" }
+            };
+
+            // Tipe "libur" = beneran gak ada sekolah (kartu jadwal disembunyikan, kayak
+            // weekend). Tipe lain = tetep masuk sekolah tapi ada agenda khusus, jadi jadwal
+            // hariannya tetep tampil, cuma banner atas kasih tau ada acara apa.
+            const EVENT_META = {
+                pts: { emoji: "📝", pesan: "Semangat Penilaian Sumatif Tengah Semester!", liburPenuh: false },
+                pas: { emoji: "📚", pesan: "Semangat Penilaian Sumatif Akhir Semester!", liburPenuh: false },
+                asaj: { emoji: "🎓", pesan: "Semangat Asesmen Sumatif Akhir Jenjang!", liburPenuh: false },
+                libur: { emoji: "🌴", pesan: "Selamat berlibur ✨", liburPenuh: true },
+                raport: { emoji: "📄", pesan: "Saatnya penyerahan raport", liburPenuh: false },
+                puasa: { emoji: "🌙", pesan: "Menyambut bulan puasa", liburPenuh: false },
+                cuti: { emoji: "🏖️", pesan: "Selamat menikmati cuti bersama ✨", liburPenuh: true },
+                lebaran: { emoji: "🎉", pesan: "Mohon Maaf Lahir & Batin ✨", liburPenuh: true },
+                upacara: { emoji: "🇮🇩", pesan: "Jangan lupa seragam lengkap ya", liburPenuh: false }
+            };
+
+            function formatISODate(d) {
+                const y = d.getFullYear();
+                const m = String(d.getMonth() + 1).padStart(2, '0');
+                const dt = String(d.getDate()).padStart(2, '0');
+                return `${y}-${m}-${dt}`;
+            }
+
+            function getEventForDate(d) {
+                return KALENDER_AKADEMIK[formatISODate(d)] || null;
+            }
+
             // Init jadwalData dari cache lokal dulu (key: savedJadwal) agar tidak kosong saat offline/refresh
             let jadwalData = (() => {
                 try {
@@ -4808,6 +4929,23 @@
                     while (d.getDay() !== 5) d.setDate(d.getDate() - 1);
                     d.setHours(JAM_GANTI_HARI, 0, 0, 0);
                     return d;
+                }
+
+                // Cek kalender akademik dulu (PTS/PAS/ASAJ/Libur/Raport/Puasa/Cuti/Lebaran/
+                // Upacara) — kalau refDate (hari ini, atau besok kalau udah lewat jam ganti
+                // hari) ada acara khusus, banner atas nampilin itu duluan, override status
+                // pelajaran biasa (soalnya di hari kayak gini jadwal normal kemungkinan besar
+                // gak relevan/berubah).
+                const eventHariIni = getEventForDate(refDate);
+                if (eventHariIni) {
+                    const meta = EVENT_META[eventHariIni.tipe] || { emoji: "📌", pesan: "" };
+                    setText(statLabel, `${meta.emoji} ${eventHariIni.label}`);
+                    setText(statNow, meta.pesan || eventHariIni.label);
+                    setText(statNext, "");
+                    setMascotMood(true);
+                    if (arcEl2) arcEl2.style.display = 'none';
+                    tampilkanNotif(eventHariIni.label, meta.pesan || "");
+                    return;
                 }
 
                 if (currentTimeMin >= jamGantiHari) {
@@ -5081,7 +5219,13 @@
             function renderSchedule() {
                 const days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
                 const dayName = days[currentViewDate.getDay()];
-                const isLibur = (dayName === "Sabtu" || dayName === "Minggu");
+                // Cek kalender akademik: kalau tanggal yang lagi dilihat termasuk hari libur
+                // penuh (Libur Akhir Semester/Cuti/Lebaran), kartu jadwal mingguan biasa
+                // disembunyikan meski template mingguannya kebetulan ada isinya —tanggal
+                // spesifik lebih otoritatif daripada pola mingguan.
+                const eventHariIni = getEventForDate(currentViewDate);
+                const isLiburKalender = !!(eventHariIni && EVENT_META[eventHariIni.tipe] && EVENT_META[eventHariIni.tipe].liburPenuh);
+                const isLiburMingguan = (dayName === "Sabtu" || dayName === "Minggu");
                 document.getElementById('display-day')?.innerText && (document.getElementById('display-day').innerText = currentViewDate.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long' }));
                 document.querySelectorAll('.day-chip').forEach(chip => {
                     chip.classList.toggle('active', Number(chip.dataset.dow) === currentViewDate.getDay());
@@ -5097,11 +5241,12 @@
                 if (grid) grid.style.display = isEditMode ? 'grid' : 'none';
                 if (cardsWrap) cardsWrap.style.display = isEditMode ? 'none' : 'flex';
                 const hariIni = jadwalData[currentWeekType][dayName] || [];
-                if (isLibur && !isEditMode && hariIni.length === 0) {
+                if (!isEditMode && (isLiburKalender || (isLiburMingguan && hariIni.length === 0))) {
                     colMapel.innerHTML = "<div class='item-box'>Libur</div>";
                     colJam.innerHTML = "<div class='item-box'>-</div>";
                     colRuang.innerHTML = "<div class='item-box'>-</div>";
-                    if (cardsWrap) cardsWrap.innerHTML = mascotImageBlockHtml("Libur, gak ada jadwal hari ini", "https://i.ibb.co.com/nMhV4WP1/91139f2f2b71db55948b0bbf8bce9ca2.png", "libur");
+                    const pesanLibur = isLiburKalender ? eventHariIni.label : "Libur, gak ada jadwal hari ini";
+                    if (cardsWrap) cardsWrap.innerHTML = mascotImageBlockHtml(pesanLibur, "https://i.ibb.co.com/nMhV4WP1/91139f2f2b71db55948b0bbf8bce9ca2.png", "libur");
                     return;
                 }
                 if (!isEditMode && hariIni.length === 0 && cardsWrap) {
