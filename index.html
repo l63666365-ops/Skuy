@@ -3628,7 +3628,7 @@
                         <div class="header-kelas" id="header-kelas">-</div>
                         <div id="full-date">Memuat...</div>
                     </div>
-                    <div id="clock" onclick="showMotivation()">00:00</div>
+                    <div id="clock" onclick="showMotivation()">00 : 00</div>
                 </div>
                 <div class="status-container" id="status-live">
                     <div class="status-inner">
@@ -4675,7 +4675,7 @@
                 const now = new Date();
                 const h = String(now.getHours()).padStart(2, '0');
                 const m = String(now.getMinutes()).padStart(2, '0');
-                setText(document.getElementById('clock'), `${h}:${m}`);
+                setText(document.getElementById('clock'), `${h} : ${m}`);
                 setText(document.getElementById('full-date'), now.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long' }));
                 let virtualDate = new Date(now);
                 if (now.getHours() >= JAM_GANTI_HARI) {
