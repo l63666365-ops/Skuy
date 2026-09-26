@@ -5129,8 +5129,8 @@
                             // Skip kartu kosong (nama mapel tidak ada)
                             if (!item[0] || !item[0].trim()) return;
                             const jamParts = item[1].replace(/\./g, ':').split('-');
-                            const jamMulai = (jamParts[0] || '').trim();
-                            const jamSelesai = (jamParts[1] || '').trim();
+                            const jamMulai = (jamParts[0] || '').trim().replace(':', ' : ');
+                            const jamSelesai = (jamParts[1] || '').trim().replace(':', ' : ');
                             // Pakai data-index supaya checkHighlight bisa match berdasarkan index asli
                             const namaGuru = (item[3] && item[3].trim()) || MAP_GURU[item[0]] || '';
                             const guruHtml = namaGuru
