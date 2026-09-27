@@ -4647,23 +4647,40 @@
                 "2027-07-09": { tipe: "libur", label: "Libur Akhir Semester" },
                 "2027-07-12": { tipe: "libur", label: "Libur Akhir Semester" },
                 "2027-07-13": { tipe: "libur", label: "Libur Akhir Semester" },
-                "2027-07-14": { tipe: "libur", label: "Libur Akhir Semester" }
+                "2027-07-14": { tipe: "libur", label: "Libur Akhir Semester" },
+                // --- Tanggal merah nasional (hari kerja, gak ada ikon khusus di kalender
+                // tapi tulisannya merah). Sabtu/Minggu gak perlu dimasukin sini karena
+                // otomatis udah kehandle sebagai libur mingguan. ---
+                "2026-08-25": { tipe: "merah", label: "Hari Libur Nasional" },
+                "2027-01-05": { tipe: "merah", label: "Hari Libur Nasional" },
+                "2027-03-08": { tipe: "merah", label: "Hari Libur Nasional" },
+                "2027-03-26": { tipe: "merah", label: "Hari Libur Nasional" },
+                "2027-04-02": { tipe: "merah", label: "Hari Libur Nasional" },
+                "2027-05-06": { tipe: "merah", label: "Hari Libur Nasional" },
+                "2027-05-17": { tipe: "merah", label: "Hari Libur Nasional" }
             };
 
-            // Tipe "libur" = beneran gak ada sekolah (kartu jadwal disembunyikan, kayak
-            // weekend). Tipe lain = tetep masuk sekolah tapi ada agenda khusus, jadi jadwal
-            // hariannya tetep tampil, cuma banner atas kasih tau ada acara apa.
+            // URL maskot yang dipakai pas jadwal mapel disembunyikan
+            const MASCOT_LIBUR_URL = "https://i.ibb.co.com/nMhV4WP1/91139f2f2b71db55948b0bbf8bce9ca2.png";
+            const MASCOT_UJIAN_URL = "https://i.ibb.co.com/cc1BsKW2/Whats-App-Image-2026-09-27-at-08-56-46.jpg";
+            const MASCOT_RAPORT_URL = "https://i.ibb.co.com/TDQgjYF6/Whats-App-Image-2026-09-27-at-08-56-47.jpg";
+
+            // liburPenuh true = kartu jadwal mapel harian disembunyikan, diganti gambar
+            // maskot + caption (mascotImg/mascotCaption). liburPenuh false = jadwal
+            // pelajaran biasa tetep tampil apa adanya, cuma banner atas yang kasih info.
             const EVENT_META = {
-                pts: { emoji: "📝", pesan: "Semangat Penilaian Sumatif Tengah Semester!", liburPenuh: false },
-                pas: { emoji: "📚", pesan: "Semangat Penilaian Sumatif Akhir Semester!", liburPenuh: false },
-                asaj: { emoji: "🎓", pesan: "Semangat Asesmen Sumatif Akhir Jenjang!", liburPenuh: false },
-                libur: { emoji: "🌴", pesan: "Selamat berlibur ✨", liburPenuh: true },
-                raport: { emoji: "📄", pesan: "Saatnya penyerahan raport", liburPenuh: false },
+                pts: { emoji: "📝", pesan: "Semangat Penilaian Sumatif Tengah Semester!", liburPenuh: true, mascotImg: MASCOT_UJIAN_URL, mascotCaption: "Lagi ujian, gak ada jadwal pelajaran hari ini" },
+                pas: { emoji: "📚", pesan: "Semangat Penilaian Sumatif Akhir Semester!", liburPenuh: true, mascotImg: MASCOT_UJIAN_URL, mascotCaption: "Lagi ujian, gak ada jadwal pelajaran hari ini" },
+                asaj: { emoji: "🎓", pesan: "Semangat Asesmen Sumatif Akhir Jenjang!", liburPenuh: true, mascotImg: MASCOT_UJIAN_URL, mascotCaption: "Lagi ujian, gak ada jadwal pelajaran hari ini" },
+                libur: { emoji: "🌴", pesan: "Selamat berlibur ✨", liburPenuh: true, mascotImg: MASCOT_LIBUR_URL, mascotCaption: "Libur, gak ada jadwal hari ini" },
+                raport: { emoji: "📄", pesan: "Saatnya penyerahan raport", liburPenuh: true, mascotImg: MASCOT_RAPORT_URL, mascotCaption: "Penyerahan raport, gak ada jadwal pelajaran hari ini" },
                 puasa: { emoji: "🌙", pesan: "Menyambut bulan puasa", liburPenuh: false },
-                cuti: { emoji: "🏖️", pesan: "Selamat menikmati cuti bersama ✨", liburPenuh: true },
-                lebaran: { emoji: "🎉", pesan: "Mohon Maaf Lahir & Batin ✨", liburPenuh: true },
-                upacara: { emoji: "🇮🇩", pesan: "Jangan lupa seragam lengkap ya", liburPenuh: false }
+                cuti: { emoji: "🏖️", pesan: "Selamat menikmati cuti bersama ✨", liburPenuh: true, mascotImg: MASCOT_LIBUR_URL, mascotCaption: "Libur, gak ada jadwal hari ini" },
+                lebaran: { emoji: "🎉", pesan: "Mohon Maaf Lahir & Batin ✨", liburPenuh: true, mascotImg: MASCOT_LIBUR_URL, mascotCaption: "Libur, gak ada jadwal hari ini" },
+                upacara: { emoji: "🇮🇩", pesan: "Jangan lupa seragam lengkap ya", liburPenuh: false },
+                merah: { emoji: "🔴", pesan: "Hari libur nasional", liburPenuh: true, mascotImg: MASCOT_LIBUR_URL, mascotCaption: "Libur, gak ada jadwal hari ini" }
             };
+
 
             function formatISODate(d) {
                 const y = d.getFullYear();
@@ -5245,8 +5262,10 @@
                     colMapel.innerHTML = "<div class='item-box'>Libur</div>";
                     colJam.innerHTML = "<div class='item-box'>-</div>";
                     colRuang.innerHTML = "<div class='item-box'>-</div>";
-                    const pesanLibur = isLiburKalender ? eventHariIni.label : "Libur, gak ada jadwal hari ini";
-                    if (cardsWrap) cardsWrap.innerHTML = mascotImageBlockHtml(pesanLibur, "https://i.ibb.co.com/nMhV4WP1/91139f2f2b71db55948b0bbf8bce9ca2.png", "libur");
+                    const metaLibur = isLiburKalender ? EVENT_META[eventHariIni.tipe] : null;
+                    const pesanLibur = metaLibur ? (metaLibur.mascotCaption || eventHariIni.label) : "Libur, gak ada jadwal hari ini";
+                    const gambarLibur = (metaLibur && metaLibur.mascotImg) || "https://i.ibb.co.com/nMhV4WP1/91139f2f2b71db55948b0bbf8bce9ca2.png";
+                    if (cardsWrap) cardsWrap.innerHTML = mascotImageBlockHtml(pesanLibur, gambarLibur, "libur");
                     return;
                 }
                 if (!isEditMode && hariIni.length === 0 && cardsWrap) {
