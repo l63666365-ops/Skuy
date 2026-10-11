@@ -864,7 +864,7 @@
             position: relative;
         }
 
-        .task-search-box svg {
+        .task-search-box > svg {
             position: absolute;
             left: 10px;
             top: 50%;
@@ -897,17 +897,28 @@
         .task-search-clear {
             all: unset;
             position: absolute;
-            right: 8px;
+            right: 4px;
             top: 50%;
             transform: translateY(-50%);
             color: var(--color-3);
             cursor: pointer;
-            padding: 4px;
+            width: 28px;
+            height: 28px;
             display: none;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            z-index: 2;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .task-search-clear.show {
+            display: flex;
+        }
+
+        .task-search-clear svg {
             display: block;
+            pointer-events: none;
         }
 
         .task-filter-chips {
