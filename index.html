@@ -6704,6 +6704,48 @@
                 renderEditNewFiles();
             }
 
+            // ===== TEMPEL FOTO DARI CLIPBOARD (Ctrl+V / Cmd+V) =====
+            // Foto hasil screenshot / copy gambar bisa langsung ditempel:
+            // - Kalau modal Edit Tugas lagi kebuka -> masuk ke lampiran baru edit.
+            // - Kalau lagi di tab Tugas -> masuk ke preview tugas baru.
+            // Paste teks biasa tetap jalan normal (gak diganggu).
+            document.addEventListener('paste', function (e) {
+                const items = (e.clipboardData && e.clipboardData.items) ? Array.from(e.clipboardData.items) : [];
+                const imageFiles = items
+                    .filter(it => it.kind === 'file' && it.type && it.type.startsWith('image/'))
+                    .map(it => it.getAsFile())
+                    .filter(Boolean);
+                if (imageFiles.length === 0) return; // bukan gambar -> biarin paste teks normal
+
+                // Kasih nama unik, soalnya gambar dari clipboard namanya selalu "image.png"
+                const d = new Date();
+                const pad = n => String(n).padStart(2, '0');
+                const stamp = `${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}-${pad(d.getHours())}${pad(d.getMinutes())}${pad(d.getSeconds())}`;
+                const named = imageFiles.map((f, i) => {
+                    const ext = (f.type.split('/')[1] || 'png').replace('jpeg', 'jpg').replace(/[^a-z0-9]/gi, '');
+                    return new File([f], `foto-tempel-${stamp}-${i + 1}.${ext}`, { type: f.type, lastModified: Date.now() });
+                });
+
+                const editModal = document.getElementById('editTaskModal');
+                const editOpen = editModal && editModal.classList.contains('show') && editingTaskId !== null;
+
+                if (editOpen) {
+                    e.preventDefault();
+                    named.forEach(file => editNewImages.push({ fileObj: file, name: file.name, type: file.type }));
+                    renderEditNewFiles();
+                    return;
+                }
+
+                // Jangan ngapa-ngapain kalau ada modal/popup lain yang lagi kebuka
+                if (document.querySelector('.modal-overlay.show')) return;
+
+                const tugasScreen = document.getElementById('screen-tugas');
+                if (tugasScreen && tugasScreen.classList.contains('active')) {
+                    e.preventDefault();
+                    previewTaskFiles({ files: named });
+                }
+            });
+
             function closeEditTaskModal() {
                 const modal = document.getElementById('editTaskModal');
                 modal.classList.remove('show');
