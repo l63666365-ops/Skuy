@@ -2392,6 +2392,14 @@
         }
 
         /* ===== Redesain: navigasi bawah, chip hari, kartu jadwal ===== */
+        /* Highlight area saat file diseret ke halaman */
+        .drop-active {
+            outline: 2px dashed var(--color-3);
+            outline-offset: 4px;
+            border-radius: 12px;
+            background-image: linear-gradient(rgba(128, 128, 128, 0.08), rgba(128, 128, 128, 0.08));
+        }
+
         .app-screen {
             display: none;
         }
@@ -6726,25 +6734,101 @@
                     return new File([f], `foto-tempel-${stamp}-${i + 1}.${ext}`, { type: f.type, lastModified: Date.now() });
                 });
 
+                if (routeIncomingFiles(named)) e.preventDefault();
+            });
+
+            // Nentuin file masuk ke mana (dipakai paste & drag-drop).
+            // Return true kalau file-nya diterima.
+            function routeIncomingFiles(files) {
+                if (!files || files.length === 0) return false;
                 const editModal = document.getElementById('editTaskModal');
                 const editOpen = editModal && editModal.classList.contains('show') && editingTaskId !== null;
-
                 if (editOpen) {
-                    e.preventDefault();
-                    named.forEach(file => editNewImages.push({ fileObj: file, name: file.name, type: file.type }));
+                    files.forEach(file => editNewImages.push({ fileObj: file, name: file.name, type: file.type }));
                     renderEditNewFiles();
-                    return;
+                    return true;
                 }
-
-                // Jangan ngapa-ngapain kalau ada modal/popup lain yang lagi kebuka
-                if (document.querySelector('.modal-overlay.show')) return;
-
+                // Ada modal/popup lain yang kebuka -> jangan ngapa-ngapain
+                if (document.querySelector('.modal-overlay.show')) return false;
                 const tugasScreen = document.getElementById('screen-tugas');
                 if (tugasScreen && tugasScreen.classList.contains('active')) {
-                    e.preventDefault();
-                    previewTaskFiles({ files: named });
+                    previewTaskFiles({ files: files });
+                    return true;
                 }
-            });
+                return false;
+            }
+
+            // ===== DRAG & DROP FILE =====
+            // Seret foto/PDF/dll dari folder ke halaman Tugas atau ke modal Edit Tugas.
+            (function () {
+                let dragDepth = 0;
+                const hasFiles = e => e.dataTransfer && Array.from(e.dataTransfer.types || []).includes('Files');
+                const dropTarget = () => {
+                    const editModal = document.getElementById('editTaskModal');
+                    if (editModal && editModal.classList.contains('show') && editingTaskId !== null) {
+                        return editModal.querySelector('.edit-task-box');
+                    }
+                    if (document.querySelector('.modal-overlay.show')) return null;
+                    const tugasScreen = document.getElementById('screen-tugas');
+                    if (tugasScreen && tugasScreen.classList.contains('active')) {
+                        return tugasScreen.querySelector('.task-section');
+                    }
+                    return null;
+                };
+                const clearHighlight = () => {
+                    dragDepth = 0;
+                    document.querySelectorAll('.drop-active').forEach(el => el.classList.remove('drop-active'));
+                };
+
+                document.addEventListener('dragenter', e => {
+                    if (!hasFiles(e)) return;
+                    dragDepth++;
+                    const t = dropTarget();
+                    if (t) t.classList.add('drop-active');
+                });
+                document.addEventListener('dragover', e => {
+                    if (!hasFiles(e)) return;
+                    // Wajib di-preventDefault biar drop diizinkan, sekalian
+                    // nahan browser supaya gak buka file-nya & pindah halaman.
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = dropTarget() ? 'copy' : 'none';
+                });
+                document.addEventListener('dragleave', e => {
+                    if (!hasFiles(e)) return;
+                    dragDepth = Math.max(0, dragDepth - 1);
+                    if (dragDepth === 0) clearHighlight();
+                });
+                document.addEventListener('drop', e => {
+                    if (!hasFiles(e)) return;
+                    e.preventDefault();
+                    clearHighlight();
+                    const files = Array.from(e.dataTransfer.files || []);
+                    routeIncomingFiles(files);
+                });
+                window.addEventListener('blur', clearHighlight);
+            })();
+
+            // ===== CTRL+ENTER / CMD+ENTER = SIMPAN =====
+            (function () {
+                const busy = () => {
+                    const ua = document.getElementById('uploadAlert');
+                    return ua && ua.classList.contains('show');
+                };
+                const bind = (id, fn) => {
+                    const el = document.getElementById(id);
+                    if (!el) return;
+                    el.addEventListener('keydown', e => {
+                        if (e.isComposing) return;
+                        if (e.key === 'Enter' && (e.ctrlKey || e.metaKey) && !e.altKey && !e.shiftKey) {
+                            e.preventDefault();
+                            if (busy()) return; // lagi upload, jangan dobel
+                            fn();
+                        }
+                    });
+                };
+                bind('taskInput', () => addTask());
+                bind('editTaskText', () => saveEditTask());
+            })();
 
             function closeEditTaskModal() {
                 const modal = document.getElementById('editTaskModal');
