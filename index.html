@@ -5677,6 +5677,8 @@
             var tugasPreviewBaseKey = '';
             var lastRenderPreviewDay = null;      // nama hari yang lagi diintip (null = mode normal)
             var lastPreviewMatchCount = -1;       // jumlah tugas yang cocok sama jadwal hari itu (-1 = belum tau)
+            var lastPreviewJadwalEmpty = false;   // true kalau hari yang diintip gak punya jadwal (libur)
+            var tugasPreviewWeek = null;          // "m1"/"m2" kalau dibuka dari tab Jadwal (ikut minggu yang lagi tampil di sana)
             var cloudTasksCacheReady = false;
 
             // ===== SEARCH & FILTER TUGAS =====
@@ -5852,23 +5854,34 @@
                 return list;
             }
 
+            // Label chip, mis. "Kam 22". Kalau bulannya beda dari hari acuan ditambah bulan ("Sen 2 Nov").
+            function formatTaskDayLabel(d, base) {
+                let teks = `${TASK_DAY_SHORT[d.getDay()]} ${d.getDate()}`;
+                if (d.getMonth() !== base.getMonth() || d.getFullYear() !== base.getFullYear()) {
+                    teks += ' ' + d.toLocaleDateString('id-ID', { month: 'short' });
+                }
+                return teks;
+            }
+
             function renderTaskDayNav() {
                 const wrap = document.getElementById('tdnChips');
-                const prev = document.getElementById('tdnPrev');
-                const next = document.getElementById('tdnNext');
                 const hint = document.getElementById('tdnHint');
-                if (!wrap || !prev || !next || !hint) return;
+                if (!wrap || !hint) return;
 
-                const offsets = getTaskPreviewOffsets();
-                if (!offsets.includes(tugasPreviewOffset)) tugasPreviewOffset = 0;
                 const isBesokMode = new Date().getHours() >= JAM_GANTI_HARI;
-                const idx = offsets.indexOf(tugasPreviewOffset);
-                prev.disabled = idx <= 0;
-                next.disabled = idx >= offsets.length - 1;
+                const base = getTaskBaseDate();
+
+                // Chip = jalan pintas (hari acuan + 5 hari sekolah berikutnya). Panah ‹ › tanpa batas,
+                // jadi kalau hari yang lagi dilihat di luar daftar itu (hasil geser panah, atau dibuka dari
+                // tab Jadwal), dia ditambahin sebagai chip aktif biar posisinya tetap kelihatan.
+                const offsets = getTaskPreviewOffsets();
+                if (!offsets.includes(tugasPreviewOffset)) offsets.push(tugasPreviewOffset);
+                offsets.sort((a, b) => a - b);
 
                 // Bangun ulang chip HANYA kalau ada yang beneran berubah, biar posisi
                 // scroll chip yang lagi digeser user gak ke-reset tiap data tugas masuk.
-                const key = offsets.join(',') + '|' + tugasPreviewOffset + '|' + isBesokMode + '|' + getTaskBaseDate().toDateString() + '|' + lastPreviewMatchCount;
+                const key = offsets.join(',') + '|' + tugasPreviewOffset + '|' + isBesokMode + '|' + base.toDateString()
+                    + '|' + lastPreviewMatchCount + '|' + lastPreviewJadwalEmpty;
                 if (wrap.__k === key) return;
                 wrap.__k = key;
 
@@ -5881,7 +5894,7 @@
                     btn.className = 'task-chip' + (off === tugasPreviewOffset ? ' active' : '');
                     btn.textContent = off === 0
                         ? `${isBesokMode ? 'Besok' : 'Hari ini'} · ${TASK_DAY_SHORT[d.getDay()]}`
-                        : `${TASK_DAY_SHORT[d.getDay()]} ${d.getDate()}`;
+                        : formatTaskDayLabel(d, base);
                     btn.addEventListener('click', () => setTaskPreviewOffset(off));
                     wrap.appendChild(btn);
                     if (off === tugasPreviewOffset) activeBtn = btn;
@@ -5893,10 +5906,13 @@
 
                 if (tugasPreviewOffset !== 0) {
                     const d = getTaskTargetDate(tugasPreviewOffset);
-                    const tglTeks = `${TASK_DAY_FULL[d.getDay()]}, ${d.toLocaleDateString('id-ID', { day: 'numeric', month: 'long' })}`;
-                    const info = (lastPreviewMatchCount === 0)
-                        ? `Belum ada tugas yang cocok sama jadwal ${TASK_DAY_FULL[d.getDay()]}`
-                        : `Lagi lihat tugas buat ${tglTeks} (sementara)`;
+                    const opsiTgl = { day: 'numeric', month: 'long' };
+                    if (d.getFullYear() !== new Date().getFullYear()) opsiTgl.year = 'numeric';
+                    const tglTeks = `${TASK_DAY_FULL[d.getDay()]}, ${d.toLocaleDateString('id-ID', opsiTgl)}`;
+                    let info = `Melihat tugas ${tglTeks}`;
+                    if (lastPreviewJadwalEmpty) info += ' · tidak ada jadwal';
+                    else if (lastPreviewMatchCount === 0) info += ' · belum ada yang cocok sama jadwal';
+                    else info += ' (sementara)';
                     hint.innerHTML = `<span>${info}</span><button type="button" class="tdn-reset" onclick="setTaskPreviewOffset(0)">Balik ke normal</button>`;
                     hint.classList.add('show');
                 } else {
@@ -5905,20 +5921,23 @@
                 }
             }
 
-            function setTaskPreviewOffset(off) {
+            // off = selisih hari dari hari acuan normal (bisa negatif/positif, tanpa batas).
+            // weekKey (opsional) = "m1"/"m2" yang harus dipakai, buat pas dibuka dari tab Jadwal
+            // supaya jadwal yang dicocokin PERSIS sama yang lagi tampil di sana.
+            function setTaskPreviewOffset(off, weekKey) {
                 tugasPreviewOffset = off;
+                tugasPreviewWeek = (off !== 0 && weekKey) ? weekKey : null;
                 tugasPreviewBaseKey = getTaskBaseDate().toDateString();
                 lastPreviewMatchCount = -1;
+                lastPreviewJadwalEmpty = false;
                 window.lastTasksData = "";
-                renderTaskDayNav();   // chip langsung berubah, gak nunggu fetch
-                loadTasks(true);      // pakai data cloud terakhir kalau ada (gak fetch ulang)
+                renderTaskDayNav();          // chip langsung berubah, gak nunggu fetch
+                return loadTasks(true);      // pakai data cloud terakhir kalau ada (gak fetch ulang)
             }
 
+            // Panah ‹ ›: geser 1 hari kalender, maju/mundur tanpa batas (sama kayak panah di tab Jadwal).
             function geserTaskDay(step) {
-                const offsets = getTaskPreviewOffsets();
-                const target = offsets[offsets.indexOf(tugasPreviewOffset) + step];
-                if (target === undefined) return;
-                setTaskPreviewOffset(target);
+                setTaskPreviewOffset(tugasPreviewOffset + step);
             }
 
             function resetTaskPreview() {
@@ -5936,6 +5955,7 @@
                 // jam ganti hari) udah lewat, otomatis balik ke mode normal.
                 if (tugasPreviewOffset && tugasPreviewBaseKey !== getTaskBaseDate().toDateString()) {
                     tugasPreviewOffset = 0;
+                    tugasPreviewWeek = null;
                 }
                 if (fromCache === true && cloudTasksCacheReady) {
                     // Ganti hari yang diintip gak butuh data baru dari server
@@ -5959,7 +5979,7 @@
                 const renderSig = JSON.stringify([
                     role, cloudTasks, localTasks, personalChecks,
                     new Date().getHours() >= JAM_GANTI_HARI,
-                    tugasPreviewOffset,
+                    tugasPreviewOffset, tugasPreviewWeek,
                     (typeof jadwalData !== 'undefined' && jadwalData && jadwalData[currentWeekType]) || null,
                     Array.from(pendingDeleteIds),
                     Math.floor(Date.now() / 600000)
@@ -5989,12 +6009,18 @@
                 const isPreview = tugasPreviewOffset !== 0;
                 const targetDate = getTaskTargetDate(tugasPreviewOffset);
                 const namaHariTarget = days[targetDate.getDay()];
-                // Hari yang diintip bisa jatuh di minggu depan (M1/M2 beda) -> hitung dari tanggalnya.
+                // Hari yang diintip bisa jatuh di minggu lain (M1/M2 beda) -> hitung dari tanggalnya,
+                // kecuali dibuka dari tab Jadwal (tugasPreviewWeek) -> ikut minggu yang tampil di sana.
                 // Mode normal tetap pakai currentWeekType seperti sebelumnya.
-                const weekKeyTarget = isPreview ? getWeekType(targetDate) : currentWeekType;
-                const jadwalBesok = (typeof jadwalData !== 'undefined' && typeof weekKeyTarget !== 'undefined' && jadwalData[weekKeyTarget])
+                const weekKeyTarget = isPreview ? (tugasPreviewWeek || getWeekType(targetDate)) : currentWeekType;
+                let jadwalBesok = (typeof jadwalData !== 'undefined' && typeof weekKeyTarget !== 'undefined' && jadwalData[weekKeyTarget])
                     ? jadwalData[weekKeyTarget][namaHariTarget] || []
                     : [];
+                // Tanggal libur penuh di kalender akademik -> jadwalnya kosong, sama kayak tab Jadwal
+                if (isPreview && typeof getEventForDate === 'function' && typeof EVENT_META !== 'undefined') {
+                    const ev = getEventForDate(targetDate);
+                    if (ev && EVENT_META[ev.tipe] && EVENT_META[ev.tipe].liburPenuh) jadwalBesok = [];
+                }
                 const daftarMapelBesok = jadwalBesok.map(item => item[0].toLowerCase().trim());
                 // Pre-compute urutan jadwal untuk SEMUA tugas (termasuk yang sudah done)
                 combinedTasks.forEach(t => {
@@ -6049,6 +6075,7 @@
                 lastRenderIsBesokMode = isBesokMode;
                 lastRenderPreviewDay = isPreview ? namaHariTarget : null;
                 lastPreviewMatchCount = isPreview ? combinedTasks.filter(t => t._isBesok).length : -1;
+                lastPreviewJadwalEmpty = isPreview ? jadwalBesok.length === 0 : false;
 
                 renderTaskDayNav();
                 updateTaskStateBanner();
@@ -6080,8 +6107,8 @@
                 }
             }
 
-            // Nempelin badge "Ada tugas" di kartu jadwal (hari ini/besok, sesuai jam skrg)
-            // kalau ada tugas AKTIF (belum dicentang) yang nama mapelnya cocok.
+            // Nempelin badge "Ada tugas" di kartu jadwal, di hari MANA PUN yang lagi dilihat
+            // (hasil geser panah di tab Jadwal) kalau ada tugas yang nama mapelnya cocok.
             function updateJadwalTugasBadges() {
                 const cardsWrap = document.getElementById('scheduleCards');
                 if (!cardsWrap) return;
@@ -6089,16 +6116,6 @@
                 document.querySelectorAll('.schedule-card.has-task').forEach(c => c.classList.remove('has-task'));
 
                 if (typeof currentViewDate === 'undefined') return;
-                const days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
-                const dayName = days[currentViewDate.getDay()];
-
-                const sekarang = new Date();
-                let targetHariIdx = sekarang.getDay();
-                if (sekarang.getHours() >= JAM_GANTI_HARI) targetHariIdx = (targetHariIdx + 1) % 7;
-                const namaHariTarget = days[targetHariIdx];
-                // Badge cuma relevan buat hari yang lagi "aktif" (hari ini/besok sesuai jam skrg),
-                // biar gak salah kaprah nyocokin ke hari lain yang mapelnya kebetulan sama nama.
-                if (dayName !== namaHariTarget) return;
 
                 const tugasAktif = (activeTasksCache || []).concat(doneTasksCache || []);
                 if (tugasAktif.length === 0) return;
@@ -6150,14 +6167,23 @@
             function bukaTugasDariJadwal(taskIdsStr) {
                 if (!taskIdsStr) return;
                 const ids = taskIdsStr.split(',').filter(Boolean);
+
+                // Tanggal yang lagi dilihat di tab Jadwal (hasil geser panah) -> selisih harinya dari
+                // hari acuan normal. Tab Tugas dibuka PERSIS di hari itu, dan pakai minggu (M1/M2)
+                // yang lagi tampil di Jadwal, jadi tugas yang ke-highlight = mapel di kartu yang diklik.
+                const viewMid = new Date(currentViewDate.getFullYear(), currentViewDate.getMonth(), currentViewDate.getDate());
+                const offset = Math.round((viewMid - getTaskBaseDate()) / 86400000);
+
                 showScreen('tugas');
-                requestAnimationFrame(() => {
-                    setTimeout(() => {
-                        const targets = ids.map(id => document.getElementById('task-' + id)).filter(Boolean);
-                        if (targets.length === 0) return;
-                        targets[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        targets.forEach(el => attachTaskBeam(el));
-                    }, 80);
+                Promise.resolve(setTaskPreviewOffset(offset, currentWeekType)).finally(() => {
+                    requestAnimationFrame(() => {
+                        setTimeout(() => {
+                            const targets = ids.map(id => document.getElementById('task-' + id)).filter(Boolean);
+                            if (targets.length === 0) return;
+                            targets[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            targets.forEach(el => attachTaskBeam(el));
+                        }, 80);
+                    });
                 });
             }
 
