@@ -2323,6 +2323,109 @@
             padding-right: 35px !important;
         }
 
+        /* ===== Mode "intip" tugas hari lain (sementara) ===== */
+        .task-preview {
+            border-left: 6px solid var(--color-2) !important;
+            position: relative;
+        }
+
+        .task-preview::after {
+            content: attr(data-hari);
+            position: absolute;
+            top: 5px;
+            right: 8px;
+            font-size: 8px;
+            font-weight: 800;
+            color: var(--color-2);
+            background: var(--bg-color);
+            padding: 1px 4px;
+            border-radius: 4px;
+            border: 1px solid var(--color-2);
+            z-index: 2;
+        }
+
+        .task-preview .task-text {
+            padding-right: 45px !important;
+        }
+
+        .task-preview.done {
+            border-left-color: var(--color-3) !important;
+        }
+
+        .task-daynav {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 10px;
+        }
+
+        .tdn-arrow {
+            all: unset;
+            flex-shrink: 0;
+            box-sizing: border-box;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            border: 1.5px solid var(--color-4);
+            background: var(--white);
+            color: var(--color-2);
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+            transition: opacity 0.2s;
+        }
+
+        .tdn-arrow[disabled] {
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        .tdn-arrow svg {
+            display: block;
+            pointer-events: none;
+        }
+
+        .tdn-chips {
+            display: flex;
+            gap: 6px;
+            overflow-x: auto;
+            flex: 1;
+            min-width: 0;
+            position: relative;
+        }
+
+        .tdn-chips::-webkit-scrollbar {
+            display: none;
+        }
+
+        .tdn-hint {
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            margin: 8px 0 0;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--color-3);
+        }
+
+        .tdn-hint.show {
+            display: flex;
+        }
+
+        .tdn-reset {
+            all: unset;
+            flex-shrink: 0;
+            font-size: 11px;
+            font-weight: 800;
+            color: var(--color-2);
+            text-decoration: underline;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+        }
+
         /* Tugas HARI INI/BESOK yang sudah dicentang: badge tetap, tapi redup */
         .task-besok.done,
         .task-hariini.done {
@@ -3781,6 +3884,17 @@
                         <p class="task-search-result-count" id="taskSearchResultCount" style="display:none;"></p>
                     </div>
 
+                    <div class="task-daynav" id="taskDayNav">
+                        <button type="button" class="tdn-arrow" id="tdnPrev" onclick="geserTaskDay(-1)" aria-label="Hari sebelumnya">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                        </button>
+                        <div class="tdn-chips" id="tdnChips"></div>
+                        <button type="button" class="tdn-arrow" id="tdnNext" onclick="geserTaskDay(1)" aria-label="Hari berikutnya">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </button>
+                    </div>
+                    <p class="tdn-hint" id="tdnHint"></p>
+
                     <div id="imagePreviewContainer"
                         style="display:none; margin-top:10px; text-align:left; flex-wrap: wrap; gap: 5px;"></div>
                     <div id="taskStateBanner"></div>
@@ -4254,6 +4368,8 @@
 
             // ===== Navigasi bawah (Jadwal / Tugas / Profil) =====
             function showScreen(name) {
+                // Mode intip tugas hari lain cuma sementara -> balik normal kalau keluar dari tab Tugas
+                if (name !== 'tugas' && typeof resetTaskPreview === 'function') resetTaskPreview();
                 document.querySelectorAll('.app-screen').forEach(el => el.classList.remove('active'));
                 const target = document.getElementById('screen-' + name);
                 if (target) {
@@ -5552,6 +5668,17 @@
             let lastRenderRole = null;
             let lastRenderIsBesokMode = false;
 
+            // ===== INTIP TUGAS HARI LAIN (SEMENTARA) =====
+            // Default-nya app tetap ngikut hari (sebelum JAM_GANTI_HARI = HARI INI, sesudahnya = BESOK).
+            // Offset ini cuma "ngintip": 0 = normal, 1+ = berapa hari setelah hari acuan normal.
+            // Sengaja pakai `var` & gak disimpan ke localStorage, jadi reload = otomatis balik normal.
+            // Juga di-reset kalau user pindah tab, atau kalau hari acuannya udah berganti.
+            var tugasPreviewOffset = 0;
+            var tugasPreviewBaseKey = '';
+            var lastRenderPreviewDay = null;      // nama hari yang lagi diintip (null = mode normal)
+            var lastPreviewMatchCount = -1;       // jumlah tugas yang cocok sama jadwal hari itu (-1 = belum tau)
+            var cloudTasksCacheReady = false;
+
             // ===== SEARCH & FILTER TUGAS =====
             let taskSearchQuery = '';
             let taskStatusFilter = 'semua'; // 'semua' | 'aktif' | 'selesai'
@@ -5693,18 +5820,135 @@
                 taskEventSource = es;
             }
 
-            async function loadTasks() {
+            // ---------- Intip tugas hari lain: helper tanggal ----------
+            const TASK_DAY_FULL = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+            const TASK_DAY_SHORT = ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"];
+            const TASK_PREVIEW_MAX_DAYS = 5; // berapa hari sekolah ke depan yang bisa diintip
+
+            // Hari acuan normal: hari ini, atau besok kalau udah lewat JAM_GANTI_HARI.
+            function getTaskBaseDate() {
+                const now = new Date();
+                const d = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                if (now.getHours() >= JAM_GANTI_HARI) d.setDate(d.getDate() + 1);
+                return d;
+            }
+
+            function getTaskTargetDate(offset) {
+                const d = getTaskBaseDate();
+                d.setDate(d.getDate() + offset);
+                return d;
+            }
+
+            // Daftar offset yang tersedia: 0 (normal) + beberapa hari sekolah (Sen-Jum) setelahnya.
+            function getTaskPreviewOffsets() {
+                const base = getTaskBaseDate();
+                const list = [0];
+                for (let i = 1; i <= 14 && list.length < TASK_PREVIEW_MAX_DAYS + 1; i++) {
+                    const d = new Date(base);
+                    d.setDate(base.getDate() + i);
+                    const w = d.getDay();
+                    if (w >= 1 && w <= 5) list.push(i);
+                }
+                return list;
+            }
+
+            function renderTaskDayNav() {
+                const wrap = document.getElementById('tdnChips');
+                const prev = document.getElementById('tdnPrev');
+                const next = document.getElementById('tdnNext');
+                const hint = document.getElementById('tdnHint');
+                if (!wrap || !prev || !next || !hint) return;
+
+                const offsets = getTaskPreviewOffsets();
+                if (!offsets.includes(tugasPreviewOffset)) tugasPreviewOffset = 0;
+                const isBesokMode = new Date().getHours() >= JAM_GANTI_HARI;
+                const idx = offsets.indexOf(tugasPreviewOffset);
+                prev.disabled = idx <= 0;
+                next.disabled = idx >= offsets.length - 1;
+
+                // Bangun ulang chip HANYA kalau ada yang beneran berubah, biar posisi
+                // scroll chip yang lagi digeser user gak ke-reset tiap data tugas masuk.
+                const key = offsets.join(',') + '|' + tugasPreviewOffset + '|' + isBesokMode + '|' + getTaskBaseDate().toDateString() + '|' + lastPreviewMatchCount;
+                if (wrap.__k === key) return;
+                wrap.__k = key;
+
+                wrap.innerHTML = '';
+                let activeBtn = null;
+                offsets.forEach(off => {
+                    const d = getTaskTargetDate(off);
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = 'task-chip' + (off === tugasPreviewOffset ? ' active' : '');
+                    btn.textContent = off === 0
+                        ? `${isBesokMode ? 'Besok' : 'Hari ini'} · ${TASK_DAY_SHORT[d.getDay()]}`
+                        : `${TASK_DAY_SHORT[d.getDay()]} ${d.getDate()}`;
+                    btn.addEventListener('click', () => setTaskPreviewOffset(off));
+                    wrap.appendChild(btn);
+                    if (off === tugasPreviewOffset) activeBtn = btn;
+                });
+                if (activeBtn) {
+                    const left = activeBtn.offsetLeft - (wrap.clientWidth - activeBtn.offsetWidth) / 2;
+                    wrap.scrollTo({ left: Math.max(0, left), behavior: 'smooth' });
+                }
+
+                if (tugasPreviewOffset !== 0) {
+                    const d = getTaskTargetDate(tugasPreviewOffset);
+                    const tglTeks = `${TASK_DAY_FULL[d.getDay()]}, ${d.toLocaleDateString('id-ID', { day: 'numeric', month: 'long' })}`;
+                    const info = (lastPreviewMatchCount === 0)
+                        ? `Belum ada tugas yang cocok sama jadwal ${TASK_DAY_FULL[d.getDay()]}`
+                        : `Lagi lihat tugas buat ${tglTeks} (sementara)`;
+                    hint.innerHTML = `<span>${info}</span><button type="button" class="tdn-reset" onclick="setTaskPreviewOffset(0)">Balik ke normal</button>`;
+                    hint.classList.add('show');
+                } else {
+                    hint.innerHTML = '';
+                    hint.classList.remove('show');
+                }
+            }
+
+            function setTaskPreviewOffset(off) {
+                tugasPreviewOffset = off;
+                tugasPreviewBaseKey = getTaskBaseDate().toDateString();
+                lastPreviewMatchCount = -1;
+                window.lastTasksData = "";
+                renderTaskDayNav();   // chip langsung berubah, gak nunggu fetch
+                loadTasks(true);      // pakai data cloud terakhir kalau ada (gak fetch ulang)
+            }
+
+            function geserTaskDay(step) {
+                const offsets = getTaskPreviewOffsets();
+                const target = offsets[offsets.indexOf(tugasPreviewOffset) + step];
+                if (target === undefined) return;
+                setTaskPreviewOffset(target);
+            }
+
+            function resetTaskPreview() {
+                if (tugasPreviewOffset) setTaskPreviewOffset(0);
+            }
+
+            async function loadTasks(fromCache) {
                 const list = document.getElementById('taskList');
                 if (!list) return;
                 const role = localStorage.getItem('role');
                 const userKelas = (localStorage.getItem("userKelas") || "UMUM").trim();
                 let personalChecks = JSON.parse(localStorage.getItem('personalTaskChecks')) || {};
                 let cloudTasks = {};
-                try {
-                    const res = await fetch(`${firebaseTugasURL}/${userKelas}.json`);
-                    cloudTasks = await res.json() || {};
-                } catch (e) {
-                    console.log("Gagal ambil data cloud", e);
+                // Mode intip hari lain cuma berlaku di hari acuan yang sama. Kalau hari (atau
+                // jam ganti hari) udah lewat, otomatis balik ke mode normal.
+                if (tugasPreviewOffset && tugasPreviewBaseKey !== getTaskBaseDate().toDateString()) {
+                    tugasPreviewOffset = 0;
+                }
+                if (fromCache === true && cloudTasksCacheReady) {
+                    // Ganti hari yang diintip gak butuh data baru dari server
+                    cloudTasks = cloudTasksCache;
+                } else {
+                    try {
+                        const res = await fetch(`${firebaseTugasURL}/${userKelas}.json`);
+                        cloudTasks = await res.json() || {};
+                        cloudTasksCache = cloudTasks;
+                        cloudTasksCacheReady = true;
+                    } catch (e) {
+                        console.log("Gagal ambil data cloud", e);
+                    }
                 }
                 let localTasks = JSON.parse(localStorage.getItem('mySchoolTasks')) || [];
                 // Kalau semua yang mempengaruhi tampilan daftar tugas sama persis dengan render
@@ -5715,6 +5959,7 @@
                 const renderSig = JSON.stringify([
                     role, cloudTasks, localTasks, personalChecks,
                     new Date().getHours() >= JAM_GANTI_HARI,
+                    tugasPreviewOffset,
                     (typeof jadwalData !== 'undefined' && jadwalData && jadwalData[currentWeekType]) || null,
                     Array.from(pendingDeleteIds),
                     Math.floor(Date.now() / 600000)
@@ -5739,14 +5984,16 @@
                 const days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
                 const sekarang = new Date();
                 const jamSekarang = sekarang.getHours();
-                let targetHariIdx = sekarang.getDay();
                 const isBesokMode = jamSekarang >= JAM_GANTI_HARI; // true = udah masuk konteks besok
-                if (isBesokMode) {
-                    targetHariIdx = (targetHariIdx + 1) % 7;
-                }
-                const namaHariTarget = days[targetHariIdx];
-                const jadwalBesok = (typeof jadwalData !== 'undefined' && typeof currentWeekType !== 'undefined' && jadwalData[currentWeekType])
-                    ? jadwalData[currentWeekType][namaHariTarget] || []
+                // Mode normal (offset 0) = hari ini/besok seperti biasa. Mode intip = hari acuan + offset.
+                const isPreview = tugasPreviewOffset !== 0;
+                const targetDate = getTaskTargetDate(tugasPreviewOffset);
+                const namaHariTarget = days[targetDate.getDay()];
+                // Hari yang diintip bisa jatuh di minggu depan (M1/M2 beda) -> hitung dari tanggalnya.
+                // Mode normal tetap pakai currentWeekType seperti sebelumnya.
+                const weekKeyTarget = isPreview ? getWeekType(targetDate) : currentWeekType;
+                const jadwalBesok = (typeof jadwalData !== 'undefined' && typeof weekKeyTarget !== 'undefined' && jadwalData[weekKeyTarget])
+                    ? jadwalData[weekKeyTarget][namaHariTarget] || []
                     : [];
                 const daftarMapelBesok = jadwalBesok.map(item => item[0].toLowerCase().trim());
                 // Pre-compute urutan jadwal untuk SEMUA tugas (termasuk yang sudah done)
@@ -5800,7 +6047,10 @@
                 // Simpan biar search/filter bisa render ulang tanpa fetch Firebase lagi
                 lastRenderRole = role;
                 lastRenderIsBesokMode = isBesokMode;
+                lastRenderPreviewDay = isPreview ? namaHariTarget : null;
+                lastPreviewMatchCount = isPreview ? combinedTasks.filter(t => t._isBesok).length : -1;
 
+                renderTaskDayNav();
                 updateTaskStateBanner();
                 renderTaskList(role, isBesokMode);
                 updateJadwalTugasBadges();
@@ -5821,6 +6071,8 @@
                     banner.innerHTML = "";
                 } else if (total === 0) {
                     banner.innerHTML = mascotImageBlockHtml("Belum ada tugas, santai dulu~", "https://i.ibb.co.com/HL1p965M/d79a4f6fd745ec02131bfe77bb901bc2-1.png", "santai");
+                } else if (lastRenderPreviewDay) {
+                    banner.innerHTML = "";
                 } else if (activeTasksCache.every(t => t.done)) {
                     banner.innerHTML = `<p style="text-align:center; font-size:12px; font-weight:800; color: var(--color-2); margin: 4px 0 12px;">Mantap, semua tugas hari ini kelar 🎉</p>`;
                 } else {
@@ -6110,8 +6362,11 @@
                 if (!list) return;
                 const li = document.createElement('li');
                 li.id = `task-${id}`;
-                const badgeClass = isTugasBesok ? (isBesokMode ? 'task-besok' : 'task-hariini') : '';
+                const badgeClass = isTugasBesok
+                    ? (lastRenderPreviewDay ? 'task-preview' : (isBesokMode ? 'task-besok' : 'task-hariini'))
+                    : '';
                 li.className = `task-item ${t.done ? 'done' : ''} ${badgeClass}${canDelete ? ' has-actions' : ''}`;
+                if (isTugasBesok && lastRenderPreviewDay) li.dataset.hari = lastRenderPreviewDay.toUpperCase();
                 li.style.cssText = "flex-direction: column; align-items: flex-start; position: relative; padding-bottom: 15px;";
                 const toggleFunc = isCloud ? `toggleTaskCloud('${id}', ${t.done}, event)` : `toggleTaskLocal('${id}', event)`;
                 const deleteFunc = isCloud ? `deleteTaskCloud('${id}', event)` : `deleteTaskLocal('${id}', event)`;
