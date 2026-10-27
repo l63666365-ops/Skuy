@@ -4812,7 +4812,10 @@
                 puasa: { emoji: "🌙", pesan: "Menyambut bulan puasa", liburPenuh: false },
                 cuti: { emoji: "🏖️", pesan: "Selamat menikmati cuti bersama ✨", liburPenuh: true, mascotImg: MASCOT_LIBUR_URL, mascotCaption: "Libur, gak ada jadwal hari ini" },
                 lebaran: { emoji: "🎉", pesan: "Mohon Maaf Lahir & Batin ✨", liburPenuh: true, mascotImg: MASCOT_LIBUR_URL, mascotCaption: "Libur, gak ada jadwal hari ini" },
-                upacara: { emoji: "🇮🇩", pesan: "Jangan lupa seragam lengkap ya", liburPenuh: false },
+                // sampaiMenit: banner cuma tampil di HARI-H sampai jam ini (07.45 = upacara selesai),
+                // setelahnya status balik ke jadwal mapel biasa. Malam sebelumnya (setelah
+                // JAM_GANTI_HARI) banner tetap tampil sebagai pengingat seragam.
+                upacara: { emoji: "🇮🇩", pesan: "Jangan lupa seragam lengkap ya", liburPenuh: false, sampaiMenit: 7 * 60 + 45 },
                 merah: { emoji: "🔴", pesan: "Hari libur nasional", liburPenuh: true, mascotImg: MASCOT_LIBUR_URL, mascotCaption: "Libur, gak ada jadwal hari ini" }
             };
 
@@ -5088,7 +5091,15 @@
                 // hari) ada acara khusus, banner atas nampilin itu duluan, override status
                 // pelajaran biasa (soalnya di hari kayak gini jadwal normal kemungkinan besar
                 // gak relevan/berubah).
-                const eventHariIni = getEventForDate(refDate);
+                const eventHariIniRaw = getEventForDate(refDate);
+                const metaEventRaw = eventHariIniRaw ? EVENT_META[eventHariIniRaw.tipe] : null;
+                // Event yang punya batas jam (mis. upacara sampai 07.45) dianggap sudah selesai
+                // kalau refDate == hari ini dan jam sekarang sudah lewat batasnya -> lanjut ke
+                // status mapel biasa di bawah.
+                const eventSudahSelesai = !!(metaEventRaw && metaEventRaw.sampaiMenit != null
+                    && formatISODate(refDate) === formatISODate(now)
+                    && currentTimeMin >= metaEventRaw.sampaiMenit);
+                const eventHariIni = eventSudahSelesai ? null : eventHariIniRaw;
                 if (eventHariIni) {
                     const meta = EVENT_META[eventHariIni.tipe] || { emoji: "📌", pesan: "" };
                     setText(statLabel, `${meta.emoji} ${eventHariIni.label}`);
