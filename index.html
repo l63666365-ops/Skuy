@@ -7875,7 +7875,7 @@
                 applyFix();
                 window.addEventListener('resize', applyFix);
                 window.addEventListener('orientationchange', applyFix);
-
+})();
             // ════ WARNA TEKS TUGAS (stabilo + warna huruf) ════
 // {=kuning:teks} = stabilo, {#merah:teks} = warna huruf. Disimpan sebagai teks biasa.
 (function () {
@@ -8041,7 +8041,6 @@
         ta.addEventListener('blur', () => setTimeout(() => { if (document.activeElement !== ta) closePal(); }, 120));
     });
 })();
-
         </script>
 </body>
 
