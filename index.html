@@ -7875,7 +7875,172 @@
                 applyFix();
                 window.addEventListener('resize', applyFix);
                 window.addEventListener('orientationchange', applyFix);
-            })();
+
+            // ════ WARNA TEKS TUGAS (stabilo + warna huruf) ════
+// {=kuning:teks} = stabilo, {#merah:teks} = warna huruf. Disimpan sebagai teks biasa.
+(function () {
+    const st = document.createElement('style');
+    st.textContent = `
+.fmt-toolbar{flex-wrap:wrap}
+.fmt-ico{display:flex;flex-direction:column;align-items:center;gap:1px}
+.fmt-bar{display:block;width:14px;height:3px;border-radius:2px}
+.fmt-btn.on{background:var(--color-5)}
+.fmt-palette{display:none;flex-basis:100%;align-items:center;gap:7px;padding:7px 4px 3px;margin-top:4px;border-top:1px solid var(--color-5)}
+.fmt-palette.open{display:flex}
+.fmt-pal-lbl{font-size:11px;font-weight:800;color:var(--color-3);margin-right:2px}
+.fmt-sw{all:unset;box-sizing:border-box;width:26px;height:26px;border-radius:50%;border:2px solid rgba(0,0,0,.15);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent;transition:transform .12s ease}
+.fmt-sw:active{transform:scale(.88)}
+.fmt-sw-clear{background:var(--white);color:var(--color-3);font-size:12px;font-weight:800;border-color:var(--color-4)}
+.hl-kuning,.hl-hijau,.hl-biru,.hl-pink,.hl-oranye{color:#1b1b1b;border-radius:3px;padding:0 2px;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.hl-kuning{background:#fff176}.hl-hijau{background:#b9f6ca}.hl-biru{background:#90caf9}.hl-pink{background:#f8bbd0}.hl-oranye{background:#ffcc80}
+.tc-merah{color:#d32f2f}.tc-biru{color:#1976d2}.tc-hijau{color:#2e7d32}.tc-oranye{color:#ef6c00}.tc-ungu{color:#7b1fa2}
+[data-theme="dark"] .tc-merah{color:#ff6b6b}[data-theme="dark"] .tc-biru{color:#64b5f6}[data-theme="dark"] .tc-hijau{color:#66bb6a}[data-theme="dark"] .tc-oranye{color:#ffa726}[data-theme="dark"] .tc-ungu{color:#ce93d8}`;
+    document.head.appendChild(st);
+
+    const NAMES = 'kuning|hijau|biru|pink|oranye|merah|ungu';
+    const COLOR_RE = new RegExp('\\{([=#])(' + NAMES + '):([^{}\\n]*)\\}', 'g');
+    const PALETTE = {
+        '=': [['kuning', '#fff176'], ['hijau', '#b9f6ca'], ['biru', '#90caf9'], ['pink', '#f8bbd0'], ['oranye', '#ffcc80']],
+        '#': [['merah', '#d32f2f'], ['biru', '#1976d2'], ['hijau', '#2e7d32'], ['oranye', '#ef6c00'], ['ungu', '#7b1fa2']]
+    };
+
+    function loopReplace(t, fn) {
+        let prev, n = 0;
+        do { prev = t; t = t.replace(COLOR_RE, fn); } while (t !== prev && ++n < 8);
+        return t;
+    }
+    const colorHtml = t => loopReplace(t, (m, k, c, x) => x === '' ? '' : '<span class="' + (k === '=' ? 'hl-' : 'tc-') + c + '">' + x + '</span>');
+    window.fmtColorStrip = t => loopReplace(t, (m, k, c, x) => x);
+
+    // Render: timpa fungsi lama (dipanggil lewat nama global, jadi otomatis ikut)
+    fmtInline = function (text) {
+        let t = escapeHtml(text);
+        FMT_INLINE.forEach(([re, rep]) => { t = t.replace(re, rep); });
+        return colorHtml(t);
+    };
+    plainTaskText = function (raw) {
+        return String(raw == null ? '' : raw).split('\n').map(line => {
+            const m = line.match(FMT_LIST_RE);
+            let t = m ? m[5] : line;
+            FMT_INLINE.forEach(([re]) => { t = t.replace(re, '$1$2'); });
+            return window.fmtColorStrip(t);
+        }).join('\n');
+    };
+    // Tombol Salin: buang kode warna (WhatsApp gak ngerti)
+    copyTaskFormat = function (text) {
+        navigator.clipboard.writeText(window.fmtColorStrip(text)).catch(err => console.error('Gagal menyalin: ', err));
+    };
+    window.copyTaskFormat = copyTaskFormat;
+
+    function tokens(v) {
+        const open = new RegExp('^\\{([=#])(' + NAMES + '):');
+        const out = [], stack = [];
+        for (let i = 0; i < v.length; i++) {
+            const c = v[i];
+            if (c === '{') {
+                const m = open.exec(v.slice(i, i + 12));
+                stack.push(m ? { start: i, kind: m[1], name: m[2], cs: i + m[0].length } : null);
+            } else if (c === '}') {
+                const t = stack.pop();
+                if (t) { t.ce = i; t.end = i + 1; out.push(t); }
+            } else if (c === '\n') stack.length = 0;
+        }
+        return out;
+    }
+    function unwrapInside(v, s, e, toks) {
+        const cuts = [];
+        toks.filter(t => t.start >= s && t.end <= e).forEach(t => cuts.push([t.start, t.cs], [t.ce, t.end]));
+        cuts.sort((a, b) => a[0] - b[0]);
+        let out = '', pos = s;
+        cuts.forEach(([a, b]) => { out += v.slice(pos, a); pos = b; });
+        return out + v.slice(pos, e);
+    }
+    function applyColor(ta, kind, name) {
+        const v = ta.value, s = ta.selectionStart, e = ta.selectionEnd;
+        const toks = tokens(v).filter(t => t.kind === kind);
+        let enc = null;
+        toks.forEach(t => { if (s >= t.cs && e <= t.ce && (!enc || t.ce - t.cs < enc.ce - enc.cs)) enc = t; });
+        if (enc) {
+            const h = enc.cs - enc.start;
+            if (!name || name === enc.name) {
+                fmtReplaceRange(ta, enc.start, enc.end, v.slice(enc.cs, enc.ce));
+                ta.setSelectionRange(s - h, e - h);
+            } else {
+                const head = '{' + kind + name + ':';
+                fmtReplaceRange(ta, enc.start, enc.cs, head);
+                const d = head.length - h;
+                ta.setSelectionRange(s + d, e + d);
+            }
+            return;
+        }
+        const sel = unwrapInside(v, s, e, toks);
+        if (!name) {
+            if (sel !== v.slice(s, e)) { fmtReplaceRange(ta, s, e, sel); ta.setSelectionRange(s, s + sel.length); }
+            return;
+        }
+        const head = '{' + kind + name + ':';
+        if (s === e) {
+            fmtReplaceRange(ta, s, e, head + '}');
+            ta.setSelectionRange(s + head.length, s + head.length);
+            return;
+        }
+        const count = (str, ch) => str.split(ch).length - 1;
+        const lines = sel.split('\n');
+        let innerStart = -1, innerLen = 0;
+        const res = lines.map(l => {
+            if (l.trim() === '' || count(l, '{') !== count(l, '}')) return l;
+            const lead = l.length - l.trimStart().length, trail = l.length - l.trimEnd().length;
+            const inner = l.slice(lead, l.length - trail);
+            if (lines.length === 1) { innerStart = lead + head.length; innerLen = inner.length; }
+            return l.slice(0, lead) + head + inner + '}' + l.slice(l.length - trail);
+        }).join('\n');
+        if (res === sel) return;
+        fmtReplaceRange(ta, s, e, res);
+        if (innerStart >= 0) ta.setSelectionRange(s + innerStart, s + innerStart + innerLen);
+        else ta.setSelectionRange(s, s + res.length);
+    }
+
+    // Tambah tombol + panel warna ke kedua toolbar (tambah tugas & modal edit)
+    document.querySelectorAll('.fmt-toolbar').forEach(tb => {
+        const ta = document.getElementById(tb.dataset.for);
+        if (!ta || tb.dataset.color) return;
+        tb.dataset.color = '1';
+        tb.insertAdjacentHTML('beforeend',
+            '<span class="fmt-sep"></span>' +
+            '<button type="button" class="fmt-btn" data-fmt="hl" tabindex="-1" aria-label="Stabilo" title="Stabilo"><span class="fmt-ico"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 11-6 6v3h9l3-3"/><path d="m22 12-4.6 4.6a2 2 0 0 1-2.8 0l-5.2-5.2a2 2 0 0 1 0-2.8L14 4"/></svg><i class="fmt-bar" style="background:#fff176"></i></span></button>' +
+            '<button type="button" class="fmt-btn" data-fmt="tc" tabindex="-1" aria-label="Warna huruf" title="Warna huruf"><span class="fmt-ico"><b style="font-size:14px;line-height:1.1">A</b><i class="fmt-bar" style="background:#d32f2f"></i></span></button>' +
+            '<div class="fmt-palette"></div>');
+        const pal = tb.querySelector('.fmt-palette');
+        const closePal = () => {
+            pal.classList.remove('open');
+            pal.dataset.kind = '';
+            tb.querySelectorAll('[data-fmt="hl"],[data-fmt="tc"]').forEach(b => b.classList.remove('on'));
+        };
+        const openPal = kind => {
+            pal.dataset.kind = kind;
+            pal.innerHTML = '<span class="fmt-pal-lbl">' + (kind === '=' ? 'Stabilo' : 'Warna huruf') + '</span>' +
+                PALETTE[kind].map(([n, c]) => '<button type="button" class="fmt-sw" data-name="' + n + '" tabindex="-1" aria-label="' + n + '" style="background:' + c + '"></button>').join('') +
+                '<button type="button" class="fmt-sw fmt-sw-clear" data-name="" tabindex="-1" aria-label="Hapus warna" title="Hapus warna">✕</button>';
+            pal.classList.add('open');
+            tb.querySelectorAll('[data-fmt="hl"],[data-fmt="tc"]').forEach(b => b.classList.toggle('on', b.dataset.fmt === (kind === '=' ? 'hl' : 'tc')));
+        };
+        tb.addEventListener('click', ev => {
+            const sw = ev.target.closest('.fmt-sw');
+            if (sw) {
+                applyColor(ta, pal.dataset.kind, sw.dataset.name || null);
+                closePal();
+                fmtAfter(ta);
+                return;
+            }
+            const btn = ev.target.closest('.fmt-btn');
+            if (!btn || (btn.dataset.fmt !== 'hl' && btn.dataset.fmt !== 'tc')) return;
+            const kind = btn.dataset.fmt === 'hl' ? '=' : '#';
+            if (pal.classList.contains('open') && pal.dataset.kind === kind) closePal();
+            else openPal(kind);
+        });
+        ta.addEventListener('blur', () => setTimeout(() => { if (document.activeElement !== ta) closePal(); }, 120));
+    });
+})();
 
         </script>
 </body>
